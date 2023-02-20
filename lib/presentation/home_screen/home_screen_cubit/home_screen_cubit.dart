@@ -10,6 +10,8 @@ import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_s
 import 'package:weather/services/remote/location_api.dart';
 import 'package:weather/services/local/shared_preferences.dart';
 
+import '../../../models/uv_index.dart';
+import '../../../services/remote/uv_api.dart';
 import '../../../services/remote/weather_api/weather_api.dart';
 
 class HomeScreenCubit extends Cubit<HomeScreenStates> {
@@ -21,6 +23,7 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
   //"sliverTitle" Is the name of the current city which will be added into the sliver app bar
   static String sliverTitle = '';
   late CurrentWeather currentWeather;
+  late List<UVIndex> uvIndexes;
 
   //We use this list to avoid the problem of late currentWeather the problem is an error occurred because the
   //currentWeather is still null when starting the app and we can  not await on initializing
@@ -107,19 +110,17 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
 
   Future<void> _getWeatherApiData() async {
     emit(LoadingDataFromWeatherAPIState());
-    await WeatherAPI.getWeatherData(
-            lat: positionOfUser!.latitude, lon: positionOfUser!.longitude)
-        .then((value) {
-      if (value == false) {
-        emit(FailedToLoadDataFromWeatherAPIState());
-      } else {
-        currentWeather = value;
-        sliverTitle = currentWeather.currentCountryDetails!.currentCity;
-        emit(SuccessfullyLoadedDataFromWeatherAPIState());
-      }
-    }).catchError((error) {
+    try {
+      uvIndexes = await UVAPI.getUVData(
+          lat: positionOfUser!.latitude, lon: positionOfUser!.longitude);
+      currentWeather = await WeatherAPI.getWeatherData(
+          lat: positionOfUser!.latitude, lon: positionOfUser!.longitude);
+      sliverTitle = currentWeather.currentCountryDetails!.currentCity;
+      emit(SuccessfullyLoadedDataFromWeatherAPIState());
+    } catch (e) {
+      debugPrint("GetWeatherAPI:" + e.toString());
       emit(FailedToLoadDataFromWeatherAPIState());
-    });
+    }
   }
 
   getSavedLocations() {

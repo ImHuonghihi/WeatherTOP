@@ -5,16 +5,19 @@ import 'package:conditional_builder_null_safety/conditional_builder_null_safety.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:weather/models/weather_style.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_cubit.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_states.dart';
 import 'package:weather/presentation/home_screen/widgets/alert_dialogs/show_location_services_disabled_dialog.dart';
+import 'package:weather/presentation/home_screen/widgets/chart_sliding_up_panel.dart';
 import 'package:weather/presentation/home_screen/widgets/current_weather_data_viewer.dart';
 import 'package:weather/presentation/home_screen/widgets/header_container.dart';
 import 'package:weather/presentation/home_screen/widgets/sliver_title_widget.dart';
 import 'package:weather/presentation/shared_widgets/my_button.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/presentation/shared_widgets_constant/progress_indicatior.dart';
+import 'package:weather/utils/chart/lib/flutter_chart.dart';
 import 'package:weather/utils/functions/restart_app.dart';
 import 'package:weather/utils/functions/time_converting.dart';
 import 'package:weather/utils/styles/colors.dart';
@@ -22,6 +25,8 @@ import 'package:weather/utils/styles/cosntants.dart';
 import 'package:weather/utils/styles/device_dimensions.dart';
 import 'package:weather/utils/styles/spaces.dart';
 
+import '../../models/current_weather.dart';
+import '../../models/uv_index.dart';
 import '../drawer/drawer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -34,6 +39,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   ScrollController sc = ScrollController();
+  PanelController pc = PanelController();
+  String panelTitle = 'Humidity';
+  Widget panelContent = const SizedBox();
   late Color color1; //Animated Color1 Background
   late Color color2; //Animated Color2 Background
   Color sliverAppBarColor = transparentColor;
@@ -208,6 +216,24 @@ class _HomeScreenState extends State<HomeScreen> {
                           sliverAppBarColor: sliverAppBarColor,
                           weatherStyle: widget.weatherStyle,
                           animatedContainerColor: animatedContainerColor,
+                          uvIndexOnTap: () {
+                            setState(() {
+                              panelTitle = "UV Index";
+                              pc.open();
+                            });
+                          },
+                          windOnTap: () {
+                            setState(() {
+                              panelTitle = "Wind";
+                              pc.open();
+                            });
+                          },
+                          humidityOnTap: () {
+                            setState(() {
+                              panelTitle = "Humidity";
+                              pc.open();
+                            });
+                          },
                         ),
                       ),
                       fallback: (context) => ConditionalBuilder(
@@ -272,6 +298,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       .ceil(),
                   weatherIcon: widget.weatherStyle.weatherIcon,
                   weatherIconColor: widget.weatherStyle.weatherIconColor,
+                ),
+                ChartSlidingUpPannel(
+                  controller: pc,
+                  chart: setUVIndexChart([]),
                 )
               ],
             ),
@@ -281,6 +311,56 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  setUVIndexChart(List<UVIndex> uvIndexes) {
+     var chartLine = ChartLine(
+      chartBeans: [
+        ChartBean(x: '12-01', y: 30),
+        ChartBean(x: '12-02', y: 88),
+        ChartBean(x: '12-03', y: 20),
+        ChartBean(x: '12-04', y: 67),
+        ChartBean(x: '12-05', y: 10),
+        ChartBean(x: '12-06', y: 40),
+        ChartBean(x: '12-07', y: 10),
+      ],
+      size: Size(MediaQuery.of(context).size.width,
+          MediaQuery.of(context).size.height / 5 * 1.6),
+      isCurve: false,
+      lineWidth: 2,
+      lineColor: Colors.yellow,
+      fontColor: Colors.white,
+      xyColor: Colors.white,
+      shaderColors: [
+        Colors.yellow.withOpacity(0.3),
+        Colors.yellow.withOpacity(0.1)
+      ],
+      fontSize: 12,
+      yNum: 8,
+      isAnimation: true,
+      isReverse: false,
+      isCanTouch: true,
+      isShowPressedHintLine: true,
+      pressedPointRadius: 4,
+      pressedHintLineWidth: 0.5,
+      pressedHintLineColor: Colors.white,
+      duration: const Duration(milliseconds: 2000),
+    );
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      margin: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
+      semanticContainer: true,
+      color: Colors.yellow.withOpacity(0.4),
+      child: chartLine,
+      clipBehavior: Clip.antiAlias,
+    );
+  }
+
+  setWindChart(CurrentWeather currentWeather) {
+    
+  }
+
+  setHumidityChart(CurrentWeather currentWeather) {
+    
+  }
   @override
   void dispose() {
     sc.dispose();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:weather/models/current_weather.dart';
 import 'package:weather/models/weather_of_day.dart';
 import 'package:weather/models/weather_style.dart';
@@ -13,6 +14,7 @@ import 'package:weather/utils/functions/time_converting.dart';
 import 'package:weather/utils/styles/colors.dart';
 
 import '../../../utils/styles/spaces.dart';
+import 'chart_sliding_up_panel.dart';
 
 class CurrentWeatherDataViewer extends StatelessWidget {
   final CurrentWeather currentWeatherData;
@@ -21,6 +23,10 @@ class CurrentWeatherDataViewer extends StatelessWidget {
   final sliverAppBarColor;
   final WeatherStyle weatherStyle;
   final animatedContainerColor;
+  final void Function() windOnTap;
+  final void Function() humidityOnTap;
+  final void Function() uvIndexOnTap;
+
   const CurrentWeatherDataViewer({
     Key? key,
     required this.currentWeatherData,
@@ -29,8 +35,10 @@ class CurrentWeatherDataViewer extends StatelessWidget {
     required this.sliverAppBarColor,
     required this.weatherStyle,
     required this.animatedContainerColor,
+    required this.windOnTap,
+    required this.humidityOnTap,
+    required this.uvIndexOnTap,
   }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     WeatherOfDay weatherOfDay = currentWeatherData.weatherOfDaysList[0];
@@ -138,6 +146,9 @@ class CurrentWeatherDataViewer extends StatelessWidget {
                   uvIndex: 'High',
                   wind: weatherOfDay.windSpeed,
                   humidity: weatherOfDay.humidity,
+                  uvIndexOnTap: uvIndexOnTap,
+                  humidityOnTap: humidityOnTap,
+                  windOnTap: windOnTap,
                 ),
                 animatedContainerColor: animatedContainerColor,
               ),

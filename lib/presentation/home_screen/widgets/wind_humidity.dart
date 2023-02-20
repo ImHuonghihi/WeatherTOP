@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/utils/styles/cosntants.dart';
 import 'package:weather/utils/styles/spaces.dart';
@@ -10,12 +11,18 @@ class WindHumidityContainer extends StatelessWidget {
   final uvIndex;
   final wind;
   final humidity;
+  final void Function() uvIndexOnTap;
+  final void Function() windOnTap;
+  final void Function() humidityOnTap;
 
   const WindHumidityContainer({
     Key? key,
     required this.uvIndex,
     required this.wind,
     required this.humidity,
+    required this.uvIndexOnTap,
+    required this.humidityOnTap,
+    required this.windOnTap,
   }) : super(key: key);
 
   @override
@@ -26,86 +33,95 @@ class WindHumidityContainer extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  CupertinoIcons.circle_fill,
-                  color: Colors.amber,
-                  size: 30,
-                ),
-                K_vSpace10,
-                MyText(
-                  text: 'UV Index',
-                  size: fontSizeM - 2,
-                ),
-                MyText(
-                  text: uvIndex,
-                  size: fontSizeM - 2,
-                  fontWeight: FontWeight.normal,
-                  color: whiteColor.withOpacity(0.6),
-                ),
-              ],
+            child: InkWell(
+              onTap: uvIndexOnTap,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    CupertinoIcons.circle_fill,
+                    color: Colors.amber,
+                    size: 30,
+                  ),
+                  K_vSpace10,
+                  MyText(
+                    text: 'UV Index',
+                    size: fontSizeM - 2,
+                  ),
+                  MyText(
+                    text: uvIndex,
+                    size: fontSizeM - 2,
+                    fontWeight: FontWeight.normal,
+                    color: whiteColor.withOpacity(0.6),
+                  ),
+                ],
+              ),
             ),
           ),
           K_hSpace20,
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  CupertinoIcons.wind,
-                  color: whiteColor.withOpacity(0.6),
-                  size: 30,
-                ),
-                K_vSpace10,
-                MyText(
-                  text: 'Wind',
-                  size: fontSizeM - 2,
-                ),
-                MyText(
-                  text: '$wind Km/h',
-                  size: fontSizeM - 2,
-                  fontWeight: FontWeight.normal,
-                  color: whiteColor.withOpacity(0.6),
-                ),
-              ],
+            child: InkWell(
+              onTap: windOnTap,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    CupertinoIcons.wind,
+                    color: whiteColor.withOpacity(0.6),
+                    size: 30,
+                  ),
+                  K_vSpace10,
+                  MyText(
+                    text: 'Wind',
+                    size: fontSizeM - 2,
+                  ),
+                  MyText(
+                    text: '$wind Km/h',
+                    size: fontSizeM - 2,
+                    fontWeight: FontWeight.normal,
+                    color: whiteColor.withOpacity(0.6),
+                  ),
+                ],
+              ),
             ),
           ),
           K_hSpace20,
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Stack(
-                  children: const [
-                    Padding(
-                      padding: EdgeInsets.only(left: 10.0),
-                      child: Icon(
+            child: InkWell(
+              onTap: humidityOnTap,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Stack(
+                    children: const [
+                      Padding(
+                        padding: EdgeInsets.only(left: 10.0),
+                        child: Icon(
+                          CupertinoIcons.drop_fill,
+                          color: Color(0XFFCDE9FF),
+                          size: 30,
+                        ),
+                      ),
+                      Icon(
                         CupertinoIcons.drop_fill,
-                        color: Color(0XFFCDE9FF),
+                        color: Color(0XFF91CFFE),
                         size: 30,
                       ),
-                    ),
-                    Icon(
-                      CupertinoIcons.drop_fill,
-                      color: Color(0XFF91CFFE),
-                      size: 30,
-                    ),
-                  ],
-                ),
-                K_vSpace10,
-                MyText(
-                  text: 'Humidity',
-                  size: fontSizeM - 2,
-                ),
-                MyText(
-                  text: '$humidity%',
-                  size: fontSizeM - 2,
-                  fontWeight: FontWeight.normal,
-                  color: whiteColor.withOpacity(0.6),
-                ),
-              ],
+                    ],
+                  ),
+                  K_vSpace10,
+                  MyText(
+                    text: 'Humidity',
+                    size: fontSizeM - 2,
+                  ),
+                  MyText(
+                    text: '$humidity%',
+                    size: fontSizeM - 2,
+                    fontWeight: FontWeight.normal,
+                    color: whiteColor.withOpacity(0.6),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
