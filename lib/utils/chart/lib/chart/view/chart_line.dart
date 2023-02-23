@@ -87,7 +87,6 @@ class ChartLineState extends State<ChartLine>
             if (widget.isReverse) {
               _controller!.repeat(reverse: widget.isReverse);
             }
-            print('绘制完成');
           }
         })
         ..addListener(() {

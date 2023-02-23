@@ -10,7 +10,7 @@ import 'package:weather/models/weather_style.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_cubit.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_states.dart';
 import 'package:weather/presentation/home_screen/widgets/alert_dialogs/show_location_services_disabled_dialog.dart';
-import 'package:weather/presentation/home_screen/widgets/chart_sliding_up_panel.dart';
+import 'package:weather/presentation/home_screen/widgets/charts/chart_sliding_up_panel.dart';
 import 'package:weather/presentation/home_screen/widgets/current_weather_data_viewer.dart';
 import 'package:weather/presentation/home_screen/widgets/header_container.dart';
 import 'package:weather/presentation/home_screen/widgets/sliver_title_widget.dart';
@@ -28,6 +28,7 @@ import 'package:weather/utils/styles/spaces.dart';
 import '../../models/current_weather.dart';
 import '../../models/uv_index.dart';
 import '../drawer/drawer.dart';
+import 'widgets/charts/chart_builder.dart';
 
 class HomeScreen extends StatefulWidget {
   final WeatherStyle weatherStyle;
@@ -39,7 +40,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   ScrollController sc = ScrollController();
-  PanelController pc = PanelController();
+  PanelController uvpc = PanelController();
+  PanelController windpc = PanelController();
+  PanelController humiditypc = PanelController();
   String panelTitle = 'Humidity';
   Widget panelContent = const SizedBox();
   late Color color1; //Animated Color1 Background
@@ -121,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     sc.addListener(() {
       scrollOffset = sc.offset;
-      if (scrollOffset > 180) {
+      if (scrollOffset > 100) {
         handleWhileScrollingDown();
       } else {
         handleWhileScrollingUp();
@@ -215,25 +218,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           sliverTitle: sliverTitle,
                           sliverAppBarColor: sliverAppBarColor,
                           weatherStyle: widget.weatherStyle,
-                          animatedContainerColor: animatedContainerColor,
-                          uvIndexOnTap: () {
-                            setState(() {
-                              panelTitle = "UV Index";
-                              pc.open();
-                            });
-                          },
-                          windOnTap: () {
-                            setState(() {
-                              panelTitle = "Wind";
-                              pc.open();
-                            });
-                          },
-                          humidityOnTap: () {
-                            setState(() {
-                              panelTitle = "Humidity";
-                              pc.open();
-                            });
-                          },
+                          animatedContainerColor: animatedContainerColor, 
+                          controllers: [uvpc, windpc, humiditypc],
                         ),
                       ),
                       fallback: (context) => ConditionalBuilder(
@@ -299,10 +285,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   weatherIcon: widget.weatherStyle.weatherIcon,
                   weatherIconColor: widget.weatherStyle.weatherIconColor,
                 ),
+                // CHARTS
                 ChartSlidingUpPannel(
-                  controller: pc,
-                  chart: setUVIndexChart([]),
-                )
+                  title: "UV Index",
+                  controller: uvpc,
+                  chart: _buildChartCurve(homeScreenCubit.uvIndexes),
+                ),
+                ChartSlidingUpPannel(
+                  title: "Wind Index",
+                  controller: windpc,
+                  chart: _buildChartCurve(homeScreenCubit.uvIndexes),
+                ),
+                ChartSlidingUpPannel(
+                  title: "Humidity Index",
+                  controller: humiditypc,
+                  chart: _buildChartCurve(homeScreenCubit.uvIndexes),
+                ),
               ],
             ),
           );
@@ -311,27 +309,23 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  setUVIndexChart(List<UVIndex> uvIndexes) {
-     var chartLine = ChartLine(
-      chartBeans: [
-        ChartBean(x: '12-01', y: 30),
-        ChartBean(x: '12-02', y: 88),
-        ChartBean(x: '12-03', y: 20),
-        ChartBean(x: '12-04', y: 67),
-        ChartBean(x: '12-05', y: 10),
-        ChartBean(x: '12-06', y: 40),
-        ChartBean(x: '12-07', y: 10),
-      ],
+ Widget _buildChartCurve(List<UVIndex> indexes) {
+    var chartLine = ChartLine(
+      chartBeans: indexes
+          .map((e) => ChartBean(
+              x: "${e.date.hour}h",
+              y: e.uv))
+          .toList(),
       size: Size(MediaQuery.of(context).size.width,
           MediaQuery.of(context).size.height / 5 * 1.6),
-      isCurve: false,
-      lineWidth: 2,
-      lineColor: Colors.yellow,
+      isCurve: true,
+      lineWidth: 4,
+      lineColor: Colors.blueAccent,
       fontColor: Colors.white,
       xyColor: Colors.white,
       shaderColors: [
-        Colors.yellow.withOpacity(0.3),
-        Colors.yellow.withOpacity(0.1)
+        Colors.blueAccent.withOpacity(0.3),
+        Colors.blueAccent.withOpacity(0.1)
       ],
       fontSize: 12,
       yNum: 8,
@@ -348,18 +342,10 @@ class _HomeScreenState extends State<HomeScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       margin: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
       semanticContainer: true,
-      color: Colors.yellow.withOpacity(0.4),
-      child: chartLine,
+      color: Colors.transparent.withOpacity(1),
       clipBehavior: Clip.antiAlias,
+      child: chartLine,
     );
-  }
-
-  setWindChart(CurrentWeather currentWeather) {
-    
-  }
-
-  setHumidityChart(CurrentWeather currentWeather) {
-    
   }
   @override
   void dispose() {

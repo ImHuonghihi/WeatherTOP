@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:weather/models/current_weather.dart';
+import 'package:weather/models/uv_index.dart';
 import 'package:weather/models/weather_of_day.dart';
 import 'package:weather/models/weather_style.dart';
 import 'package:weather/presentation/home_screen/widgets/content_container.dart';
@@ -10,41 +11,45 @@ import 'package:weather/presentation/home_screen/widgets/sunrise_sunset.dart';
 import 'package:weather/presentation/home_screen/widgets/temp_forcasting_container.dart';
 import 'package:weather/presentation/home_screen/widgets/weeklyContainer.dart';
 import 'package:weather/presentation/home_screen/widgets/wind_humidity.dart';
+import 'package:weather/utils/chart/lib/flutter_chart.dart';
 import 'package:weather/utils/functions/time_converting.dart';
 import 'package:weather/utils/styles/colors.dart';
 
 import '../../../utils/styles/spaces.dart';
-import 'chart_sliding_up_panel.dart';
+import 'charts/chart_sliding_up_panel.dart';
 
-class CurrentWeatherDataViewer extends StatelessWidget {
+class CurrentWeatherDataViewer extends StatefulWidget {
   final CurrentWeather currentWeatherData;
-  final ScrollController sc;
   final sliverTitle;
   final sliverAppBarColor;
   final WeatherStyle weatherStyle;
   final animatedContainerColor;
-  final void Function() windOnTap;
-  final void Function() humidityOnTap;
-  final void Function() uvIndexOnTap;
+  final controllers;
+  final ScrollController sc;
 
   const CurrentWeatherDataViewer({
     Key? key,
     required this.currentWeatherData,
-    required this.sc,
     required this.sliverTitle,
     required this.sliverAppBarColor,
     required this.weatherStyle,
     required this.animatedContainerColor,
-    required this.windOnTap,
-    required this.humidityOnTap,
-    required this.uvIndexOnTap,
+    required this.sc,
+    required this.controllers,
   }) : super(key: key);
   @override
+  State<CurrentWeatherDataViewer> createState() =>
+      _CurrentWeatherDataViewerState();
+}
+
+class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
+  @override
   Widget build(BuildContext context) {
-    WeatherOfDay weatherOfDay = currentWeatherData.weatherOfDaysList[0];
+    WeatherOfDay weatherOfDay = widget.currentWeatherData.weatherOfDaysList[0];
+
     return NestedScrollView(
       floatHeaderSlivers: true,
-      controller: sc,
+      controller: widget.sc,
       physics: const BouncingScrollPhysics(),
       headerSliverBuilder: (context, innerBoxIsScrolled) => [
         SliverAppBar(
@@ -68,11 +73,11 @@ class CurrentWeatherDataViewer extends StatelessWidget {
                   },
                 ),
               ),
-              sliverTitle,
+              widget.sliverTitle,
             ],
           ),
           leadingWidth: 0.0,
-          backgroundColor: sliverAppBarColor,
+          backgroundColor: widget.sliverAppBarColor,
           elevation: 0.0,
           automaticallyImplyLeading: false,
           pinned: true,
@@ -86,7 +91,7 @@ class CurrentWeatherDataViewer extends StatelessWidget {
             ),
             child: FlexibleBar(
               sliverTitle:
-                  currentWeatherData.currentCountryDetails!.currentCity,
+                  widget.currentWeatherData.currentCountryDetails!.currentCity,
               maxTemp: weatherOfDay.maxTemp.ceil(),
               currentTemp: weatherOfDay.currentTemp.ceil(),
               minTemp: weatherOfDay.minTemp.ceil(),
@@ -94,8 +99,8 @@ class CurrentWeatherDataViewer extends StatelessWidget {
                 weatherOfDay.timeStamp,
               ),
               currentTime: TimeOfDay.now().format(context),
-              weatherIcon: weatherStyle.weatherIcon,
-              weatherIconColor: weatherStyle.weatherIconColor,
+              weatherIcon: widget.weatherStyle.weatherIcon,
+              weatherIconColor: widget.weatherStyle.weatherIconColor,
             ),
           ),
         ),
@@ -113,31 +118,31 @@ class CurrentWeatherDataViewer extends StatelessWidget {
               AnimatedContentContainer(
                 height: 180.0,
                 contentWidget: TemperatureForecastingContainer(
-                  temps: currentWeatherData.weatherOfDaysList,
+                  temps: widget.currentWeatherData.weatherOfDaysList,
                 ),
-                animatedContainerColor: animatedContainerColor,
+                animatedContainerColor: widget.animatedContainerColor,
               ),
               K_vSpace10,
               //Tomorrow
               AnimatedContentContainer(
                 height: 250.0,
-                animatedContainerColor: animatedContainerColor,
+                animatedContainerColor: widget.animatedContainerColor,
                 contentWidget: WeeklyContainer(
-                    forecastDays: currentWeatherData.weatherOfDaysList),
+                    forecastDays: widget.currentWeatherData.weatherOfDaysList),
               ),
               K_vSpace10,
               //sunrise
               AnimatedContentContainer(
                 height: 150.0,
                 contentWidget: SunriseSunsetContainer(
-                  sunriseTime: TimeConverting.getTime(currentWeatherData
+                  sunriseTime: TimeConverting.getTime(widget.currentWeatherData
                           .currentCountryDetails!.currentSunRise)
                       .format(context),
-                  sunsetTime: TimeConverting.getTime(currentWeatherData
+                  sunsetTime: TimeConverting.getTime(widget.currentWeatherData
                           .currentCountryDetails!.currentSunSet)
                       .format(context),
                 ),
-                animatedContainerColor: animatedContainerColor,
+                animatedContainerColor: widget.animatedContainerColor,
               ),
               K_vSpace10,
               AnimatedContentContainer(
@@ -146,11 +151,9 @@ class CurrentWeatherDataViewer extends StatelessWidget {
                   uvIndex: 'High',
                   wind: weatherOfDay.windSpeed,
                   humidity: weatherOfDay.humidity,
-                  uvIndexOnTap: uvIndexOnTap,
-                  humidityOnTap: humidityOnTap,
-                  windOnTap: windOnTap,
+                  controllers: widget.controllers,
                 ),
-                animatedContainerColor: animatedContainerColor,
+                animatedContainerColor: widget.animatedContainerColor,
               ),
               K_vSpace20,
             ],

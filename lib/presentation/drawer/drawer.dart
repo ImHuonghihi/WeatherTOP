@@ -16,6 +16,7 @@ class MyDrawer extends StatelessWidget {
   final currentLocationName;
   final currentLocationCurrentTemp;
   final HomeScreenCubit homeScreenCubit;
+  
   const MyDrawer({
     Key? key,
     required this.homeScreenCubit,
@@ -25,6 +26,10 @@ class MyDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const divider = Padding(
+      padding: EdgeInsets.symmetric(vertical: 20.0),
+      child: Divider(color: whiteColor, thickness: 1.0),
+    );
     return SafeArea(
       child: Container(
         decoration: BoxDecoration(
@@ -63,10 +68,7 @@ class MyDrawer extends StatelessWidget {
                     isFavoriteItem: true,
                     color: whiteColor,
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20.0),
-                    child: Divider(color: whiteColor, thickness: 1.0),
-                  ),
+                  K_vSpace20,
                   DrawerTitle(
                       title: 'Other locations',
                       icon: Icons.add_location_outlined),
@@ -91,10 +93,24 @@ class MyDrawer extends StatelessWidget {
                           ));
                     },
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20.0),
-                    child: Divider(color: whiteColor, thickness: 1.0),
+                  divider,
+                  DrawerTitle(
+                    title: 'Plan your trip',
+                    icon: Icons.backpack_outlined,
+                    onTap: () {
+                      
+                    },
                   ),
+                  K_vSpace20,
+                  DrawerTitle(
+                    title: 'Notifications',
+                    icon: Icons.notifications_active_outlined,
+                    onTap: () {
+                      
+                    },
+                  ),
+                  K_vSpace20,
+                  divider,
                   const FooterRow(
                       title: 'Report wrong location', icon: Icons.info_outline),
                   K_vSpace20,

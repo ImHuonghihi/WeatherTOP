@@ -55,10 +55,23 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
     );
   }
 
+  _setChartDefault() {
+    uvIndexes = [];
+    // loop through the list of defaults and add the default data to the chart
+    for (int i = 0; i < 6; i++) {
+      uvIndexes.add(UVIndex(
+        uv: 0,
+        date: DateTime.now().add(Duration(days: i)),
+      ));
+    }
+  }
+
   initServices() async {
     //fill the currentWeather with dummy data until the true data come
     _setCurrentWeatherDefault();
+    _setChartDefault();
     await _initLocationService();
+    await UVAPI.initializeUVAPI();
     if (positionOfUser != null) {
       await _getWeatherApiData();
     }
@@ -111,15 +124,17 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
   Future<void> _getWeatherApiData() async {
     emit(LoadingDataFromWeatherAPIState());
     try {
-      uvIndexes = await UVAPI.getUVData(
-          lat: positionOfUser!.latitude, lon: positionOfUser!.longitude);
-      currentWeather = await WeatherAPI.getWeatherData(
-          lat: positionOfUser!.latitude, lon: positionOfUser!.longitude);
+      var lat = positionOfUser!.latitude;
+      var lon = positionOfUser!.longitude;
+      currentWeather = await WeatherAPI.getWeatherData(lat: lat, lon: lon);
       sliverTitle = currentWeather.currentCountryDetails!.currentCity;
+      // uvIndexes = await UVAPI.getUVData(lat: lat, lon: lon);
+      uvIndexes = await UVAPI.getUVData();
       emit(SuccessfullyLoadedDataFromWeatherAPIState());
     } catch (e) {
       debugPrint("GetWeatherAPI:" + e.toString());
       emit(FailedToLoadDataFromWeatherAPIState());
+      rethrow;
     }
   }
 

@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'package:http/io_client.dart';
+import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -7,41 +10,50 @@ import 'package:http/http.dart' as http;
 import '../../models/uv_index.dart';
 
 class UVAPI {
-  static Dio? dio;
-  static const double _latKey = 0.0;
-  static const double _lonKey = 0.0;
-  static const String _baseURL =
-      "https://api.openuv.io/api/v1/forecast";
-  static const String _apiKeyValue = "180e26362853d6ee8ba73f4d0682d55f";
+  static late IOClient client;
 
-  static initializeAPI() {
-    dio = Dio(
-      BaseOptions(
-        baseUrl: _baseURL,
-        receiveDataWhenStatusError: true,
-      ),
-    );
-    debugPrint('API Initialized');
+  static const String _baseURL = "https://api.openuv.io/api/v1/forecast";
+  static const String _apiKeyValue = "openuv-mf1pgrle2l8hme-io";
+  static const String _altapiKeyValue = "openuv-g141rrlegtecc3-io";
+
+  static initializeUVAPI() {
+    var ioc = HttpClient();
+    ioc.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+    client = IOClient(ioc);
+    debugPrint('UV API Initialized');
   }
 
-  static Future<List<UVIndex>> getUVData(
-      {required double lat, required double lon}) async {
-    return await dio!.get(
-      _baseURL,
-      queryParameters: {
-        'lat': lat,
-        'lon': lon,
-      },
-      options: Options(
-        headers: {
-          'x-access-token': _apiKeyValue,
-        },
-      ),
-    ).asStream()
-    .transform(utf8.decoder as StreamTransformer<Response, dynamic>)
-    .transform(json.decoder)
-    .expand((dynamic event) => event['result'] as List<dynamic>)
-    .map((element) => UVIndex.fromJson(element))
-    .toList();
+  // static Future<List<UVIndex>> getUVData(
+  //     {required double lat, required double lon}) async {
+  //   var uri = Uri.parse(
+  //     '$_baseURL?lat=$lat&lng=$lon&dt=${DateTime.now().toIso8601String()}',
+  //   );
+  //   return await client.get(
+  //     uri,
+  //     headers: {
+  //       'x-access-token': _altapiKeyValue,
+  //     },
+  //   ).then((res) {
+  //     final value = jsonDecode(res.body);
+  //     final List<dynamic> result = value['result'];
+  //     return result.map((e) => UVIndex.fromJson(e)).toList();
+  //   });
+  // }
+
+  static Future<List<UVIndex>> getUVData() async {
+    var uri = Uri.parse(
+      'https://raw.githubusercontent.com/huongpham2001/WeatherTOP/master/lib/services/remote/uv.json',
+    );
+    return await client.get(
+      uri,
+    ).then((res) {
+      final value = jsonDecode(res.body);
+      final List<dynamic> result = value['result'];
+      return result.map((e) => UVIndex.fromJson(e)).toList();
+    });
   }
 }
+
+// read uv.json file
+

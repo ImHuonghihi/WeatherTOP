@@ -8,13 +8,20 @@ class DrawerTitle extends StatelessWidget {
   final title;
   final icon;
   bool setInfo;
+  void Function()? onTap;
   DrawerTitle(
-      {Key? key, required this.title, required this.icon, this.setInfo = false})
+      {Key? key,
+      required this.title,
+      required this.icon,
+      this.setInfo = false,
+      this.onTap})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return InkWell(
+        onTap: onTap,
+        child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
@@ -39,6 +46,6 @@ class DrawerTitle extends StatelessWidget {
           size: setInfo ? 23.0 : 0.0,
         ),
       ],
-    );
+    ),);
   }
 }

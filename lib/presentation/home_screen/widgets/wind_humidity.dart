@@ -11,18 +11,14 @@ class WindHumidityContainer extends StatelessWidget {
   final uvIndex;
   final wind;
   final humidity;
-  final void Function() uvIndexOnTap;
-  final void Function() windOnTap;
-  final void Function() humidityOnTap;
+  final List<PanelController> controllers;
 
   const WindHumidityContainer({
     Key? key,
     required this.uvIndex,
     required this.wind,
     required this.humidity,
-    required this.uvIndexOnTap,
-    required this.humidityOnTap,
-    required this.windOnTap,
+    required this.controllers
   }) : super(key: key);
 
   @override
@@ -34,7 +30,7 @@ class WindHumidityContainer extends StatelessWidget {
         children: [
           Expanded(
             child: InkWell(
-              onTap: uvIndexOnTap,
+              onTap: () { controllers[0].open();},
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -61,7 +57,7 @@ class WindHumidityContainer extends StatelessWidget {
           K_hSpace20,
           Expanded(
             child: InkWell(
-              onTap: windOnTap,
+              onTap: () { controllers[1].open();},
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -88,7 +84,7 @@ class WindHumidityContainer extends StatelessWidget {
           K_hSpace20,
           Expanded(
             child: InkWell(
-              onTap: humidityOnTap,
+              onTap: () { controllers[2].open();},
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
