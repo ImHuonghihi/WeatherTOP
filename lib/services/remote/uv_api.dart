@@ -50,7 +50,8 @@ class UVAPI {
     ).then((res) {
       final value = jsonDecode(res.body);
       final List<dynamic> result = value['result'];
-      return result.map((e) => UVIndex.fromJson(e)).toList();
+      return result.map((e) => UVIndex.fromJson(e))
+      .where((e) => e.date.hour >= DateTime.now().hour).toList();
     });
   }
 }
