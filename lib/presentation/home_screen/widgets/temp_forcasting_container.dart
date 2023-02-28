@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:weather/data/constants.dart';
 import 'package:weather/models/weather_of_day.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
+import 'package:weather/utils/functions/number_converter.dart';
 import 'package:weather/utils/functions/time_converting.dart';
 import 'package:weather/utils/styles/colors.dart';
 
@@ -105,9 +106,10 @@ class TemperatureForecastingContainer extends StatelessWidget {
   }
 
   double setPadding(int index) {
-    return temps[index].currentTemp < 50.0 && temps[index].currentTemp > 0.0
-        ? temps[index].currentTemp
-        : temps[index].currentTemp < 0.0
+    var currentTemp = convertNumber<double>(temps[index].currentTemp);
+    return currentTemp < 50.0 && currentTemp > 0.0
+        ? currentTemp
+        : currentTemp < 0.0
             ? 0.0
             : 48.0;
   }

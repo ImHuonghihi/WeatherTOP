@@ -6,6 +6,7 @@ import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:weather/utils/functions/date_compare.dart';
 
 import '../../models/uv_index.dart';
 
@@ -48,13 +49,16 @@ class UVAPI {
     return await client.get(
       uri,
     ).then((res) {
+      
       final value = jsonDecode(res.body);
       final List<dynamic> result = value['result'];
+      DateTime now = DateTime.now();
       return result.map((e) => UVIndex.fromJson(e))
-      .where((e) => e.date.hour >= DateTime.now().hour).toList();
+      .where((e) => compareDate(e.date, now, compareType: ">=", compareTarget: ['hour']) ).toList();
     });
   }
 }
+
 
 // read uv.json file
 
