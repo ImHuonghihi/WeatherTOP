@@ -1,0 +1,1 @@
+var tripAPIKey = '5ae2e3f221c38a28845f05b6197f01f4472d8b09d6bca6f44169d320';
