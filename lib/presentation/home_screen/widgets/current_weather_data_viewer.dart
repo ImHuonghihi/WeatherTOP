@@ -11,6 +11,7 @@ import 'package:weather/presentation/home_screen/widgets/sunrise_sunset.dart';
 import 'package:weather/presentation/home_screen/widgets/temp_forcasting_container.dart';
 import 'package:weather/presentation/home_screen/widgets/weeklyContainer.dart';
 import 'package:weather/presentation/home_screen/widgets/wind_humidity.dart';
+import 'package:weather/presentation/shared_widgets_constant/progress_indicatior.dart';
 import 'package:weather/models/quotes.dart';
 import 'package:weather/services/remote/quotes_api.dart';
 import 'package:weather/utils/chart/lib/flutter_chart.dart';
@@ -94,25 +95,24 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
               left: 20.0,
             ),
             child: FutureBuilder(
-              future: getQuotes(),
-              builder: (context, snapshot) {
-                final quotes = snapshot.data as Quotes?;
-                return FlexibleBar(
-                  sliverTitle:
-                      widget.currentWeatherData.currentCountryDetails!.currentCity,
-                  maxTemp: weatherOfDay.maxTemp.ceil(),
-                  currentTemp: weatherOfDay.currentTemp.ceil(),
-                  minTemp: weatherOfDay.minTemp.ceil(),
-                  day: TimeConverting.getDayNameFromTimeStamp(
-                    weatherOfDay.timeStamp,
-                  ),
-                  currentTime: TimeOfDay.now().format(context),
-                  weatherIcon: widget.weatherStyle.weatherIcon,
-                  weatherIconColor: widget.weatherStyle.weatherIconColor,
-                  quotes: quotes?.content,
-                );
-              }
-            ),
+                future: getQuotes(),
+                builder: (context, snapshot) {
+                  final quotes = snapshot.data as Quotes?;
+                  return FlexibleBar(
+                    sliverTitle: widget
+                        .currentWeatherData.currentCountryDetails!.currentCity,
+                    maxTemp: weatherOfDay.maxTemp.ceil(),
+                    currentTemp: weatherOfDay.currentTemp.ceil(),
+                    minTemp: weatherOfDay.minTemp.ceil(),
+                    day: TimeConverting.getDayNameFromTimeStamp(
+                      weatherOfDay.timeStamp,
+                    ),
+                    currentTime: TimeOfDay.now().format(context),
+                    weatherIcon: widget.weatherStyle.weatherIcon,
+                    weatherIconColor: widget.weatherStyle.weatherIconColor,
+                    quotes: quotes?.content,
+                  );
+                }),
           ),
         ),
       ],
@@ -126,6 +126,24 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
           ),
           child: Column(
             children: [
+              FutureBuilder(
+                  future: getQuotes(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      var quote = snapshot.data;
+                      return AnimatedContentContainer(
+                        height: 90,
+                        contentWidget: Text("$quote"),
+                        animatedContainerColor: widget.animatedContainerColor,
+                      );
+                    } else if (snapshot.hasError) {
+                      debugPrint("Quote widget: ${snapshot.error}");
+                      return Container();
+                    } else {
+                      return const MainProgressIndicator(
+                          loadingMessage: "Getting quotes of the day...");
+                    }
+                  }),
               AnimatedContentContainer(
                 height: 180.0,
                 contentWidget: TemperatureForecastingContainer(
