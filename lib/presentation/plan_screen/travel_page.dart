@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:weather/services/remote/trip_api/trip_model.dart';
+import 'package:weather/utils/functions/calc_distance.dart';
 import 'package:weather/utils/styles/colors.dart';
+import 'package:geolocator/geolocator.dart';
 
 class TravelPage extends StatefulWidget {
   const TravelPage({Key? key, required this.location}) : super(key: key);
-  final 
+  final Position location;
 
   @override
   _TravelPageState createState() => _TravelPageState();
@@ -79,11 +81,15 @@ Widget buildTravelList(List<TravelLocation> travelLocations) {
   return ListView.builder(
     itemCount: travelLocations.length,
     itemBuilder: (context, index) {
-      var lat_a = travelLocations[index].lat;
-      var lon_b = travelLocations[index].lon;
+      var lat = travelLocations[index].lat;
+      var lon = travelLocations[index].lon;
+      var distance = calculateDistanceInMeters(
+        widget.location.latitude, 
+      widget.location.longitude, 
+      lat, lon) * 1000; // km
       return buildTile(
         title: travelLocations[index].name,
-        subtitle: travelLocations[index].,
+        subtitle: '${distance.toStringAsFixed(2)} km',
         icon: Icons.location_on,
         color: Colors.white,
         onTap: () {},

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:weather/services/remote/trip_api/api_key.dart';
 import 'package:http/http.dart';
+import 'package:weather/services/remote/trip_api/trip_model.dart';
 class Features {
   static const geoname = 'geoname';
   static const radius = 'radius';
@@ -29,7 +30,7 @@ class TripAPI {
   }
 
 
-  Future<List<Map<String, dynamic>>> getPlacesByRadius(
+  Future<List<TravelLocation>> getPlacesByRadius(
       {required double lat,
       required double lon,
       required double radius}) async {
@@ -40,10 +41,10 @@ class TripAPI {
       'lang': lang,
     });
     Response response = await get(Uri.parse(url));
-    return jsonDecode(response.body);
+    return jsonDecode(response.body).map((e) => TravelLocation.fromJson(e)).toList();
   }
 
-  Future<List<Map<String, dynamic>>> getPlacesByBBox(
+  Future<List<TravelLocation>> getPlacesByBBox(
       {
       required double minLat,
       required double minLon,
@@ -58,20 +59,22 @@ class TripAPI {
       'lang': lang,
     });
     Response response = await get(Uri.parse(url));
-    return jsonDecode(response.body);
+    return jsonDecode(response.body)
+        .map((e) => TravelLocation.fromJson(e))
+        .toList();
   }
 
-   Future<Map<String, dynamic>> getPlaceByXID(
+   Future<TravelLocation> getPlaceByXID(
       {required String xid,}) async {
     createOptions(Features.xid, {
       'lang': lang,
       'xid': xid,
     });
     Response response = await get(Uri.parse(url));
-    return jsonDecode(response.body);
+    return TravelLocation.fromJson(jsonDecode(response.body));
   }
 
-  Future<List<Map<String, dynamic>>> getPlacesByGeoname(
+  Future<List<TravelLocation>> getPlacesByGeoname(
       {required String name,
       }) async {
     createOptions(Features.geoname, {
@@ -79,10 +82,12 @@ class TripAPI {
       'name': name,
     });
     Response response = await get(Uri.parse(url));
-    return jsonDecode(response.body);
+    return jsonDecode(response.body)
+        .map((e) => TravelLocation.fromJson(e))
+        .toList();
   }
 
-  Future<List<Map<String, dynamic>>> getPlacesAutoSuggest({
+  Future<List<TravelLocation>> getPlacesAutoSuggest({
     required String name,
     required double radius,
     required double lat,
@@ -98,7 +103,9 @@ class TripAPI {
       'limit': limit,
     });
     Response response = await get(Uri.parse(url));
-    return jsonDecode(response.body);
+    return jsonDecode(response.body)
+        .map((e) => TravelLocation.fromJson(e))
+        .toList();
   }
 
 

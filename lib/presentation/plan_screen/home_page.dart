@@ -1,19 +1,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_cubit.dart';
+import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_states.dart';
+import 'package:weather/presentation/plan_screen/plan_screen_cubit/plan_screen_states.dart';
+import 'package:weather/presentation/plan_screen/travel_page.dart';
 import 'package:weather/utils/functions/navigation_functions.dart';
 import 'package:weather/utils/styles/colors.dart';
 
 import 'anims/fade_animation.dart';
+import 'plan_screen_cubit/plan_screen_cubit.dart';
 import 'service/service.dart';
 
 class HomePage extends StatefulWidget {
-  static const String id = 'Home_screen';
+  final HomeScreenCubit homeScreenCubit;
+  HomePage({Key? key, required this.homeScreenCubit}) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  
+  late PlanScreenCubit planScreenCubit;
   List<dynamic> workers = [
     ['The Royal Arcs', 'Kanpur', 'images/download.jpg', 4.8],
     ['Hotel Grand maze', 'Lucknow', 'images/maze.jpg', 4.6],
@@ -21,13 +28,27 @@ class _HomePageState extends State<HomePage> {
   ];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        floatingActionButton: FloatingActionButton.extended(
+    return BlocProvider(
+      create: (context) => PlanScreenCubit()..init(),
+      child: BlocConsumer<PlanScreenCubit, PlanScreenStates>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          planScreenCubit = PlanScreenCubit.get(context);
+          return mainBuilder(context);
+        },
+      ),
+    );
+  
+  }
+
+
+  mainBuilder(BuildContext context) {
+    return Scaffold(      floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const Travel(),
+                builder: (context) => TravelPage(location: widget.homeScreenCubit.positionOfUser!,),
               ),
             );
           },
@@ -247,7 +268,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ])));
   }
-
   serviceContainer(String image, String name, int index) {
     return GestureDetector(
       child: Container(
@@ -346,56 +366,3 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          const DrawerHeader(
-            decoration: BoxDecoration(
-                color: Colors.blue,
-                image: DecorationImage(
-                    fit: BoxFit.fill, image: AssetImage('images/cover.jpeg'))),
-            child: Text(
-              'Hello, There!',
-              style: TextStyle(color: Colors.white, fontSize: 25),
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.input),
-            title: const Text('Welcome'),
-            onTap: () => {},
-          ),
-          ListTile(
-            leading: const Icon(Icons.verified_user),
-            title: const Text('Profile'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
-          ListTile(
-            leading: const Icon(Icons.border_color),
-            title: const Text('Feedback'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
-          ListTile(
-            leading: const Icon(Icons.exit_to_app),
-            title: const Text('Logout'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text('About Us'),
-            onTap: () {
-              launch("http://event-tour.co/");
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}

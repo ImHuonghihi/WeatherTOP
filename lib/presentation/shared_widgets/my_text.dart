@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:weather/utils/functions/number_converter.dart';
 
 import '../../utils/styles/colors.dart';
 
@@ -31,7 +32,7 @@ class MyText extends StatelessWidget {
       maxLines: maxLinesNumber,
       overflow: showEllipsis ? TextOverflow.ellipsis : null,
       style: GoogleFonts.poppins(
-        fontSize: size,
+        fontSize: convertNumber<double>(size),
         fontWeight: fontWeight ?? FontWeight.w600,
         color: color ?? whiteColor,
       ),

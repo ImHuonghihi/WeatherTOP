@@ -11,6 +11,7 @@ import 'package:weather/presentation/home_screen/widgets/sunrise_sunset.dart';
 import 'package:weather/presentation/home_screen/widgets/temp_forcasting_container.dart';
 import 'package:weather/presentation/home_screen/widgets/weeklyContainer.dart';
 import 'package:weather/presentation/home_screen/widgets/wind_humidity.dart';
+import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/presentation/shared_widgets_constant/progress_indicatior.dart';
 import 'package:weather/models/quotes.dart';
 import 'package:weather/services/remote/quotes_api.dart';
@@ -130,24 +131,88 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
                   future: getQuotes(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      var quote = snapshot.data;
+                      var data = snapshot.data as Quotes;
+                      var quote = data.content;
+                      var author = data.author;
                       return AnimatedContentContainer(
-                        height: 90,
-                        contentWidget: Text("$quote"),
                         animatedContainerColor: widget.animatedContainerColor,
+                        // height: 150,
+                        contentWidget: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            // quote
+                            Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20.0, right: 20.0, bottom: 10.0),
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: <Widget>[
+                                      RichText(
+                                        textAlign: TextAlign.center,
+                                        text: TextSpan(
+                                            text: '“ ',
+                                            style: const TextStyle(
+                                                fontFamily: "Ic",
+                                                color: Colors.grey,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 30),
+                                            children: [
+                                              TextSpan(
+                                                  text: quote,
+                                                  style: const TextStyle(
+                                                      fontFamily: "Ic",
+                                                      color: Colors.white,
+                                                      fontStyle: FontStyle.italic,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 13)),
+                                              const TextSpan(
+                                                  text: '”',
+                                                  style: TextStyle(
+                                                      fontFamily: "Ic",
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: Colors.grey,
+                                                      fontSize: 30))
+                                            ]),
+                                      ),
+                                     
+                                    ])),
+                            // author at the right bottom
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 20.0, right: 20.0, bottom: 10.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  Text("\n - $author",
+                                      style: TextStyle(
+                                          fontFamily: "Ic",
+                                          color: Colors.grey[200],
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13))
+                                ],
+                              ),
+                            ),
+                            
+                          ],
+                        ),
                       );
                     } else if (snapshot.hasError) {
                       debugPrint("Quote widget: ${snapshot.error}");
                       return Container();
                     } else {
                       return AnimatedContentContainer(
-                        height: 90,
+                        // height: 100,
                         contentWidget: const MainProgressIndicator(
                             loadingMessage: "Getting quotes of the day..."),
                         animatedContainerColor: widget.animatedContainerColor,
                       );
                     }
                   }),
+              K_vSpace10,
               AnimatedContentContainer(
                 height: 180.0,
                 contentWidget: TemperatureForecastingContainer(
