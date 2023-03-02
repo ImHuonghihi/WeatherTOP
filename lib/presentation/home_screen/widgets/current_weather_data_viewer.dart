@@ -140,8 +140,12 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
                       debugPrint("Quote widget: ${snapshot.error}");
                       return Container();
                     } else {
-                      return const MainProgressIndicator(
-                          loadingMessage: "Getting quotes of the day...");
+                      return AnimatedContentContainer(
+                        height: 90,
+                        contentWidget: const MainProgressIndicator(
+                            loadingMessage: "Getting quotes of the day..."),
+                        animatedContainerColor: widget.animatedContainerColor,
+                      );
                     }
                   }),
               AnimatedContentContainer(
