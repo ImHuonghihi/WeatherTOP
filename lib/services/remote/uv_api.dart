@@ -24,6 +24,7 @@ class UVAPI {
     client = IOClient(ioc);
     debugPrint('UV API Initialized');
   }
+  
 
   // static Future<List<UVIndex>> getUVData(
   //     {required double lat, required double lon}) async {
