@@ -134,6 +134,7 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
                       var data = snapshot.data as Quotes;
                       var quote = data.content;
                       var author = data.author;
+                      snapshot.data == null;
                       return AnimatedContentContainer(
                         animatedContainerColor: widget.animatedContainerColor,
                         // height: 150,
@@ -164,7 +165,8 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
                                                   style: const TextStyle(
                                                       fontFamily: "Ic",
                                                       color: Colors.white,
-                                                      fontStyle: FontStyle.italic,
+                                                      fontStyle:
+                                                          FontStyle.italic,
                                                       fontWeight:
                                                           FontWeight.w400,
                                                       fontSize: 13)),
@@ -178,7 +180,6 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
                                                       fontSize: 30))
                                             ]),
                                       ),
-                                     
                                     ])),
                             // author at the right bottom
                             Padding(
@@ -196,7 +197,6 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
                                 ],
                               ),
                             ),
-                            
                           ],
                         ),
                       );

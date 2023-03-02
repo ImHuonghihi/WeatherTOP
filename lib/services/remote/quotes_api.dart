@@ -9,11 +9,9 @@ class Api {
     http.Response response = await http.get(url);
 
     if (response.statusCode == 200) {
-      print("success");
-      print(response.body);
       return Quotes.fromJson(jsonDecode(response.body));
     } else {
-      print("error in getting data");
+      throw Exception('Failed to load quotes');
     }
   }
 }
