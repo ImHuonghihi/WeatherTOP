@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:weather/services/remote/quotes_api.dart';
+
 Quotes quotesFromJson(String str) => Quotes.fromJson(json.decode(str));
 
 String quotesToJson(Quotes data) => json.encode(data.toJson());
@@ -52,4 +54,5 @@ class Quotes {
         "dateModified":
             "${dateModified!.year.toString().padLeft(4, '0')}-${dateModified!.month.toString().padLeft(2, '0')}-${dateModified!.day.toString().padLeft(2, '0')}",
       };
+
 }

@@ -11,6 +11,8 @@ import 'package:weather/presentation/home_screen/widgets/sunrise_sunset.dart';
 import 'package:weather/presentation/home_screen/widgets/temp_forcasting_container.dart';
 import 'package:weather/presentation/home_screen/widgets/weeklyContainer.dart';
 import 'package:weather/presentation/home_screen/widgets/wind_humidity.dart';
+import 'package:weather/services/remote/quotes.dart';
+import 'package:weather/services/remote/quotes_api.dart';
 import 'package:weather/utils/chart/lib/flutter_chart.dart';
 import 'package:weather/utils/functions/time_converting.dart';
 import 'package:weather/utils/styles/colors.dart';
@@ -26,6 +28,7 @@ class CurrentWeatherDataViewer extends StatefulWidget {
   final animatedContainerColor;
   final controllers;
   final ScrollController sc;
+  final Quotes? quotes;
 
   const CurrentWeatherDataViewer({
     Key? key,
@@ -36,6 +39,7 @@ class CurrentWeatherDataViewer extends StatefulWidget {
     required this.animatedContainerColor,
     required this.sc,
     required this.controllers,
+    required this.quotes,
   }) : super(key: key);
   @override
   State<CurrentWeatherDataViewer> createState() =>
@@ -89,18 +93,25 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
               right: 20.0,
               left: 20.0,
             ),
-            child: FlexibleBar(
-              sliverTitle:
-                  widget.currentWeatherData.currentCountryDetails!.currentCity,
-              maxTemp: weatherOfDay.maxTemp.ceil(),
-              currentTemp: weatherOfDay.currentTemp.ceil(),
-              minTemp: weatherOfDay.minTemp.ceil(),
-              day: TimeConverting.getDayNameFromTimeStamp(
-                weatherOfDay.timeStamp,
-              ),
-              currentTime: TimeOfDay.now().format(context),
-              weatherIcon: widget.weatherStyle.weatherIcon,
-              weatherIconColor: widget.weatherStyle.weatherIconColor,
+            child: FutureBuilder(
+              future: getQuotes(),
+              builder: (context, snapshot) {
+                final quotes = snapshot.data as Quotes?;
+                return FlexibleBar(
+                  sliverTitle:
+                      widget.currentWeatherData.currentCountryDetails!.currentCity,
+                  maxTemp: weatherOfDay.maxTemp.ceil(),
+                  currentTemp: weatherOfDay.currentTemp.ceil(),
+                  minTemp: weatherOfDay.minTemp.ceil(),
+                  day: TimeConverting.getDayNameFromTimeStamp(
+                    weatherOfDay.timeStamp,
+                  ),
+                  currentTime: TimeOfDay.now().format(context),
+                  weatherIcon: widget.weatherStyle.weatherIcon,
+                  weatherIconColor: widget.weatherStyle.weatherIconColor,
+                  quotes: quotes?.content,
+                );
+              }
             ),
           ),
         ),
@@ -161,5 +172,10 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
         ),
       ),
     );
+  }
+
+  Future<Quotes?> getQuotes() async {
+    Quotes? data = await Api.getQuotes();
+    return data;
   }
 }

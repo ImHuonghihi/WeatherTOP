@@ -17,6 +17,7 @@ import 'package:weather/presentation/home_screen/widgets/sliver_title_widget.dar
 import 'package:weather/presentation/shared_widgets/my_button.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/presentation/shared_widgets_constant/progress_indicatior.dart';
+import 'package:weather/services/remote/quotes.dart';
 import 'package:weather/utils/chart/lib/flutter_chart.dart';
 import 'package:weather/utils/functions/restart_app.dart';
 import 'package:weather/utils/functions/time_converting.dart';
@@ -59,6 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
     text: HomeScreenCubit.sliverTitle,
     size: 1.0,
   );
+
+  Quotes? data;
 
   //Used in the home screen
   void setAnimatedContentContainerColor() {
@@ -218,8 +221,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           sliverTitle: sliverTitle,
                           sliverAppBarColor: sliverAppBarColor,
                           weatherStyle: widget.weatherStyle,
-                          animatedContainerColor: animatedContainerColor, 
+                          animatedContainerColor: animatedContainerColor,
                           controllers: [uvpc, windpc, humiditypc],
+                          quotes: data,
                         ),
                       ),
                       fallback: (context) => ConditionalBuilder(
@@ -309,13 +313,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
- Widget _buildChartCurve(List<UVIndex> indexes) {
+  Widget _buildChartCurve(List<UVIndex> indexes) {
     var chartLine = ChartLine(
-      chartBeans: indexes
-          .map((e) => ChartBean(
-              x: "${e.date.hour}h",
-              y: e.uv))
-          .toList(),
+      chartBeans:
+          indexes.map((e) => ChartBean(x: "${e.date.hour}h", y: e.uv)).toList(),
       size: Size(MediaQuery.of(context).size.width,
           MediaQuery.of(context).size.height / 5 * 1.6),
       isCurve: true,
@@ -347,6 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: chartLine,
     );
   }
+
   @override
   void dispose() {
     sc.dispose();
