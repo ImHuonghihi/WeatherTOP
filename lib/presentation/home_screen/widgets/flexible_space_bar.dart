@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:weather/data/constants.dart';
 import 'package:weather/presentation/home_screen/widgets/sliver_title_widget.dart';
-import 'package:weather/services/remote/quotes.dart';
+import 'package:weather/models/quotes.dart';
 import 'package:weather/services/remote/quotes_api.dart';
 import 'package:weather/utils/styles/cosntants.dart';
 import 'package:weather/utils/styles/spaces.dart';
@@ -43,11 +43,14 @@ class FlexibleBar extends StatelessWidget {
           K_vSpace10,
           MyText(
             text:
-                "$maxTemp$degreeSymbol / $minTemp$degreeSymbol Feels like $maxTemp$degreeSymbol\n$day, $currentTime, $quotes",
+                "$maxTemp$degreeSymbol / $minTemp$degreeSymbol Feels like $maxTemp$degreeSymbol\n$day, $currentTime",
             size: 9.0,
           ),
-          
-          
+
+          // MyText(
+          //   text: "$quotes",
+          //   size: 8.0,
+          // ),
         ],
       ),
       background: Row(

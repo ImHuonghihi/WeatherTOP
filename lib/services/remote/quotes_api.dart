@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:weather/services/remote/quotes.dart';
+import 'package:weather/models/quotes.dart';
 
 class Api {
   static Future<Quotes?> getQuotes() async {

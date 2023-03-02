@@ -17,7 +17,7 @@ import 'package:weather/presentation/home_screen/widgets/sliver_title_widget.dar
 import 'package:weather/presentation/shared_widgets/my_button.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/presentation/shared_widgets_constant/progress_indicatior.dart';
-import 'package:weather/services/remote/quotes.dart';
+import 'package:weather/models/quotes.dart';
 import 'package:weather/utils/chart/lib/flutter_chart.dart';
 import 'package:weather/utils/functions/restart_app.dart';
 import 'package:weather/utils/functions/time_converting.dart';

@@ -11,7 +11,7 @@ import 'package:weather/presentation/home_screen/widgets/sunrise_sunset.dart';
 import 'package:weather/presentation/home_screen/widgets/temp_forcasting_container.dart';
 import 'package:weather/presentation/home_screen/widgets/weeklyContainer.dart';
 import 'package:weather/presentation/home_screen/widgets/wind_humidity.dart';
-import 'package:weather/services/remote/quotes.dart';
+import 'package:weather/models/quotes.dart';
 import 'package:weather/services/remote/quotes_api.dart';
 import 'package:weather/utils/chart/lib/flutter_chart.dart';
 import 'package:weather/utils/functions/time_converting.dart';
