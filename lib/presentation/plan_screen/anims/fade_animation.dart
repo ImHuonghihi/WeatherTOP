@@ -9,24 +9,30 @@ class FadeAnimation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tween = MultiTrackTween([
-      Track("opacity")
-          .add(const Duration(milliseconds: 500), Tween(begin: 0.0, end: 1.0)),
-      Track("translateY").add(
-          const Duration(milliseconds: 500), Tween(begin: -30.0, end: 0.0),
-          curve: Curves.easeOut)
-    ]);
+    // final tween = MultiTrackTween([
+    //   Track("opacity")
+    //       .add(const Duration(milliseconds: 500), Tween(begin: 0.0, end: 1.0)),
+    //   Track("translateY").add(
+    //       const Duration(milliseconds: 500), Tween(begin: -30.0, end: 0.0),
+    //       curve: Curves.easeOut)
+    // ]);
 
-    return ControlledAnimation(
-      delay: Duration(milliseconds: (500 * delay).round()),
-      duration: tween.duration,
-      tween: tween,
+    // return ControlledAnimation(
+    //   delay: Duration(milliseconds: (500 * delay).round()),
+    //   duration: tween.duration,
+    //   tween: tween,
+    //   child: child,
+    //   builderWithChild: (context, child, animation) => Opacity(
+    //     opacity: (animation as Map)["opacity"],
+    //     child: Transform.translate(
+    //         offset: Offset(0, animation["translateY"]), child: child),
+    //   ),
+    // );
+    // fade animation
+    return AnimatedOpacity(
+      opacity: 1.0,
+      duration: const Duration(milliseconds: 500),
       child: child,
-      builderWithChild: (context, child, animation) => Opacity(
-        opacity: (animation as Map)["opacity"],
-        child: Transform.translate(
-            offset: Offset(0, animation["translateY"]), child: child),
-      ),
     );
   }
 }
