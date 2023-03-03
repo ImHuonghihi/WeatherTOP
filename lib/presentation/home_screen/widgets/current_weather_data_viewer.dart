@@ -127,6 +127,48 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
           ),
           child: Column(
             children: [
+              
+              AnimatedContentContainer(
+                height: 180.0,
+                contentWidget: TemperatureForecastingContainer(
+                  temps: widget.currentWeatherData.weatherOfDaysList,
+                ),
+                animatedContainerColor: widget.animatedContainerColor,
+              ),
+              K_vSpace10,
+              //Tomorrow
+              AnimatedContentContainer(
+                height: 250.0,
+                animatedContainerColor: widget.animatedContainerColor,
+                contentWidget: WeeklyContainer(
+                    forecastDays: widget.currentWeatherData.weatherOfDaysList),
+              ),
+              K_vSpace10,
+              //sunrise
+              AnimatedContentContainer(
+                height: 150.0,
+                contentWidget: SunriseSunsetContainer(
+                  sunriseTime: TimeConverting.getTime(widget.currentWeatherData
+                          .currentCountryDetails!.currentSunRise)
+                      .format(context),
+                  sunsetTime: TimeConverting.getTime(widget.currentWeatherData
+                          .currentCountryDetails!.currentSunSet)
+                      .format(context),
+                ),
+                animatedContainerColor: widget.animatedContainerColor,
+              ),
+              K_vSpace10,
+              AnimatedContentContainer(
+                height: 150.0,
+                contentWidget: WindHumidityContainer(
+                  uvIndex: 'High',
+                  wind: weatherOfDay.windSpeed,
+                  humidity: weatherOfDay.humidity,
+                  controllers: widget.controllers,
+                ),
+                animatedContainerColor: widget.animatedContainerColor,
+              ),
+              K_vSpace20,
               FutureBuilder(
                   future: getQuotes(),
                   builder: (context, snapshot) {
@@ -144,6 +186,7 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
                             // quote
                             Padding(
                                 padding: const EdgeInsets.only(
+                                    top: 10.0,
                                     left: 20.0, right: 20.0, bottom: 10.0),
                                 child: Column(
                                     mainAxisAlignment: MainAxisAlignment.end,
@@ -212,47 +255,6 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
                       );
                     }
                   }),
-              K_vSpace10,
-              AnimatedContentContainer(
-                height: 180.0,
-                contentWidget: TemperatureForecastingContainer(
-                  temps: widget.currentWeatherData.weatherOfDaysList,
-                ),
-                animatedContainerColor: widget.animatedContainerColor,
-              ),
-              K_vSpace10,
-              //Tomorrow
-              AnimatedContentContainer(
-                height: 250.0,
-                animatedContainerColor: widget.animatedContainerColor,
-                contentWidget: WeeklyContainer(
-                    forecastDays: widget.currentWeatherData.weatherOfDaysList),
-              ),
-              K_vSpace10,
-              //sunrise
-              AnimatedContentContainer(
-                height: 150.0,
-                contentWidget: SunriseSunsetContainer(
-                  sunriseTime: TimeConverting.getTime(widget.currentWeatherData
-                          .currentCountryDetails!.currentSunRise)
-                      .format(context),
-                  sunsetTime: TimeConverting.getTime(widget.currentWeatherData
-                          .currentCountryDetails!.currentSunSet)
-                      .format(context),
-                ),
-                animatedContainerColor: widget.animatedContainerColor,
-              ),
-              K_vSpace10,
-              AnimatedContentContainer(
-                height: 150.0,
-                contentWidget: WindHumidityContainer(
-                  uvIndex: 'High',
-                  wind: weatherOfDay.windSpeed,
-                  humidity: weatherOfDay.humidity,
-                  controllers: widget.controllers,
-                ),
-                animatedContainerColor: widget.animatedContainerColor,
-              ),
               K_vSpace20,
             ],
           ),
