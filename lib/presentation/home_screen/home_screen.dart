@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:animate_do/animate_do.dart';
@@ -295,6 +296,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: "UV Index",
                   controller: uvpc,
                   chart: _buildUVChart(homeScreenCubit.uvIndexes),
+                  otherWidgets: [
+                    getUvRecommendation(
+                      context,
+                      homeScreenCubit.uvIndexes,
+                    ),
+                  ],
                 ),
                 ChartSlidingUpPannel(
                   title: "Wind Index",
@@ -389,6 +396,51 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     sc.dispose();
     super.dispose();
+  }
+
+  getUvRecommendation(BuildContext context, List<UVIndex> uvIndexes) {
+    var dangerUV = uvIndexes.where((element) => element.uv * 10 >= 8).toList();
+    if (dangerUV.isNotEmpty) {
+      return Container(
+        margin: const EdgeInsets.only(top: 8),
+        child: Column(
+          children: [
+            MyText(
+              text: "Dangerous UV Index",
+              size: fontSizeM,
+              fontWeight: FontWeight.bold,
+            ),
+            K_vSpace10,
+            MyText(
+              text: "You should avoid going out",
+              size: fontSizeM,
+              fontWeight: FontWeight.normal,
+            ),
+          ],
+        ),
+      );
+    } else {
+      var now = DateTime.now();
+      var time = "${now.hour}:${now.minute}";
+      return Container(
+        margin: const EdgeInsets.only(top: 8),
+        child: Column(
+          children: [
+            MyText(
+              text: "Now, $time, safe UV Index",
+              size: fontSizeM,
+              fontWeight: FontWeight.bold,
+            ),
+            K_vSpace10,
+            MyText(
+              text: "Today is good day to go out hihi!!",
+              size: fontSizeM,
+              fontWeight: FontWeight.normal,
+            ),
+          ],
+        ),
+      );
+    }
   }
 }
 
