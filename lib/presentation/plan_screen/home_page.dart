@@ -12,14 +12,14 @@ import 'anims/fade_animation.dart';
 import 'plan_screen_cubit/plan_screen_cubit.dart';
 import 'service/service.dart';
 
-class HomePage extends StatefulWidget {
+class PlanHomePage extends StatefulWidget {
   final HomeScreenCubit homeScreenCubit;
-  HomePage({Key? key, required this.homeScreenCubit}) : super(key: key);
+  PlanHomePage({Key? key, required this.homeScreenCubit}) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<PlanHomePage> {
   late PlanScreenCubit planScreenCubit;
   List<dynamic> workers = [
     ['The Royal Arcs', 'Kanpur', 'images/download.jpg', 4.8],
@@ -43,7 +43,9 @@ class _HomePageState extends State<HomePage> {
 
 
   mainBuilder(BuildContext context) {
-    return Scaffold(      floatingActionButton: FloatingActionButton.extended(
+    return Scaffold(
+      backgroundColor: whiteColor,
+      floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             Navigator.push(
               context,
@@ -58,21 +60,17 @@ class _HomePageState extends State<HomePage> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         appBar: AppBar(
-          backgroundColor: Colors.blue,
+          backgroundColor: whiteColor,
           title: const Text(
             'Events',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(
+              color: blackColor,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           elevation: 0,
-          actions: [
-            IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.menu,
-                  color: Colors.grey.shade700,
-                  size: 30,
-                )),
-          ],
+          
           leading: IconButton(
             onPressed: () {
               navigateBack(context);

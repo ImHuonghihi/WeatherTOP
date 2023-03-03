@@ -4,6 +4,7 @@ import 'package:weather/presentation/drawer/widgets/drawer_title.dart';
 import 'package:weather/presentation/drawer/widgets/footer_row.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_cubit.dart';
 import 'package:weather/presentation/manage_locations.dart/manage_locations.dart';
+import 'package:weather/presentation/plan_screen/home_page.dart';
 import 'package:weather/presentation/shared_widgets/my_button.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/utils/functions/navigation_functions.dart';
@@ -16,7 +17,7 @@ class MyDrawer extends StatelessWidget {
   final currentLocationName;
   final currentLocationCurrentTemp;
   final HomeScreenCubit homeScreenCubit;
-  
+
   const MyDrawer({
     Key? key,
     required this.homeScreenCubit,
@@ -98,16 +99,18 @@ class MyDrawer extends StatelessWidget {
                     title: 'Plan your trip',
                     icon: Icons.backpack_outlined,
                     onTap: () {
-                      
+                      navigateTo(
+                          context,
+                          PlanHomePage(
+                            homeScreenCubit: homeScreenCubit,
+                          ));
                     },
                   ),
                   K_vSpace20,
                   DrawerTitle(
                     title: 'Notifications',
                     icon: Icons.notifications_active_outlined,
-                    onTap: () {
-                      
-                    },
+                    onTap: () {},
                   ),
                   K_vSpace20,
                   divider,

@@ -17,6 +17,15 @@ class TravelLocation {
   late String name, osm, xid, wikidata, kind;
   late double lat, lon;
 
+  TravelLocation(
+      {required this.name,
+      required this.osm,
+      required this.xid,
+      required this.wikidata,
+      required this.kind,
+      required this.lat,
+      required this.lon});
+
   TravelLocation.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     osm = json['osm'];
