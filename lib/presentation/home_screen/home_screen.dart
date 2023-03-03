@@ -313,6 +313,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // Widget _buildWindChart(List<double> windSpeed) {
+  //   return;
+  // }
+
   Widget _buildChartCurve(List<UVIndex> indexes) {
     var chartLine = ChartLine(
       chartBeans:
