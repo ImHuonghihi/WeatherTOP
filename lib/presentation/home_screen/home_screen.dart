@@ -299,8 +299,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ChartSlidingUpPannel(
                   title: "Wind Index",
                   controller: windpc,
-                  chart: _buildWindChart(homeScreenCubit.currentWeather.weatherOfDaysList
-                  .map((e) => convertNumber<double>(e.windSpeed)).toList()),
+                  chart: _buildWindChart(homeScreenCubit
+                      .currentWeather.weatherOfDaysList
+                      .map((e) => convertNumber<double>(e.windSpeed))
+                      .toList()),
                 ),
                 ChartSlidingUpPannel(
                   title: "Humidity Index",
@@ -322,28 +324,46 @@ class _HomeScreenState extends State<HomeScreen> {
   //   return;
   // }
   Widget _buildUVChart(List<UVIndex> uvIndexes) {
-    return _buildChartCurve(uvIndexes.map((e) => ChartBean(x: "${e.date.hour}h", y: e.uv*10)).toList());
+    return _buildChartCurve(
+      uvIndexes
+          .map((e) => ChartBean(x: "${e.date.hour}h", y: e.uv * 10))
+          .toList(),
+      lineColor: Color.fromARGB(255, 222, 226, 111),
+      shaderColors: [
+        Color.fromARGB(255, 227, 210, 105).withOpacity(0.3),
+        Color.fromARGB(255, 50, 232, 13).withOpacity(0.2)
+      ],
+    );
   }
+
   Widget _buildWindChart(List<double> windIndexes) {
-    return _buildChartCurve(windIndexes.map((e) => ChartBean(x: "${windIndexes.indexOf(e)}h", y: e)).toList());
+    return _buildChartCurve(windIndexes
+        .map((e) => ChartBean(x: "${windIndexes.indexOf(e) * 4}h", y: e))
+        .toList());
   }
+
   Widget _buildHumidityChart(List<double> humidityIndexes) {
-    return _buildChartCurve(humidityIndexes.map((e) => ChartBean(x: "${humidityIndexes.indexOf(e)}h", y: e)).toList());
+    return _buildChartCurve(humidityIndexes
+        .map((e) => ChartBean(x: "${humidityIndexes.indexOf(e) * 4}h", y: e))
+        .toList());
   }
-  Widget _buildChartCurve(List<ChartBean> indexes) {
+
+  Widget _buildChartCurve(List<ChartBean> indexes,
+      {lineColor, fontColor, xyColor, pressedHintLineColor, shaderColors}) {
     var chartLine = ChartLine(
       chartBeans: indexes,
       size: Size(MediaQuery.of(context).size.width,
           MediaQuery.of(context).size.height / 5 * 1.6),
       isCurve: true,
       lineWidth: 4,
-      lineColor: Colors.blueAccent,
-      fontColor: Colors.white,
-      xyColor: Colors.white,
-      shaderColors: [
-        Colors.blueAccent.withOpacity(0.3),
-        Colors.blueAccent.withOpacity(0.1)
-      ],
+      lineColor: lineColor ?? Colors.blueAccent,
+      fontColor: fontColor ?? Colors.white,
+      xyColor: xyColor ?? Colors.white,
+      shaderColors: shaderColors ??
+          [
+            Colors.blueAccent.withOpacity(0.3),
+            Colors.blueAccent.withOpacity(0.1)
+          ],
       fontSize: 12,
       yNum: 8,
       isAnimation: true,
@@ -352,14 +372,14 @@ class _HomeScreenState extends State<HomeScreen> {
       isShowPressedHintLine: true,
       pressedPointRadius: 4,
       pressedHintLineWidth: 0.5,
-      pressedHintLineColor: Colors.white,
+      pressedHintLineColor: pressedHintLineColor ?? Colors.white,
       duration: const Duration(milliseconds: 2000),
     );
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       margin: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
       semanticContainer: true,
-      color: Colors.transparent.withOpacity(1),
+      color: Color.fromARGB(60, 0, 0, 0).withOpacity(1),
       clipBehavior: Clip.antiAlias,
       child: chartLine,
     );
