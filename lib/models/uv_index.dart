@@ -1,3 +1,5 @@
+import 'package:weather/utils/functions/number_converter.dart';
+
 class UVIndex {
 
   
@@ -9,7 +11,7 @@ class UVIndex {
 
   factory UVIndex.fromJson(Map<String, dynamic> json) {
     return UVIndex(
-      uv: _convertToDouble(json['uv']),
+      uv: json['uv'] is! double? convertNumber<double>(json['uv']) : json['uv'],
       date: DateTime.tryParse(json['uv_time'])!,
       sunPosition: SunPosition(
         azimuth: json['sun_position']['azimuth'],
@@ -18,15 +20,7 @@ class UVIndex {
     );
   }
 
-  static _convertToDouble(dynamic value) {
-    if (value is int) {
-      return value.toDouble();
-    } else if (value is double) {
-      return value;
-    } else {
-      return null;
-    }
-  }
+
 }
 class SunPosition {
     final double? azimuth;

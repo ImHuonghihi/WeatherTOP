@@ -19,6 +19,7 @@ import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/presentation/shared_widgets_constant/progress_indicatior.dart';
 import 'package:weather/models/quotes.dart';
 import 'package:weather/utils/chart/lib/flutter_chart.dart';
+import 'package:weather/utils/functions/number_converter.dart';
 import 'package:weather/utils/functions/restart_app.dart';
 import 'package:weather/utils/functions/time_converting.dart';
 import 'package:weather/utils/styles/colors.dart';
@@ -293,17 +294,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 ChartSlidingUpPannel(
                   title: "UV Index",
                   controller: uvpc,
-                  chart: _buildChartCurve(homeScreenCubit.uvIndexes),
+                  chart: _buildUVChart(homeScreenCubit.uvIndexes),
                 ),
                 ChartSlidingUpPannel(
                   title: "Wind Index",
                   controller: windpc,
-                  chart: _buildChartCurve(homeScreenCubit.uvIndexes),
+                  chart: _buildWindChart(homeScreenCubit.currentWeather.weatherOfDaysList
+                  .map((e) => convertNumber<double>(e.windSpeed)).toList()),
                 ),
                 ChartSlidingUpPannel(
                   title: "Humidity Index",
                   controller: humiditypc,
-                  chart: _buildChartCurve(homeScreenCubit.uvIndexes),
+                  chart: _buildHumidityChart(homeScreenCubit
+                      .currentWeather.weatherOfDaysList
+                      .map((e) => convertNumber<double>(e.humidity))
+                      .toList()),
                 ),
               ],
             ),
@@ -316,11 +321,18 @@ class _HomeScreenState extends State<HomeScreen> {
   // Widget _buildWindChart(List<double> windSpeed) {
   //   return;
   // }
-
-  Widget _buildChartCurve(List<UVIndex> indexes) {
+  Widget _buildUVChart(List<UVIndex> uvIndexes) {
+    return _buildChartCurve(uvIndexes.map((e) => ChartBean(x: "${e.date.hour}h", y: e.uv*10)).toList());
+  }
+  Widget _buildWindChart(List<double> windIndexes) {
+    return _buildChartCurve(windIndexes.map((e) => ChartBean(x: "${windIndexes.indexOf(e)}h", y: e)).toList());
+  }
+  Widget _buildHumidityChart(List<double> humidityIndexes) {
+    return _buildChartCurve(humidityIndexes.map((e) => ChartBean(x: "${humidityIndexes.indexOf(e)}h", y: e)).toList());
+  }
+  Widget _buildChartCurve(List<ChartBean> indexes) {
     var chartLine = ChartLine(
-      chartBeans:
-          indexes.map((e) => ChartBean(x: "${e.date.hour}h", y: e.uv)).toList(),
+      chartBeans: indexes,
       size: Size(MediaQuery.of(context).size.width,
           MediaQuery.of(context).size.height / 5 * 1.6),
       isCurve: true,
