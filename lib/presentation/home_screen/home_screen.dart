@@ -15,6 +15,7 @@ import 'package:weather/presentation/home_screen/widgets/charts/chart_sliding_up
 import 'package:weather/presentation/home_screen/widgets/current_weather_data_viewer.dart';
 import 'package:weather/presentation/home_screen/widgets/header_container.dart';
 import 'package:weather/presentation/home_screen/widgets/sliver_title_widget.dart';
+import 'package:weather/presentation/home_screen/widgets/wind_humidity.dart';
 import 'package:weather/presentation/shared_widgets/my_button.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/presentation/shared_widgets_constant/progress_indicatior.dart';
@@ -306,10 +307,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 ChartSlidingUpPannel(
                   title: "Wind Index",
                   controller: windpc,
-                  chart: _buildWindChart(homeScreenCubit
-                      .currentWeather.weatherOfDaysList
-                      .map((e) => convertNumber<double>(e.windSpeed))
-                      .toList()),
+                  chart: _buildWindChart(
+                    homeScreenCubit.currentWeather.weatherOfDaysList
+                        .map((e) => convertNumber<double>(e.windSpeed))
+                        .toList(),
+                  ),
+                  otherWidgets: [
+                    getWindRecommendation(
+                      context,
+                      homeScreenCubit.currentWeather.weatherOfDaysList
+                          .map((e) => convertNumber<double>(e.windSpeed))
+                          .toList(),
+                    )
+                  ],
                 ),
                 ChartSlidingUpPannel(
                   title: "Humidity Index",
@@ -327,9 +337,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Widget _buildWindChart(List<double> windSpeed) {
-  //   return;
-  // }
   Widget _buildUVChart(List<UVIndex> uvIndexes) {
     return _buildChartCurve(
       uvIndexes
@@ -428,6 +435,56 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             MyText(
               text: "Now, $time, safe UV Index",
+              size: fontSizeM,
+              fontWeight: FontWeight.bold,
+            ),
+            K_vSpace10,
+            MyText(
+              text: "Today is good day to go out hihi!!",
+              size: fontSizeM,
+              fontWeight: FontWeight.normal,
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  getWindRecommendation(BuildContext context, List<double> windpc) {
+    var windpc = HomeScreenCubit.get(context)
+        .currentWeather
+        .weatherOfDaysList
+        .map((e) => convertNumber<double>(e.windSpeed))
+        .toList();
+    var dangerWind = windpc.where((element) => element >= 8).toList();
+    if (dangerWind.isNotEmpty) {
+      return Container(
+        margin: const EdgeInsets.only(top: 8),
+        child: Column(
+          children: [
+            MyText(
+              text: "Dangerous Wind Index",
+              size: fontSizeM,
+              fontWeight: FontWeight.bold,
+            ),
+            K_vSpace10,
+            MyText(
+              text: "You should avoid going out",
+              size: 9.0,
+              fontWeight: FontWeight.normal,
+            ),
+          ],
+        ),
+      );
+    } else {
+      var now = DateTime.now();
+      var time = "${now.hour}:${now.minute}";
+      return Container(
+        margin: const EdgeInsets.only(top: 8),
+        child: Column(
+          children: [
+            MyText(
+              text: "Now, $time, safe Wind Index",
               size: fontSizeM,
               fontWeight: FontWeight.bold,
             ),
