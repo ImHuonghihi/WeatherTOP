@@ -38,19 +38,19 @@ class _HomePageState extends State<PlanHomePage> {
         },
       ),
     );
-  
   }
-
 
   mainBuilder(BuildContext context) {
     return Scaffold(
-      backgroundColor: whiteColor,
-      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: whiteColor,
+        floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => TravelPage(location: widget.homeScreenCubit.positionOfUser!,),
+                builder: (context) => TravelPage(
+                  location: widget.homeScreenCubit.positionOfUser!,
+                ),
               ),
             );
           },
@@ -64,27 +64,27 @@ class _HomePageState extends State<PlanHomePage> {
           title: const Text(
             'Events',
             style: TextStyle(
-              color: blackColor,
+              color: blueColor,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
+          centerTitle: true,
           elevation: 0,
-          
           leading: IconButton(
             onPressed: () {
               navigateBack(context);
             },
-            icon: const Icon(CupertinoIcons.back, color: blackColor),
+            icon: const Icon(CupertinoIcons.back, color: blueColor),
           ),
-
         ),
         body: SingleChildScrollView(
             child: Column(children: [
           FadeAnimation(
               1,
               Padding(
-                padding: const EdgeInsets.only(left: 20.0, top: 10.0, right: 10.0),
+                padding:
+                    const EdgeInsets.only(left: 20.0, top: 10.0, right: 10.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -266,6 +266,7 @@ class _HomePageState extends State<PlanHomePage> {
           ),
         ])));
   }
+
   serviceContainer(String image, String name, int index) {
     return GestureDetector(
       child: Container(
@@ -325,8 +326,8 @@ class _HomePageState extends State<PlanHomePage> {
                   children: [
                     Text(
                       name,
-                      style:
-                          const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(
                       height: 5,
@@ -344,8 +345,8 @@ class _HomePageState extends State<PlanHomePage> {
                   children: [
                     Text(
                       rating.toString(),
-                      style:
-                          const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(
                       height: 5,
@@ -363,4 +364,3 @@ class _HomePageState extends State<PlanHomePage> {
     );
   }
 }
-

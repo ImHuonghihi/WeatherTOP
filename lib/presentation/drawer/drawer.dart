@@ -4,6 +4,7 @@ import 'package:weather/presentation/drawer/widgets/drawer_title.dart';
 import 'package:weather/presentation/drawer/widgets/footer_row.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_cubit.dart';
 import 'package:weather/presentation/manage_locations.dart/manage_locations.dart';
+import 'package:weather/presentation/notification_screen/home_screen_noti.dart';
 import 'package:weather/presentation/plan_screen/home_page.dart';
 import 'package:weather/presentation/shared_widgets/my_button.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
@@ -110,7 +111,9 @@ class MyDrawer extends StatelessWidget {
                   DrawerTitle(
                     title: 'Notifications',
                     icon: Icons.notifications_active_outlined,
-                    onTap: () {},
+                    onTap: () {
+                      navigateTo(context, const NotificationSetting());
+                    },
                   ),
                   K_vSpace20,
                   divider,

@@ -1,9 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/services/remote/trip_api/trip_model.dart';
 import 'package:weather/utils/functions/calc_distance.dart';
+import 'package:weather/utils/functions/navigation_functions.dart';
 import 'package:weather/utils/styles/colors.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:weather/utils/styles/cosntants.dart';
 
 class TravelPage extends StatefulWidget {
   const TravelPage({Key? key, required this.location}) : super(key: key);
@@ -27,20 +31,18 @@ class _TravelPageState extends State<TravelPage> {
           backgroundColor: whiteColor,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: blackColor,
-            ),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              navigateBack(context);
+            },
+            icon: const Icon(CupertinoIcons.back, color: blueColor),
           ),
-          title: const Text(
-            'Travel',
-            style: TextStyle(
-              color: blackColor,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+          title: MyText(
+            text: 'Your Locations',
+            size: fontSizeL - 2,
+            fontWeight: FontWeight.normal,
+            color: blueColor,
           ),
+          centerTitle: true,
         ),
         body: buildTravelList([
           TravelLocation(
