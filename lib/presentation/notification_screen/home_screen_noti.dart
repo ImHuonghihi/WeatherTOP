@@ -41,19 +41,6 @@ class _NotificationSettingState extends State<NotificationSetting> {
           },
           icon: const Icon(CupertinoIcons.back, color: blueColor),
         ),
-        actions: [
-          //switch to enable/disable notification
-          Switch(
-            value: isNotificationEnabled,
-            onChanged: (value) {
-              setState(() {
-                isNotificationEnabled = value;
-              });
-            },
-            activeTrackColor: blueColor,
-            activeColor: whiteColor,
-          ),
-        ],
         title: MyText(
           text: 'Notification Setting',
           size: fontSizeL - 2,
