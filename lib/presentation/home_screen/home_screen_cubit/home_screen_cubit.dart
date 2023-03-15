@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -7,6 +8,7 @@ import 'package:weather/models/current_city.dart';
 import 'package:weather/models/current_weather.dart';
 import 'package:weather/models/weather_of_day.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_states.dart';
+import 'package:weather/services/remote/firebase_notification/firebase_api.dart';
 import 'package:weather/services/remote/location_api.dart';
 import 'package:weather/services/local/shared_preferences.dart';
 
@@ -70,11 +72,14 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
     //fill the currentWeather with dummy data until the true data come
     _setCurrentWeatherDefault();
     _setChartDefault();
+
     await _initLocationService();
+
     await UVAPI.initializeUVAPI();
     if (positionOfUser != null) {
       await _getWeatherApiData();
     }
+    _initNotification();
   }
 
   _setPosition() async {
@@ -95,6 +100,33 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
       emit(LocationSuccessfullySetState());
       debugPrint('Done');
     }
+  }
+
+
+
+  _initNotification() async {
+    debugPrint('initNotification');
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          channelKey: 'alerts',
+          id: 10,
+          title: currentWeather.currentCountryDetails!.currentCity +
+              Emojis.wheater_thermometer +
+              Emojis.sky_cloud_with_snow,
+          
+          bigPicture:
+              "https://www.vietnamonline.com/media/cache/7e/e6/7ee69ffc1c68e13fe33645f21434984a.jpg",
+          notificationLayout: NotificationLayout.BigPicture,
+          
+          body:
+              '${currentWeather.weatherOfDaysList[0].currentTemp}°C/${currentWeather.weatherOfDaysList[0].feelsLikeTemp}°C . ${currentWeather.weatherOfDaysList[0].weatherStatus}',
+        ),
+        schedule: NotificationCalendar(
+          hour: 6,
+          minute: 0,
+          second: 0,
+          repeats: true,
+        ));
   }
 
   _locationListener() async {

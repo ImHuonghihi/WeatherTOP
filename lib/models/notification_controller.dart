@@ -5,7 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class NotificationController {
-	// Khởi tạo Local Notification ở đây với custom tùy thích 
+  // Khởi tạo Local Notification ở đây với custom tùy thích
   static Future<void> initializeLocalNotifications(
       {required bool debug}) async {
     await AwesomeNotifications().initialize(
@@ -14,7 +14,7 @@ class NotificationController {
           NotificationChannel(
               channelKey: 'alerts',
               channelName: 'Alerts',
-              channelDescription: 'Notification tests as alerts',
+              channelDescription: 'This is the channel for alerts',
               playSound: true,
               importance: NotificationImportance.High,
               defaultPrivacy: NotificationPrivacy.Private,
@@ -24,19 +24,18 @@ class NotificationController {
         debug: debug);
   }
 
-	// Hàm này dùng để Khởi tạo Push Notification.
+  // Hàm này dùng để Khởi tạo Push Notification.
   static Future<void> initializeRemoteNotifications(
       {required bool debug}) async {
     await Firebase.initializeApp();
     await AwesomeNotificationsFcm().initialize(
-				// Handle Silent data
+        // Handle Silent data
         onFcmSilentDataHandle: NotificationController.mySilentDataHandle,
-				// Method này dùng để phát hiện khi nhận được fcm token mới.
+        // Method này dùng để phát hiện khi nhận được fcm token mới.
         onFcmTokenHandle: NotificationController.myFcmTokenHandle,
-				// Method này dùng để phát hiện khi nhận được native token mới.
+        // Method này dùng để phát hiện khi nhận được native token mới.
         onNativeTokenHandle: NotificationController.myNativeTokenHandle,
-				// Bài sau mình sẽ đi chi tiết hơn về 3 Method trên nhé.
-
+        // Method này dùng để phát hiện khi nhận được native token mới.
         // This license key is necessary only to remove the watermark for
         // push notifications in release mode. To know more about it, please
         // visit http://awesome-notifications.carda.me#prices
@@ -61,7 +60,7 @@ class NotificationController {
     }
     return '';
   }
-  
+
   Future<void> checkPermission() async {
     bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
     if (!isAllowed) {
@@ -69,7 +68,7 @@ class NotificationController {
     }
   }
 
-	// Hàm gọi Local notification khi nhấn nút Send notification trên ứng dụng
+  // Hàm gọi Local notification khi nhấn nút Send notification trên ứng dụng
   Future<void> localNotification() async {
     String timezom = await AwesomeNotifications().getLocalTimeZoneIdentifier();
     await AwesomeNotifications().createNotification(
@@ -77,7 +76,6 @@ class NotificationController {
         id: 1,
         channelKey: 'alerts',
         title: 'This is Notification',
-				// Thêm cái hình vào nhìn cho vui mắt :v
         bigPicture:
             'https://images.pexels.com/photos/14679216/pexels-photo-14679216.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
         notificationLayout: NotificationLayout.BigPicture,

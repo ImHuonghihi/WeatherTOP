@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:weather/models/notification_controller.dart';
 import 'package:weather/models/weather_style.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_cubit.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_states.dart';
@@ -20,6 +21,7 @@ import 'package:weather/presentation/shared_widgets/my_button.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/presentation/shared_widgets_constant/progress_indicatior.dart';
 import 'package:weather/models/quotes.dart';
+import 'package:weather/services/remote/firebase_notification/firebase_api.dart';
 import 'package:weather/utils/chart/lib/flutter_chart.dart';
 import 'package:weather/utils/functions/number_converter.dart';
 import 'package:weather/utils/functions/restart_app.dart';
@@ -43,6 +45,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final notifController = NotificationController();
   ScrollController sc = ScrollController();
   PanelController uvpc = PanelController();
   PanelController windpc = PanelController();
@@ -124,6 +127,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    notifController.checkPermission();
+    notifController.requestFirebaseToken().then((token) {
+      FirebaseNotification.sendNotification(token,
+        title: 'WeatherTOP', body: "You're welcome to WeatherTOP").then((status) {
+          if (status) {
+            print('Notification sent');
+          } else {
+            print('Notification failed');
+          }
+        });
+    
+    });
+    
     color1 = widget.weatherStyle.colorOne
         .withOpacity(widget.weatherStyle.colorOpacity);
     color2 = widget.weatherStyle.colorTwo;

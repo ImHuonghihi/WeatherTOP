@@ -11,7 +11,6 @@ import 'package:weather/services/remote/weather_api/weather_api.dart';
 
 import 'data/bloc_observer.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -23,7 +22,7 @@ void main() async {
   await NotificationController.initializeLocalNotifications(debug: true);
 
   // Initialize cho Push Notification
-  // await NotificationController.initializeRemoteNotifications(debug: true);
+  await NotificationController.initializeRemoteNotifications(debug: true);
 
   await SharedHandler.initSharedPref();
 

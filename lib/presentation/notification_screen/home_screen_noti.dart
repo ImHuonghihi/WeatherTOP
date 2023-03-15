@@ -205,19 +205,13 @@ class _NotificationSettingState extends State<NotificationSetting> {
                         }
                         AwesomeNotifications().createNotification(
                           content: NotificationContent(
-                            id: 10,
                             channelKey: 'alerts',
-                            title: 'Test notification',
-                            body: 'This is a test notification',
+                            id: 10,
+                            title: Emojis.sky_cloud_with_snow,
                             bigPicture:
-                                'https://picsum.photos/seed/picsum/200/300',
-                          ),
-                          schedule: NotificationCalendar(
-                            hour: scheduledDate.hour,
-                            minute: scheduledDate.minute,
-                            second: scheduledDate.second + 5,
-                            millisecond: scheduledDate.millisecond,
-                            repeats: true,
+                                "https://www.vietnamonline.com/media/cache/7e/e6/7ee69ffc1c68e13fe33645f21434984a.jpg",
+                            notificationLayout: NotificationLayout.BigPicture,
+                            body: '0°C/0°C . -1',
                           ),
                         );
                       },
