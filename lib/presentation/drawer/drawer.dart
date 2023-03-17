@@ -148,10 +148,16 @@ class MyDrawer extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         itemCount: listOfLocations.length,
         itemBuilder: (context, index) {
-          return LocationListItem(
-            locationName: listOfLocations[index],
-            degree: listOfTemps[index],
-            color: whiteColor,
+          return GestureDetector(
+            onTap: () {
+              debugPrint('Tapped on $index');
+            },
+            child: LocationListItem(
+              locationName: listOfLocations[index],
+              degree: listOfTemps[index],
+              isFavoriteItem: false,
+              color: whiteColor,
+            ),
           );
         },
       );

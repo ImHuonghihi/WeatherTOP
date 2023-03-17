@@ -180,4 +180,6 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
     return SharedHandler.getListFromSharedPref(
         SharedHandler.favoriteLocationsTempListKey);
   }
+
+  getWeatherByCityName(String favoriteLocationsList, listOfTemp) {}
 }
