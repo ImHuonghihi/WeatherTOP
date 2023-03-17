@@ -1,0 +1,1 @@
+const hereAPIKey = "l7vdlr_53oPmjqPXXE1wNYHbWDjaB2DjPJqDkjy3scg";
