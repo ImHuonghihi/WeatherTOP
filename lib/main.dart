@@ -25,7 +25,7 @@ void main() async {
   await NotificationController.initializeRemoteNotifications(debug: true);
 
   await SharedHandler.initSharedPref();
-
+ 
   Bloc.observer = MyBlocObserver();
 
   runApp(Phoenix(child: const MyApp()));
