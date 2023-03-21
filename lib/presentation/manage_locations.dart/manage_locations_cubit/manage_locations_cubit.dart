@@ -1,6 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather/presentation/manage_locations.dart/manage_locations_cubit/manage_locations_states.dart';
 import 'package:weather/services/local/shared_preferences.dart';
+import 'package:weather/services/remote/here_api/api.dart';
+import 'package:weather/services/remote/here_api/api_key.dart';
 
 import '../../../models/current_weather.dart';
 
@@ -12,6 +15,7 @@ class ManageLocationsCubit extends Cubit<ManageLocationsStates> {
   bool isFavorite = false;
   List<String> favoriteLocationsList = [];
   List<String> favoriteLocationsTempsList = [];
+  late HereAPI hereAPI;
 
   setLocationListValuesToString(List list) {
     for (var element in list) {
@@ -28,6 +32,7 @@ class ManageLocationsCubit extends Cubit<ManageLocationsStates> {
   initLists(favoriteLocationsListValue, favoriteLocationsTempsListValue) {
     setLocationListValuesToString(favoriteLocationsListValue);
     setTempsListValuesToString(favoriteLocationsTempsListValue);
+    _initHereAPI();
   }
 
   addLocationToFavorites(CurrentWeather currentWeather) {
@@ -68,5 +73,14 @@ class ManageLocationsCubit extends Cubit<ManageLocationsStates> {
     if (favoriteLocationsList.isEmpty) {
       emit(NoLocationsAvailableState());
     }
+  }
+
+  _initHereAPI() {
+    try {
+      hereAPI = HereAPI.authenicate(hereAPIKey);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+
   }
 }

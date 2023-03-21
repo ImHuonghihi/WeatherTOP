@@ -1,17 +1,18 @@
 class HereLocationData {
-  String id, title, language, resultType, houseNumberType;
-  HerePosition position;
-  HereAddress address;
+  String id, title, resultType;
+  String? language, houseNumberType;
+  HerePosition? position;
+  HereAddress? address;
 
   // fromjson factory
   HereLocationData({
     required this.id,
     required this.title,
-    required this.language,
-    required this.resultType,
-    required this.houseNumberType,
-    required this.position,
-    required this.address,
+     this.language,
+     required this.resultType,
+     this.houseNumberType,
+     this.position,
+     this.address,
   });
 
   factory HereLocationData.fromJson(Map<String, dynamic> json) {
@@ -43,23 +44,26 @@ class HereLocationData {
   }
 }
 
+
+
+
 class HereAddress {
-  String label, countryCode, country, state, county, city, district, street, 
-      houseNumber;
-  String? stateCode, countyCode, postalCode;
+  final String label;
+  String? countryCode, country, state, county, city, district, street, 
+      houseNumber, stateCode, countyCode, postalCode;
   HereAddress({
     required this.label,
-    required this.countryCode,
-    required this.country,
-    required this.state,
+    this.countryCode,
+    this.country,
+    this.state,
     this.stateCode,
-    required this.county,
+    this.county,
     this.countyCode,
-    required this.city,
-    required this.district,
-    required this.street,
+    this.city,
+    this.district,
+    this.street,
     this.postalCode,
-    required this.houseNumber,
+    this.houseNumber,
   });
 
 }

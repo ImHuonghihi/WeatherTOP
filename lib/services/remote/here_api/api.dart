@@ -51,10 +51,13 @@ class HereAPI {
   /// autosuggest location using name
   Future<List<HereLocationData>> autosuggest({
     required String query,
-    int? limit
+    int? limit,
+    required String at,
   }) async {
+    if (query == '' || query.length < 3) return Future.value([]);
     final uri = createParams(Uri.https('autosuggest.search.hereapi.com', '/v1/autosuggest'), {
       'q': query,
+      'at': at,
       'limit': '${limit ?? 10}'
     });
     var res = await _sendRequest(uri);
@@ -80,9 +83,11 @@ class HereAPI {
     return items.map((item) => item as Map<String, dynamic>).toList();
   }
 
+
+
   _sendRequest(Uri uri) async {
     final response = await http.get(uri);
-    if (response.statusCode == 200) {
+    if ([200, 201].contains(response.statusCode)) {
       return jsonDecode(response.body);
     } else {
       throw Exception('Failed to load data');
