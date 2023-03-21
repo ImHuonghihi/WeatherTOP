@@ -46,11 +46,6 @@ class FlexibleBar extends StatelessWidget {
                 "$maxTemp$degreeSymbol / $minTemp$degreeSymbol Feels like $maxTemp$degreeSymbol\n$day, $currentTime",
             size: 9.0,
           ),
-
-          // MyText(
-          //   text: "$quotes",
-          //   size: 8.0,
-          // ),
         ],
       ),
       background: Row(
