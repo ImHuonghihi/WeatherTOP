@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather/presentation/drawer/widgets/Location_list_item.dart';
 import 'package:weather/presentation/manage_locations.dart/manage_locations_cubit/manage_locations_cubit.dart';
 import 'package:weather/presentation/manage_locations.dart/manage_locations_cubit/manage_locations_states.dart';
+import 'package:weather/presentation/manage_locations.dart/search_delegate.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/utils/functions/navigation_functions.dart';
 import 'package:weather/utils/functions/toaster.dart';
@@ -55,6 +56,19 @@ class ManageLocations extends StatelessWidget {
                         .addLocationToFavorites(homeScreenCubit.currentWeather);
                   },
                   icon: const Icon(CupertinoIcons.star, color: blueColor),
+                ),
+                // search button
+                IconButton(
+                  onPressed: () {
+                    showSearch(
+                      context: context,
+                      delegate: LocationSearchDelegate(
+                        manageLocationsCubit: manageLocationsCubit,
+                        homeScreenCubit: homeScreenCubit,
+                      ),
+                    );
+                  },
+                  icon: const Icon(CupertinoIcons.search, color: blueColor),
                 ),
               ],
               leading: IconButton(

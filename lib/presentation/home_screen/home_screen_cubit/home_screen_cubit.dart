@@ -11,6 +11,7 @@ import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_s
 import 'package:weather/services/remote/firebase_notification/firebase_api.dart';
 import 'package:weather/services/remote/location_api.dart';
 import 'package:weather/services/local/shared_preferences.dart';
+import 'package:weather/utils/functions/number_converter.dart';
 
 import '../../../models/uv_index.dart';
 import '../../../services/remote/uv_api.dart';
@@ -26,6 +27,8 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
   static String sliverTitle = '';
   late CurrentWeather currentWeather;
   late List<UVIndex> uvIndexes;
+  late List<double> windIndexes;
+  late List<double> humidityIndexes;
 
   //We use this list to avoid the problem of late currentWeather the problem is an error occurred because the
   //currentWeather is still null when starting the app and we can  not await on initializing
@@ -59,12 +62,16 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
 
   _setChartDefault() {
     uvIndexes = [];
+    windIndexes = [];
+    humidityIndexes = [];
     // loop through the list of defaults and add the default data to the chart
     for (int i = 0; i < 6; i++) {
       uvIndexes.add(UVIndex(
         uv: 0,
         date: DateTime.now().add(Duration(days: i)),
       ));
+      windIndexes.add(0);
+      humidityIndexes.add(0);
     }
   }
 
@@ -159,6 +166,12 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
       var lat = positionOfUser!.latitude;
       var lon = positionOfUser!.longitude;
       currentWeather = await WeatherAPI.getWeatherData(lat: lat, lon: lon);
+      windIndexes = currentWeather.weatherOfDaysList
+                        .map((e) => convertNumber<double>(e.windSpeed))
+                        .toList();
+      humidityIndexes = currentWeather.weatherOfDaysList
+                      .map((e) => convertNumber<double>(e.humidity))
+                      .toList();
       sliverTitle = currentWeather.currentCountryDetails!.currentCity;
       // uvIndexes = await UVAPI.getUVData(lat: lat, lon: lon);
       uvIndexes = await UVAPI.getUVData();

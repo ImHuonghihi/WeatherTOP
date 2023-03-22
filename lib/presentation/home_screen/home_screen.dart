@@ -324,27 +324,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: "Wind Index",
                   controller: windpc,
                   chart: _buildWindChart(
-                    homeScreenCubit.currentWeather.weatherOfDaysList
-                        .map((e) => convertNumber<double>(e.windSpeed))
-                        .toList(),
+                    homeScreenCubit.windIndexes,
                   ),
                   otherWidgets: [
                     getWindRecommendation(
                       context,
-                      homeScreenCubit.currentWeather.weatherOfDaysList
-                          .map((e) => convertNumber<double>(e.windSpeed))
-                          .toList(),
+                      homeScreenCubit.windIndexes,
                     )
                   ],
                 ),
                 ChartSlidingUpPannel(
                   title: "Humidity Index",
                   controller: humiditypc,
-                  chart: _buildHumidityChart(homeScreenCubit
-                      .currentWeather.weatherOfDaysList
-                      .map((e) => convertNumber<double>(e.humidity))
-                      .toList()),
+                  chart: _buildHumidityChart(
+                    homeScreenCubit.humidityIndexes
                 ),
+                )
               ],
             ),
           );
