@@ -147,18 +147,7 @@ class ManageLocations extends StatelessWidget {
                                                   index),
                                       background: Container(
                                         color: offWhiteColor,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            MyText(
-                                              text: 'Delete',
-                                              size: fontSizeM - 2,
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.redAccent,
-                                            ),
-                                          ],
-                                        ),
+                                    
                                       ),
                                       child: LocationListItem(
                                         isFavoriteItem: true,

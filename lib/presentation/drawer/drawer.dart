@@ -150,6 +150,10 @@ class MyDrawer extends StatelessWidget {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
+
+              homeScreenCubit.getWeatherByCityName(
+                  listOfLocations[index], listOfTemps[index]);
+              
               debugPrint('Tapped on $index');
             },
             child: LocationListItem(
