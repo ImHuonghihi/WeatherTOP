@@ -59,6 +59,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
         centerTitle: true,
         backgroundColor: whiteColor,
       ),
+      
       backgroundColor: whiteColor,
       body: Padding(
           padding: const EdgeInsets.all(20.0),

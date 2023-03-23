@@ -1,4 +1,3 @@
-
 import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -36,34 +35,16 @@ class _TasksPageState extends State<TasksPage> {
             Container(
               padding: const EdgeInsets.all(25),
               decoration: const BoxDecoration(
-                  color: Colors.white,
+                  color: Color.fromARGB(255, 159, 192, 248),
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(50),
                     bottomRight: Radius.circular(50),
+                    topLeft: Radius.circular(50),
+                    topRight: Radius.circular(50),
                   )),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          widget.Goback(1);
-                        },
-                        child: const Icon(
-                          Icons.arrow_back_rounded,
-                          color: Colors.black,
-                          size: 30,
-                        ),
-                      ),
-                      const Icon(
-                        Icons.search_rounded,
-                        color: Colors.black,
-                        size: 30,
-                      )
-                    ],
-                  ),
                   const SizedBox(height: 25),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -86,7 +67,7 @@ class _TasksPageState extends State<TasksPage> {
                         child: Container(
                           padding: const EdgeInsets.all(15),
                           decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 123, 0, 245),
+                            color: Colors.blueAccent,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Row(
@@ -115,7 +96,7 @@ class _TasksPageState extends State<TasksPage> {
                   DatePicker(
                     DateTime.now(),
                     initialSelectedDate: this._selectedDate,
-                    selectionColor: const Color.fromARGB(255, 123, 0, 245),
+                    selectionColor: Colors.blueAccent,
                     onDateChange: this._onDateChange,
                   )
                 ],
@@ -127,7 +108,7 @@ class _TasksPageState extends State<TasksPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Task",
+                    "List Task",
                     style: GoogleFonts.montserrat(
                       color: Colors.black,
                       fontSize: 20,
@@ -137,6 +118,10 @@ class _TasksPageState extends State<TasksPage> {
                   SingleChildScrollView(
                     scrollDirection: Axis.vertical,
                     child: Column(children: [
+                      ProgressCard(
+                          ProjectName: "Project", CompletedPercent: 30),
+                      ProgressCard(
+                          ProjectName: "Project", CompletedPercent: 30),
                       ProgressCard(
                           ProjectName: "Project", CompletedPercent: 30),
                       ProgressCard(

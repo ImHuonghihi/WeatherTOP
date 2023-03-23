@@ -23,7 +23,7 @@ class OverviewCard extends StatelessWidget {
                 height: 40,
                 margin: EdgeInsets.only(right: 10),
                 decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 123, 0, 245),
+                  color: Colors.blueAccent,
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
                 child: const Icon(Icons.person, color: Colors.white),
@@ -46,7 +46,7 @@ class OverviewCard extends StatelessWidget {
       ),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.0),
-          color: Color.fromARGB(150, 123, 0, 245)),
+          color: Color.fromARGB(255, 159, 192, 248)),
     );
   }
 }

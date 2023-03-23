@@ -1,9 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:weather/presentation/shared_widgets/my_text.dart';
+import 'package:weather/utils/functions/navigation_functions.dart';
+import 'package:weather/utils/styles/colors.dart';
+import 'package:weather/utils/styles/cosntants.dart';
 
 import 'CategoryCard.dart';
-
 
 class AddNewTask extends StatefulWidget {
   const AddNewTask({Key? key}) : super(key: key);
@@ -72,10 +77,32 @@ class _AddNewTaskState extends State<AddNewTask> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: SafeArea(
+    return Scaffold(
+      appBar: AppBar(
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: transparentColor, // status bar color
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
+        leading: IconButton(
+          onPressed: () {
+            navigateBack(context);
+          },
+          icon: const Icon(CupertinoIcons.back, color: blueColor),
+        ),
+        title: MyText(
+          text: 'Create new task',
+          size: fontSizeL - 2,
+          fontWeight: FontWeight.normal,
+          color: blueColor,
+        ),
+        elevation: 0.0,
+        centerTitle: true,
+        backgroundColor: whiteColor,
+      ),
+      body: SafeArea(
         child: Container(
-          color: Color.fromRGBO(130, 0, 255, 1),
+          color: Colors.blueAccent,
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Column(
@@ -83,30 +110,30 @@ class _AddNewTaskState extends State<AddNewTask> {
                 Container(
                   padding:
                       EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Icon(Icons.arrow_back,
-                            size: 30, color: Colors.white),
-                      ),
-                      SizedBox(
-                        width: 50,
-                      ),
-                      Text(
-                        "Create New Task",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.montserrat(
-                          color: Colors.white,
-                          fontSize: 20,
-                          decoration: TextDecoration.none,
-                        ),
-                      ),
-                    ],
-                  ),
+                  // child: Row(
+                  //   mainAxisAlignment: MainAxisAlignment.start,
+                  //   children: [
+                  //     // GestureDetector(
+                  //     //   onTap: () {
+                  //     //     Navigator.pop(context);
+                  //     //   },
+                  //     //   child: const Icon(Icons.arrow_back,
+                  //     //       size: 30, color: Colors.white),
+                  //     // ),
+                  //     SizedBox(
+                  //       width: 50,
+                  //     ),
+                  //     // Text(
+                  //     //   "Create New Task",
+                  //     //   textAlign: TextAlign.center,
+                  //     //   style: GoogleFonts.montserrat(
+                  //     //     color: Colors.white,
+                  //     //     fontSize: 20,
+                  //     //     decoration: TextDecoration.none,
+                  //     //   ),
+                  //     // ),
+                  //   ],
+                  // ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
@@ -369,13 +396,13 @@ class _AddNewTaskState extends State<AddNewTask> {
                         ),
                       ),
                       SizedBox(
-                        height: 100,
+                        height: 40,
                       ),
                       Container(
                         padding: EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: Color.fromRGBO(130, 0, 255, 1),
+                          color: Colors.blueAccent,
                         ),
                         alignment: Alignment.center,
                         child: Text(

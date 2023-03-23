@@ -19,7 +19,7 @@ class ProgressCard extends StatelessWidget {
             margin: EdgeInsets.only(top: 10),
             height: 49 * 0.01 * this.CompletedPercent,
             decoration: BoxDecoration(
-              color: Color.fromARGB(255, 123, 0, 245),
+              color: Colors.blueAccent,
               borderRadius: BorderRadius.circular(10),
             ),
           ),
@@ -36,7 +36,7 @@ class ProgressCard extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 123, 0, 245),
+                    color: Colors.blueAccent,
                     borderRadius: BorderRadius.all(Radius.circular(30)),
                   ),
                   child: const Icon(Icons.assignment, color: Colors.white),
