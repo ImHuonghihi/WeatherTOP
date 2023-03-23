@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:weather/presentation/event/lib/ProjectsPage/OverviewScroll.dart';
-import 'package:weather/presentation/event/lib/ProjectsPage/ProgressCard.dart';
+
+import 'OverviewScroll.dart';
+import 'ProgressCard.dart';
 
 class ProjectsPage extends StatelessWidget {
   const ProjectsPage({

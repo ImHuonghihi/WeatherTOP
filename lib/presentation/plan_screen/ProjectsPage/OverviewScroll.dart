@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:weather/presentation/event/lib/ProjectsPage/OverViewCard.dart';
+
+import 'OverViewCard.dart';
 
 
 
@@ -63,7 +64,7 @@ class _OverViewState extends State<OverView> with TickerProviderStateMixin {
                     itemCount: 3,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (BuildContext context, int index) {
-                      return OvervewCard();
+                      return OverviewCard();
                     }),
                 Text("Projects"),
                 Text("Projects"),

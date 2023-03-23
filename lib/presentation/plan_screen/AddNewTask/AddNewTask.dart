@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:weather/presentation/event/lib/AddNewTask/CategoryCard.dart';
+
+import 'CategoryCard.dart';
 
 
 class AddNewTask extends StatefulWidget {
