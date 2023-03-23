@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_cubit.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_states.dart';
-import 'package:weather/presentation/plan_screen/plan_screen_cubit/plan_screen_states.dart';
-import 'package:weather/presentation/plan_screen/travel_page.dart';
 import 'package:weather/utils/functions/navigation_functions.dart';
 import 'package:weather/utils/styles/colors.dart';
 
 import 'anims/fade_animation.dart';
 import 'plan_screen_cubit/plan_screen_cubit.dart';
+import 'plan_screen_cubit/plan_screen_states.dart';
 import 'service/service.dart';
+import 'travel_page.dart';
 
 class PlanHomePage extends StatefulWidget {
   final HomeScreenCubit homeScreenCubit;

@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import 'package:weather/presentation/event/lib/AddNewTask/AddNewTask.dart';
-
+import '../AddNewTask/AddNewTask.dart';
 import '../ProjectsPage/ProgressCard.dart';
 
 class TasksPage extends StatefulWidget {
@@ -30,13 +29,13 @@ class _TasksPageState extends State<TasksPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        color: Color.fromRGBO(242, 244, 255, 1),
+        color: const Color.fromRGBO(242, 244, 255, 1),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: EdgeInsets.all(25),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(25),
+              decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(50),
@@ -52,25 +51,25 @@ class _TasksPageState extends State<TasksPage> {
                         onTap: () {
                           widget.Goback(1);
                         },
-                        child: Icon(
+                        child: const Icon(
                           Icons.arrow_back_rounded,
                           color: Colors.black,
                           size: 30,
                         ),
                       ),
-                      Icon(
+                      const Icon(
                         Icons.search_rounded,
                         color: Colors.black,
                         size: 30,
                       )
                     ],
                   ),
-                  SizedBox(height: 25),
+                  const SizedBox(height: 25),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '${DateFormat('MMM, d').format(this._selectedDate)}',
+                        DateFormat('MMM, d').format(this._selectedDate),
                         style: GoogleFonts.montserrat(
                           color: Colors.black,
                           fontSize: 25,
@@ -85,15 +84,15 @@ class _TasksPageState extends State<TasksPage> {
                                   builder: (context) => const AddNewTask()));
                         },
                         child: Container(
-                          padding: EdgeInsets.all(15),
+                          padding: const EdgeInsets.all(15),
                           decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 123, 0, 245),
+                            color: const Color.fromARGB(255, 123, 0, 245),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.add,
                                 color: Colors.white,
                                 size: 20,
@@ -112,18 +111,18 @@ class _TasksPageState extends State<TasksPage> {
                       )
                     ],
                   ),
-                  SizedBox(height: 25),
+                  const SizedBox(height: 25),
                   DatePicker(
                     DateTime.now(),
                     initialSelectedDate: this._selectedDate,
-                    selectionColor: Color.fromARGB(255, 123, 0, 245),
+                    selectionColor: const Color.fromARGB(255, 123, 0, 245),
                     onDateChange: this._onDateChange,
                   )
                 ],
               ),
             ),
             Container(
-              padding: EdgeInsets.all(25),
+              padding: const EdgeInsets.all(25),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

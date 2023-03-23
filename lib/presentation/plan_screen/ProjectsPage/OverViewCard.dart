@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-class OvervewCard extends StatelessWidget {
-  const OvervewCard({Key? key}) : super(key: key);
+class OverviewCard extends StatelessWidget {
+  const OverviewCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
