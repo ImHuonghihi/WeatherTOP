@@ -109,8 +109,6 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
     }
   }
 
-
-
   _initNotification() async {
     debugPrint('initNotification');
     AwesomeNotifications().createNotification(
@@ -120,11 +118,9 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
           title: currentWeather.currentCountryDetails!.currentCity +
               Emojis.wheater_thermometer +
               Emojis.sky_cloud_with_snow,
-          
           bigPicture:
               "https://www.vietnamonline.com/media/cache/7e/e6/7ee69ffc1c68e13fe33645f21434984a.jpg",
           notificationLayout: NotificationLayout.BigPicture,
-          
           body:
               '${currentWeather.weatherOfDaysList[0].currentTemp}°C/${currentWeather.weatherOfDaysList[0].feelsLikeTemp}°C . ${currentWeather.weatherOfDaysList[0].weatherStatus}',
         ),
@@ -167,11 +163,11 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
       var lon = positionOfUser!.longitude;
       currentWeather = await WeatherAPI.getWeatherData(lat: lat, lon: lon);
       windIndexes = currentWeather.weatherOfDaysList
-                        .map((e) => convertNumber<double>(e.windSpeed))
-                        .toList();
+          .map((e) => convertNumber<double>(e.windSpeed))
+          .toList();
       humidityIndexes = currentWeather.weatherOfDaysList
-                      .map((e) => convertNumber<double>(e.humidity))
-                      .toList();
+          .map((e) => convertNumber<double>(e.humidity))
+          .toList();
       sliverTitle = currentWeather.currentCountryDetails!.currentCity;
       // uvIndexes = await UVAPI.getUVData(lat: lat, lon: lon);
       uvIndexes = await UVAPI.getUVData();
@@ -194,5 +190,24 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
         SharedHandler.favoriteLocationsTempListKey);
   }
 
-  getWeatherByCityName(String favoriteLocationsList, listOfTemp) {}
+  Future <void>getWeatherByCityName(double lat, double lon) async {
+    emit(LoadingDataFromWeatherAPIState());
+    try {
+      currentWeather = await WeatherAPI.getWeatherData(lat: lat, lon: lon);
+      windIndexes = currentWeather.weatherOfDaysList
+          .map((e) => convertNumber<double>(e.windSpeed))
+          .toList();
+      humidityIndexes = currentWeather.weatherOfDaysList
+          .map((e) => convertNumber<double>(e.humidity))
+          .toList();
+      sliverTitle = currentWeather.currentCountryDetails!.currentCity;
+      // uvIndexes = await UVAPI.getUVData(lat: lat, lon: lon);
+      uvIndexes = await UVAPI.getUVData();
+      emit(SuccessfullyLoadedDataFromWeatherAPIState());
+    } catch (e) {
+      debugPrint("GetWeatherAPI:" + e.toString());
+      emit(FailedToLoadDataFromWeatherAPIState());
+      rethrow;
+    }
+  }
 }

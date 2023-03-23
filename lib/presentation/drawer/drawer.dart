@@ -1,14 +1,25 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:weather/models/current_weather.dart';
+import 'package:weather/models/uv_index.dart';
 import 'package:weather/presentation/drawer/widgets/Location_list_item.dart';
 import 'package:weather/presentation/drawer/widgets/drawer_title.dart';
 import 'package:weather/presentation/drawer/widgets/footer_row.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_cubit.dart';
 import 'package:weather/presentation/manage_locations.dart/manage_locations.dart';
+import 'package:weather/presentation/manage_locations.dart/manage_locations_cubit/manage_locations_cubit.dart';
 import 'package:weather/presentation/notification_screen/home_screen_noti.dart';
 import 'package:weather/presentation/plan_screen/home_page.dart';
 import 'package:weather/presentation/shared_widgets/my_button.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
+import 'package:weather/services/remote/here_api/api.dart';
+import 'package:weather/services/remote/here_api/api_key.dart';
+import 'package:weather/services/remote/here_api/here_model.dart';
+import 'package:weather/services/remote/weather_api/weather_api.dart';
+
 import 'package:weather/utils/functions/navigation_functions.dart';
+import 'package:weather/utils/loading.dart';
 import 'package:weather/utils/styles/colors.dart';
 import 'package:weather/utils/styles/device_dimensions.dart';
 import 'package:weather/utils/styles/spaces.dart';
@@ -133,6 +144,7 @@ class MyDrawer extends StatelessWidget {
 
   Widget setSavedLocationsOrSetNoLocationsAvailable(
       listOfLocations, listOfTemps) {
+    var hereAPI = HereAPI.authenicate(hereAPIKey);
     if (listOfLocations.isEmpty) {
       return Center(
         child: MyText(
@@ -150,11 +162,20 @@ class MyDrawer extends StatelessWidget {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-
-              homeScreenCubit.getWeatherByCityName(
-                  listOfLocations[index], listOfTemps[index]);
-              
               debugPrint('Tapped on $index');
+
+              showLoaderDialog(context);
+
+              var locationName = listOfLocations[index];
+
+              hereAPI.geocode(query: locationName).then((value) {
+                var lat = value.first.position!.lat;
+                var lon = value.first.position!.lng;
+                homeScreenCubit.getWeatherByCityName(lat, lon).then((value) {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                });
+              });
             },
             child: LocationListItem(
               locationName: listOfLocations[index],

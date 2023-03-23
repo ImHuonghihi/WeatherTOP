@@ -12,40 +12,33 @@ class HereAPI {
 
   HereAPI._(this._apiKey);
 
-  createParams(Uri uri,Map<String, dynamic> params) {
+  createParams(Uri uri, Map<String, dynamic> params) {
     params['apiKey'] = _apiKey;
     return uri.replace(queryParameters: params);
   }
 
   /// Geocoding location using name
-  Future<List<HereLocationData>> geocode({
-    required String query,
-    int? limit
-  }) {
-    final uri = createParams(Uri.https('geocode.search.hereapi.com', '/v1/geocode'), {
-      'q': query,
-      'limit': limit ?? 10
-    });
-    return _sendRequest(uri).then((json) {
-      final List<dynamic> items = json['items'];
-      return items.map((item) => HereLocationData.fromJson(item)).toList();
-    });
+  Future<List<HereLocationData>> geocode(
+      {required String query, int? limit}) async {
+    final uri = createParams(
+        Uri.https('geocode.search.hereapi.com', '/v1/geocode'),
+        {'q': query, 'limit': limit == null ? "10" : limit.toString()});
+    var res = await _sendRequest(uri);
+    return _getItems(res)
+        .map((item) => HereLocationData.fromJson(item))
+        .toList();
   }
 
   /// Reverse geocoding location using coordinates
-  Future<List<HereLocationData>> reverseGeocode({
-    required double lat,
-    required double lng,
-    int? limit
-  }) {
-    final uri = createParams(Uri.https('revgeocode.search.hereapi.com', '/v1/revgeocode'), {
-      'at': '$lat,$lng',
-      'limit': '${limit ?? 10}'
-    });
-    return _sendRequest(uri).then((json) {
-      final List<dynamic> items = json['items'];
-      return items.map((item) => HereLocationData.fromJson(item)).toList();
-    });
+  Future<List<HereLocationData>> reverseGeocode(
+      {required double lat, required double lng, int? limit}) async {
+    final uri = createParams(
+        Uri.https('revgeocode.search.hereapi.com', '/v1/revgeocode'),
+        {'at': '$lat,$lng', 'limit': '${limit ?? 10}'});
+    var res = await _sendRequest(uri);
+    return _getItems(res)
+        .map((item) => HereLocationData.fromJson(item))
+        .toList();
   }
 
   /// autosuggest location using name
@@ -55,26 +48,25 @@ class HereAPI {
     required String at,
   }) async {
     if (query == '' || query.length < 3) return Future.value([]);
-    final uri = createParams(Uri.https('autosuggest.search.hereapi.com', '/v1/autosuggest'), {
-      'q': query,
-      'at': at,
-      'limit': '${limit ?? 10}'
-    });
+    final uri = createParams(
+        Uri.https('autosuggest.search.hereapi.com', '/v1/autosuggest'),
+        {'q': query, 'at': at, 'limit': '${limit ?? 10}'});
     var res = await _sendRequest(uri);
-    return _getItems(res).map((item) => HereLocationData.fromJson(item)).toList();
+    return _getItems(res)
+        .map((item) => HereLocationData.fromJson(item))
+        .toList();
   }
 
   /// Autocomplete location using name
-  Future<List<HereLocationData>> autocomplete({
-    required String query,
-    int? limit
-  }) {
-    final uri = createParams(Uri.https('autocomplete.search.hereapi.com', '/v1/autocomplete'), {
-      'q': query,
-      'limit': '${limit ?? 10}'
-    });
+  Future<List<HereLocationData>> autocomplete(
+      {required String query, int? limit}) {
+    final uri = createParams(
+        Uri.https('autocomplete.search.hereapi.com', '/v1/autocomplete'),
+        {'q': query, 'limit': '${limit ?? 10}'});
     return _sendRequest(uri).then((json) {
-      return _getItems(json).map((item) => HereLocationData.fromJson(item)).toList();
+      return _getItems(json)
+          .map((item) => HereLocationData.fromJson(item))
+          .toList();
     });
   }
 
@@ -82,8 +74,6 @@ class HereAPI {
     final List<dynamic> items = json['items'];
     return items.map((item) => item as Map<String, dynamic>).toList();
   }
-
-
 
   _sendRequest(Uri uri) async {
     final response = await http.get(uri);
