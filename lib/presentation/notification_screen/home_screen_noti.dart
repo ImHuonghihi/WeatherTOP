@@ -2,15 +2,12 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:weather/presentation/drawer/widgets/drawer_title.dart';
-import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_cubit.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/services/local/shared_preferences.dart';
 import 'package:weather/utils/functions/navigation_functions.dart';
 import 'package:weather/utils/styles/colors.dart';
 import 'package:weather/utils/styles/cosntants.dart';
-import 'package:weather/utils/styles/spaces.dart';
+
 
 class NotificationSetting extends StatefulWidget {
   var homeScreenCubit;
