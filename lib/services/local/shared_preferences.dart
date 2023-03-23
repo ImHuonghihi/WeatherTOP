@@ -7,6 +7,20 @@ class SharedHandler {
   static String favoriteLocationsListKey = 'favoriteLocationList';
   static String favoriteLocationsTempListKey = 'favoriteLocationTempList';
 
+  static String extremeWeatherNotificationKey = 'extremeWeatherNotification';
+
+  
+  
+  static String weatherNotificationKey = 'weatherNotification';
+  
+  static String newsNotificationKey = 'newsNotification';
+
+  static String timeNotificationKey = 'timeNotification';
+
+
+
+
+
   static initSharedPref() async {
     await SharedPreferences.getInstance().then((value) {
       sharedPrefInstance = value;

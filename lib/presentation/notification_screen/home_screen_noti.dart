@@ -4,24 +4,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:weather/presentation/drawer/widgets/drawer_title.dart';
+import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_cubit.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
+import 'package:weather/services/local/shared_preferences.dart';
 import 'package:weather/utils/functions/navigation_functions.dart';
 import 'package:weather/utils/styles/colors.dart';
 import 'package:weather/utils/styles/cosntants.dart';
 import 'package:weather/utils/styles/spaces.dart';
 
 class NotificationSetting extends StatefulWidget {
-  const NotificationSetting({Key? key}) : super(key: key);
+  var homeScreenCubit;
+
+  NotificationSetting({Key? key, required this.homeScreenCubit})
+      : super(key: key);
 
   @override
   _NotificationSettingState createState() => _NotificationSettingState();
 }
 
 class _NotificationSettingState extends State<NotificationSetting> {
-  var scheduledDate;
+  var scheduledDate =
+      SharedHandler.getSharedPref(SharedHandler.timeNotificationKey) == false
+          ? null
+          : DateTime.parse(
+              SharedHandler.getSharedPref(SharedHandler.timeNotificationKey));
   var isNotificationEnabled = true;
-  var isExtremeWeatherWarningEnabled = true;
-  var isNewsFeedEnabled = true;
+  var isExtremeWeatherWarningEnabled =
+      SharedHandler.getSharedPref(SharedHandler.extremeWeatherNotificationKey);
+  var isNewsFeedEnabled =
+      SharedHandler.getSharedPref(SharedHandler.newsNotificationKey);
   var newsFeedRSS = 'https://vnexpress.net/rss/tin-moi-nhat.rss';
 
   var rssInterval = 1; //hours
@@ -72,6 +83,9 @@ class _NotificationSettingState extends State<NotificationSetting> {
                         onChanged: (value) {
                           setState(() {
                             isExtremeWeatherWarningEnabled = value;
+                            SharedHandler.setSharedPref(
+                                SharedHandler.extremeWeatherNotificationKey,
+                                value);
                           });
                         },
                         activeTrackColor: blueColor,
@@ -91,6 +105,8 @@ class _NotificationSettingState extends State<NotificationSetting> {
                         onChanged: (value) {
                           setState(() {
                             isNewsFeedEnabled = value;
+                            SharedHandler.setSharedPref(
+                                SharedHandler.newsNotificationKey, value);
                           });
                         },
                         activeTrackColor: blueColor,
@@ -167,7 +183,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
                       trailing: MyText(
                         text: scheduledDate == null
                             ? 'Not set'
-                            : '${scheduledDate.hour}:${scheduledDate.minute}',
+                            : '${scheduledDate!.hour}:${scheduledDate!.minute}',
                         size: fontSizeM,
                         fontWeight: FontWeight.normal,
                         color: blackColor,
@@ -176,11 +192,25 @@ class _NotificationSettingState extends State<NotificationSetting> {
                     //button to set scheduled time
                     ElevatedButton(
                       onPressed: () async {
-                        scheduledDate = await showTimePicker(
+                        var timeSet = (await showTimePicker(
                           context: context,
                           initialTime: TimeOfDay.now(),
-                        );
-                        setState(() {});
+                        ));
+                        if (timeSet == null) return;
+                        setState(() {
+                          scheduledDate = DateTime(
+                            DateTime.now().year,
+                            DateTime.now().month,
+                            DateTime.now().day,
+                            timeSet!.hour,
+                            timeSet!.minute,
+                          );
+                          SharedHandler.setSharedPref(
+                              SharedHandler.timeNotificationKey,
+                              scheduledDate.toString());
+                          AwesomeNotifications().cancel(10);
+                          widget.homeScreenCubit.initWeatherNotification();
+                        });
                       },
                       child: MyText(
                         text: 'Set scheduled time',

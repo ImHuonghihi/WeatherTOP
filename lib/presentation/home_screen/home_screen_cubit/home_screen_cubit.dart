@@ -8,10 +8,10 @@ import 'package:weather/models/current_city.dart';
 import 'package:weather/models/current_weather.dart';
 import 'package:weather/models/weather_of_day.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_states.dart';
-import 'package:weather/services/remote/firebase_notification/firebase_api.dart';
 import 'package:weather/services/remote/location_api.dart';
 import 'package:weather/services/local/shared_preferences.dart';
 import 'package:weather/utils/functions/number_converter.dart';
+import 'package:weather/utils/template_noti.dart';
 
 import '../../../models/uv_index.dart';
 import '../../../services/remote/uv_api.dart';
@@ -109,28 +109,37 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
     }
   }
 
-  _initNotification() async {
-    debugPrint('initNotification');
-    AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          channelKey: 'alerts',
-          id: 10,
-          title: currentWeather.currentCountryDetails!.currentCity +
-              Emojis.wheater_thermometer +
-              Emojis.sky_cloud_with_snow,
-          bigPicture:
-              "https://www.vietnamonline.com/media/cache/7e/e6/7ee69ffc1c68e13fe33645f21434984a.jpg",
-          notificationLayout: NotificationLayout.BigPicture,
-          body:
-              '${currentWeather.weatherOfDaysList[0].currentTemp}°C/${currentWeather.weatherOfDaysList[0].feelsLikeTemp}°C . ${currentWeather.weatherOfDaysList[0].weatherStatus}',
-        ),
-        schedule: NotificationCalendar(
-          hour: 6,
-          minute: 0,
-          second: 0,
-          repeats: true,
-        ));
+  initWeatherNotification() async {
+    String timeSet =
+        SharedHandler.getSharedPref(SharedHandler.timeNotificationKey) == false
+            ? ""
+            : SharedHandler.getSharedPref(SharedHandler.timeNotificationKey);
+
+    DateTime? scheduledDate = timeSet == "" ? null : DateTime.parse(timeSet);
+    createNotification(
+        title: currentWeather.currentCountryDetails!.currentCity +
+            Emojis.wheater_thermometer +
+            Emojis.sky_cloud_with_snow,
+        body:
+            '${currentWeather.weatherOfDaysList[0].currentTemp}°C/${currentWeather.weatherOfDaysList[0].feelsLikeTemp}°C . ${currentWeather.weatherOfDaysList[0].weatherStatus}',
+        bigPicture:
+            "https://www.vietnamonline.com/media/cache/7e/e6/7ee69ffc1c68e13fe33645f21434984a.jpg",
+        schedule: scheduledDate == null
+            ? null
+            : NotificationCalendar(
+                hour: scheduledDate.hour,
+                minute: scheduledDate.minute,
+                second: scheduledDate.second,
+                repeats: true,
+              ));
   }
+  
+
+  _initNotification() async {
+    
+    debugPrint('initNotification');
+    initWeatherNotification();  
+    }
 
   _locationListener() async {
     late StreamSubscription streamSubscription;
@@ -190,7 +199,7 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
         SharedHandler.favoriteLocationsTempListKey);
   }
 
-  Future <void>getWeatherByCityName(double lat, double lon) async {
+  Future<void> getWeatherByCityName(double lat, double lon) async {
     emit(LoadingDataFromWeatherAPIState());
     try {
       currentWeather = await WeatherAPI.getWeatherData(lat: lat, lon: lon);

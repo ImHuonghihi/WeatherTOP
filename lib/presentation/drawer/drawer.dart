@@ -1,24 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:weather/models/current_weather.dart';
-import 'package:weather/models/uv_index.dart';
 import 'package:weather/presentation/drawer/widgets/Location_list_item.dart';
 import 'package:weather/presentation/drawer/widgets/drawer_title.dart';
 import 'package:weather/presentation/drawer/widgets/footer_row.dart';
 import 'package:weather/presentation/event/lib/main.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_cubit.dart';
 import 'package:weather/presentation/manage_locations.dart/manage_locations.dart';
-import 'package:weather/presentation/manage_locations.dart/manage_locations_cubit/manage_locations_cubit.dart';
 import 'package:weather/presentation/notification_screen/home_screen_noti.dart';
-import 'package:weather/presentation/plan_screen/home_page.dart';
 import 'package:weather/presentation/shared_widgets/my_button.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/services/remote/here_api/api.dart';
 import 'package:weather/services/remote/here_api/api_key.dart';
-import 'package:weather/services/remote/here_api/here_model.dart';
-import 'package:weather/services/remote/weather_api/weather_api.dart';
-
 import 'package:weather/utils/functions/navigation_functions.dart';
 import 'package:weather/utils/loading.dart';
 import 'package:weather/utils/styles/colors.dart';
@@ -89,9 +82,8 @@ class MyDrawer extends StatelessWidget {
                   K_vSpace20,
                   //List of favorites
                   setSavedLocationsOrSetNoLocationsAvailable(
-                    homeScreenCubit.getSavedLocations(),
-                    homeScreenCubit.getSavedTemps(),
-                  ),
+                      homeScreenCubit.getSavedLocations(),
+                      homeScreenCubit.getSavedTemps()),
                   K_vSpace20,
                   MyButton(
                     fillColor: whiteColor.withOpacity(0.2),
@@ -124,7 +116,11 @@ class MyDrawer extends StatelessWidget {
                     title: 'Notifications',
                     icon: Icons.notifications_active_outlined,
                     onTap: () {
-                      navigateTo(context, const NotificationSetting());
+                      navigateTo(
+                          context,
+                          NotificationSetting(
+                            homeScreenCubit: homeScreenCubit,
+                          ));
                     },
                   ),
                   K_vSpace20,
