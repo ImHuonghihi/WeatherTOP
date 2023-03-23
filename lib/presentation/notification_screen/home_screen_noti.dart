@@ -226,38 +226,6 @@ class _NotificationSettingState extends State<NotificationSetting> {
                       ),
                     ),
                     //button to test notification
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (scheduledDate == null) {
-                          setState(() {
-                            scheduledDate = DateTime.now();
-                          });
-                        }
-                        AwesomeNotifications().createNotification(
-                          content: NotificationContent(
-                            channelKey: 'alerts',
-                            id: 10,
-                            title: Emojis.sky_cloud_with_snow,
-                            bigPicture:
-                                "https://www.vietnamonline.com/media/cache/7e/e6/7ee69ffc1c68e13fe33645f21434984a.jpg",
-                            notificationLayout: NotificationLayout.BigPicture,
-                            body: '0°C/0°C . -1',
-                          ),
-                        );
-                      },
-                      child: MyText(
-                        text: 'Test notification',
-                        size: fontSizeM,
-                        fontWeight: FontWeight.normal,
-                        color: whiteColor,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        primary: blueColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(radius),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
