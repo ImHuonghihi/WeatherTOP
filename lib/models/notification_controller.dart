@@ -48,9 +48,9 @@ class NotificationController {
     if (await AwesomeNotificationsFcm().isFirebaseAvailable) {
       try {
         final token = await AwesomeNotificationsFcm().requestFirebaseAppToken();
-        print('==================FCM Token==================');
-        print(token);
-        print('======================================');
+        // print('==================FCM Token==================');
+        // print(token);
+        // print('======================================');
         return token;
       } catch (exception) {
         debugPrint('$exception');

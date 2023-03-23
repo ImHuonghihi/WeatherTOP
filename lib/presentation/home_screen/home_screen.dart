@@ -16,7 +16,6 @@ import 'package:weather/presentation/home_screen/widgets/charts/chart_sliding_up
 import 'package:weather/presentation/home_screen/widgets/current_weather_data_viewer.dart';
 import 'package:weather/presentation/home_screen/widgets/header_container.dart';
 import 'package:weather/presentation/home_screen/widgets/sliver_title_widget.dart';
-import 'package:weather/presentation/home_screen/widgets/wind_humidity.dart';
 import 'package:weather/presentation/shared_widgets/my_button.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/presentation/shared_widgets_constant/progress_indicatior.dart';
