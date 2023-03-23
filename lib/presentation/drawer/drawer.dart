@@ -6,6 +6,7 @@ import 'package:weather/models/uv_index.dart';
 import 'package:weather/presentation/drawer/widgets/Location_list_item.dart';
 import 'package:weather/presentation/drawer/widgets/drawer_title.dart';
 import 'package:weather/presentation/drawer/widgets/footer_row.dart';
+import 'package:weather/presentation/event/lib/main.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_cubit.dart';
 import 'package:weather/presentation/manage_locations.dart/manage_locations.dart';
 import 'package:weather/presentation/manage_locations.dart/manage_locations_cubit/manage_locations_cubit.dart';
@@ -113,7 +114,7 @@ class MyDrawer extends StatelessWidget {
                     onTap: () {
                       navigateTo(
                           context,
-                          PlanHomePage(
+                          TaskManager(
                             homeScreenCubit: homeScreenCubit,
                           ));
                     },
