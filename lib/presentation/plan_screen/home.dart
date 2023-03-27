@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_cubit.dart';
+import 'package:weather/presentation/plan_screen/SearchPage/search_delegate.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/utils/functions/navigation_functions.dart';
 import 'package:weather/utils/styles/colors.dart';
 import 'package:weather/utils/styles/cosntants.dart';
 
 import 'ProjectsPage/ProjectsPage.dart';
+
 import 'TasksPage/TasksPage.dart';
 
 class TaskManager extends StatefulWidget {
@@ -27,14 +29,15 @@ class _TaskManagerState extends State<TaskManager> {
     });
   }
 
-  final List<Widget> _Pages = [
-    const ProjectsPage(),
-    TasksPage(
-      Goback: (int index) {},
-    )
-  ];
+  _getPages(HomeScreenCubit homeScreenCubit) => [
+        const ProjectsPage(),
+        TasksPage(
+          Goback: (int index) {},
+        ),
+      ];
   @override
   Widget build(BuildContext context) {
+    var pages = _getPages(widget.homeScreenCubit);
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: const SystemUiOverlayStyle(
@@ -58,14 +61,25 @@ class _TaskManagerState extends State<TaskManager> {
         centerTitle: true,
         backgroundColor: whiteColor,
       ),
-      body: _Pages.elementAt(_selectedIndex),
+      body: pages.elementAt(_selectedIndex),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          showSearch(
+              context: context,
+              delegate:
+                  TripSearchDelegate(homeScreenCubit: widget.homeScreenCubit));
+        },
+        label: const Text('Suggest a trip?'),
+        icon: const Icon(Icons.add_location_alt_rounded, color: whiteColor),
+        backgroundColor: Colors.blueAccent,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         showSelectedLabels: false,
         showUnselectedLabels: false,
         elevation: 1,
-        type: BottomNavigationBarType.shifting,
+        // type: BottomNavigationBarType.shifting,
         iconSize: 25,
-        selectedItemColor: const Color.fromARGB(255, 123, 0, 245),
+        selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey.shade400,
         currentIndex: _selectedIndex,
         onTap: _onIndexChange,
@@ -74,11 +88,8 @@ class _TaskManagerState extends State<TaskManager> {
               icon: Icon(Icons.home_rounded), label: "Home"),
           BottomNavigationBarItem(
               icon: Icon(Icons.calendar_month_rounded), label: "Tasks"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.notifications_none_outlined),
-              label: "Notifcation"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.search_rounded), label: "Search"),
+          // BottomNavigationBarItem(
+          //     icon: Icon(Icons.search_rounded), label: "Search"),
         ],
       ),
     );

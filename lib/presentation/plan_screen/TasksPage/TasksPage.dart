@@ -50,14 +50,9 @@ class _TasksPageState extends State<TasksPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        DateFormat('MMM, d').format(this._selectedDate),
-                        style: GoogleFonts.montserrat(
-                          color: Colors.black,
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      //show weather data of day
+
+                      _buildTaskWeatherData(context),
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -121,22 +116,22 @@ class _TasksPageState extends State<TasksPage> {
                       maxHeight: 250,
                     ),
                     child: ListView(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    children: [
-                      ProgressCard(
-                          ProjectName: "Project", CompletedPercent: 30),
-                      ProgressCard(
-                          ProjectName: "Project", CompletedPercent: 30),
-                      ProgressCard(
-                          ProjectName: "Project", CompletedPercent: 30),
-                      ProgressCard(
-                          ProjectName: "Project", CompletedPercent: 30),
-                      ProgressCard(
-                          ProjectName: "Project", CompletedPercent: 30),
-                      ProgressCard(
-                          ProjectName: "Project", CompletedPercent: 30),
-                    ]),
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        children: [
+                          ProgressCard(
+                              ProjectName: "Project", CompletedPercent: 30),
+                          ProgressCard(
+                              ProjectName: "Project", CompletedPercent: 30),
+                          ProgressCard(
+                              ProjectName: "Project", CompletedPercent: 30),
+                          ProgressCard(
+                              ProjectName: "Project", CompletedPercent: 30),
+                          ProgressCard(
+                              ProjectName: "Project", CompletedPercent: 30),
+                          ProgressCard(
+                              ProjectName: "Project", CompletedPercent: 30),
+                        ]),
                   )
                 ],
               ),
@@ -144,6 +139,50 @@ class _TasksPageState extends State<TasksPage> {
           ],
         ),
       ),
+    );
+  }
+
+  _buildTaskWeatherData(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          DateFormat('MMM, d').format(this._selectedDate),
+          style: GoogleFonts.montserrat(
+            color: Colors.black,
+            fontSize: 25,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 5),
+        Row(
+          children: [
+            Text(
+              "Sunny",
+              style: GoogleFonts.montserrat(
+                color: Colors.black,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Icon(
+              Icons.wb_sunny,
+              color: Colors.yellow,
+              size: 20,
+            ),
+            const SizedBox(width: 5),
+            Text(
+              "30°",
+              style: GoogleFonts.montserrat(
+                color: Colors.black,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        )
+      ],
     );
   }
 }
