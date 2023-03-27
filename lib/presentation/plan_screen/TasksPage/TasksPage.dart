@@ -26,7 +26,8 @@ class _TasksPageState extends State<TasksPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
       child: Container(
         color: const Color.fromRGBO(242, 244, 255, 1),
         child: Column(
@@ -115,9 +116,14 @@ class _TasksPageState extends State<TasksPage> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  SingleChildScrollView(
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxHeight: 250,
+                    ),
+                    child: ListView(
                     scrollDirection: Axis.vertical,
-                    child: Column(children: [
+                    shrinkWrap: true,
+                    children: [
                       ProgressCard(
                           ProjectName: "Project", CompletedPercent: 30),
                       ProgressCard(
