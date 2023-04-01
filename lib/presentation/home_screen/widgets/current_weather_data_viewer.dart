@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:weather/models/current_weather.dart';
-import 'package:weather/models/uv_index.dart';
 import 'package:weather/models/weather_of_day.dart';
 import 'package:weather/models/weather_style.dart';
 import 'package:weather/presentation/home_screen/widgets/content_container.dart';
@@ -11,16 +9,13 @@ import 'package:weather/presentation/home_screen/widgets/sunrise_sunset.dart';
 import 'package:weather/presentation/home_screen/widgets/temp_forcasting_container.dart';
 import 'package:weather/presentation/home_screen/widgets/weeklyContainer.dart';
 import 'package:weather/presentation/home_screen/widgets/wind_humidity.dart';
-import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/presentation/shared_widgets_constant/progress_indicatior.dart';
 import 'package:weather/models/quotes.dart';
 import 'package:weather/services/remote/quotes_api.dart';
-import 'package:weather/utils/chart/lib/flutter_chart.dart';
 import 'package:weather/utils/functions/time_converting.dart';
 import 'package:weather/utils/styles/colors.dart';
 
 import '../../../utils/styles/spaces.dart';
-import 'charts/chart_sliding_up_panel.dart';
 
 class CurrentWeatherDataViewer extends StatefulWidget {
   final CurrentWeather currentWeatherData;

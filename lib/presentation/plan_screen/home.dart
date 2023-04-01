@@ -33,6 +33,7 @@ class _TaskManagerState extends State<TaskManager> {
         const ProjectsPage(),
         TasksPage(
           Goback: (int index) {},
+          homeScreenCubit: homeScreenCubit,
         ),
       ];
   @override

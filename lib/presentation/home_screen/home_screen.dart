@@ -1,4 +1,4 @@
-import 'dart:math';
+
 import 'dart:ui';
 
 import 'package:animate_do/animate_do.dart';
