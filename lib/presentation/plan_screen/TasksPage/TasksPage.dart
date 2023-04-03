@@ -2,14 +2,17 @@ import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:weather/data/plan_database.dart';
 
 import '../AddNewTask/AddNewTask.dart';
 import '../ProjectsPage/ProgressCard.dart';
 
 class TasksPage extends StatefulWidget {
-  const TasksPage({
+  PlanDatabase database;
+
+  TasksPage({
     Key? key,
-    required this.Goback,
+    required this.Goback, required this.database,
   }) : super(key: key);
   final void Function(int) Goback;
   @override
@@ -19,8 +22,8 @@ class TasksPage extends StatefulWidget {
 class _TasksPageState extends State<TasksPage> {
   DateTime _selectedDate = DateTime.now();
   void _onDateChange(DateTime date) {
-    this.setState(() {
-      this._selectedDate = date;
+    setState(() {
+      _selectedDate = date;
     });
   }
 
@@ -91,9 +94,9 @@ class _TasksPageState extends State<TasksPage> {
                   const SizedBox(height: 25),
                   DatePicker(
                     DateTime.now(),
-                    initialSelectedDate: this._selectedDate,
+                    initialSelectedDate: _selectedDate,
                     selectionColor: Colors.blueAccent,
-                    onDateChange: this._onDateChange,
+                    onDateChange: _onDateChange,
                   )
                 ],
               ),
@@ -147,7 +150,7 @@ class _TasksPageState extends State<TasksPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          DateFormat('MMM, d').format(this._selectedDate),
+          DateFormat('MMM, d').format(_selectedDate),
           style: GoogleFonts.montserrat(
             color: Colors.black,
             fontSize: 25,

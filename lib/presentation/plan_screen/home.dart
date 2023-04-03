@@ -1,10 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:weather/data/plan_database.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_cubit.dart';
 import 'package:weather/presentation/plan_screen/SearchPage/search_delegate.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
+import 'package:weather/utils/functions/loader_future.dart';
 import 'package:weather/utils/functions/navigation_functions.dart';
+import 'package:weather/utils/functions/toaster.dart';
+import 'package:weather/utils/loading.dart';
 import 'package:weather/utils/styles/colors.dart';
 import 'package:weather/utils/styles/cosntants.dart';
 
@@ -29,15 +34,15 @@ class _TaskManagerState extends State<TaskManager> {
     });
   }
 
-  _getPages(HomeScreenCubit homeScreenCubit) => [
-        const ProjectsPage(),
+  _getPages(HomeScreenCubit homeScreenCubit, PlanDatabase planDB) => [
+        ProjectsPage(database: planDB),
         TasksPage(
           Goback: (int index) {},
+          database: planDB,
         ),
       ];
   @override
   Widget build(BuildContext context) {
-    var pages = _getPages(widget.homeScreenCubit);
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: const SystemUiOverlayStyle(
@@ -61,7 +66,10 @@ class _TaskManagerState extends State<TaskManager> {
         centerTitle: true,
         backgroundColor: whiteColor,
       ),
-      body: pages.elementAt(_selectedIndex),
+      body: FutureLoader.showLoadingScreen(
+          context: context,
+          future: PlanDatabase.createFutureInstance(),
+          onSuccess: (PlanDatabase db) => _buildPage(context, db)),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           showSearch(
@@ -93,5 +101,10 @@ class _TaskManagerState extends State<TaskManager> {
         ],
       ),
     );
+  }
+
+  _buildPage(BuildContext context, PlanDatabase db) {
+    var pages = _getPages(widget.homeScreenCubit, db);
+    return pages[_selectedIndex];
   }
 }

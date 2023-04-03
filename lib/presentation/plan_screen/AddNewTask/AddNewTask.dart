@@ -20,23 +20,17 @@ class AddNewTask extends StatefulWidget {
 class _AddNewTaskState extends State<AddNewTask> {
   late TextEditingController _Titlecontroller;
   late TextEditingController _Datecontroller;
-  late TextEditingController _StartTime;
-  late TextEditingController _EndTime;
+  late TextEditingController _date;
   DateTime SelectedDate = DateTime.now();
   String Category = "Meeting";
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _Titlecontroller = new TextEditingController();
-    _Datecontroller = new TextEditingController(
-        text: '${DateFormat('EEE, MMM d, ' 'yy').format(this.SelectedDate)}');
-    _StartTime = new TextEditingController(
-        text: '${DateFormat.jm().format(DateTime.now())}');
-    _EndTime = new TextEditingController(
-        text: '${DateFormat.jm().format(DateTime.now().add(
-      Duration(hours: 1),
-    ))}');
+    _Titlecontroller = TextEditingController();
+    _Datecontroller = TextEditingController(
+        text: DateFormat('EEE, MMM d, ' 'yy').format(SelectedDate));
+    _date = TextEditingController(text: DateFormat.jm().format(DateTime.now()));
   }
 
   _selectDate(BuildContext context) async {
@@ -49,28 +43,25 @@ class _AddNewTaskState extends State<AddNewTask> {
     if (selected != null && selected != SelectedDate) {
       setState(() {
         SelectedDate = selected;
-        _Datecontroller.text =
-            '${DateFormat('EEE, MMM d, ' 'yy').format(selected)}';
+        _Datecontroller.text = DateFormat('EEE, MMM d, ' 'yy').format(selected);
       });
     }
   }
 
-  _selectTime(BuildContext context, String Timetype) async {
+  _selectTime(
+    BuildContext context,
+  ) async {
     final TimeOfDay? result =
         await showTimePicker(context: context, initialTime: TimeOfDay.now());
     if (result != null) {
       setState(() {
-        if (Timetype == "StartTime") {
-          _StartTime.text = result.format(context);
-        } else {
-          _EndTime.text = result.format(context);
-        }
+        _date.text = result.format(context);
       });
     }
   }
 
   _SetCategory(String Category) {
-    this.setState(() {
+    setState(() {
       this.Category = Category;
     });
   }
@@ -109,7 +100,7 @@ class _AddNewTaskState extends State<AddNewTask> {
               children: [
                 Container(
                   padding:
-                      EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 20),
+                      const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 20),
                   // child: Row(
                   //   mainAxisAlignment: MainAxisAlignment.start,
                   //   children: [
@@ -147,10 +138,10 @@ class _AddNewTaskState extends State<AddNewTask> {
                     ),
                     decoration: InputDecoration(
                       labelText: "Title",
-                      enabledBorder: UnderlineInputBorder(
+                      enabledBorder: const UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
-                      focusedBorder: UnderlineInputBorder(
+                      focusedBorder: const UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
                       fillColor: Colors.white,
@@ -178,15 +169,15 @@ class _AddNewTaskState extends State<AddNewTask> {
                         onTap: () {
                           _selectDate(context);
                         },
-                        child: Icon(
+                        child: const Icon(
                           Icons.calendar_month_outlined,
                           color: Colors.white,
                         ),
                       ),
-                      enabledBorder: UnderlineInputBorder(
+                      enabledBorder: const UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
-                      focusedBorder: UnderlineInputBorder(
+                      focusedBorder: const UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
                       fillColor: Colors.white,
@@ -198,10 +189,10 @@ class _AddNewTaskState extends State<AddNewTask> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 40),
+                  margin: const EdgeInsets.only(top: 40),
                   padding:
-                      EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
-                  decoration: BoxDecoration(
+                      const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
+                  decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(30),
@@ -219,55 +210,25 @@ class _AddNewTaskState extends State<AddNewTask> {
                               width: MediaQuery.of(context).size.width * 0.4,
                               child: TextField(
                                 readOnly: true,
-                                controller: _StartTime,
+                                controller: _date,
                                 decoration: InputDecoration(
                                   labelText: "Date",
                                   suffixIcon: GestureDetector(
                                     onTap: () {
-                                      _selectTime(context, "StartTime");
+                                      _selectTime(
+                                        context,
+                                      );
                                     },
-                                    child: Icon(
+                                    child: const Icon(
                                       Icons.alarm,
                                       color: Colors.black26,
                                     ),
                                   ),
-                                  enabledBorder: UnderlineInputBorder(
+                                  enabledBorder: const UnderlineInputBorder(
                                     borderSide:
                                         BorderSide(color: Colors.black26),
                                   ),
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.black26),
-                                  ),
-                                  fillColor: Colors.black26,
-                                  labelStyle: GoogleFonts.montserrat(
-                                    color: Colors.black26,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.4,
-                              child: TextField(
-                                readOnly: true,
-                                controller: _EndTime,
-                                decoration: InputDecoration(
-                                  labelText: "Date",
-                                  suffixIcon: GestureDetector(
-                                    onTap: () {
-                                      _selectTime(context, "EndTime");
-                                    },
-                                    child: Icon(
-                                      Icons.alarm,
-                                      color: Colors.black26,
-                                    ),
-                                  ),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.black26),
-                                  ),
-                                  focusedBorder: UnderlineInputBorder(
+                                  focusedBorder: const UnderlineInputBorder(
                                     borderSide:
                                         BorderSide(color: Colors.black26),
                                   ),
@@ -295,10 +256,10 @@ class _AddNewTaskState extends State<AddNewTask> {
                           ),
                           decoration: InputDecoration(
                             labelText: "Description",
-                            enabledBorder: UnderlineInputBorder(
+                            enabledBorder: const UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.black26),
                             ),
-                            focusedBorder: UnderlineInputBorder(
+                            focusedBorder: const UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.black26),
                             ),
                             fillColor: Colors.black26,
@@ -329,65 +290,65 @@ class _AddNewTaskState extends State<AddNewTask> {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    this._SetCategory('Marketting');
+                                    _SetCategory('Marketting');
                                   },
                                   child: Categorcard(
                                     CategoryText: 'Marketting',
-                                    isActive: this.Category == 'Marketting',
+                                    isActive: Category == 'Marketting',
                                   ),
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    this._SetCategory('Meeting');
+                                    _SetCategory('Meeting');
                                   },
                                   child: Categorcard(
                                     CategoryText: 'Meeting',
-                                    isActive: this.Category == 'Meeting',
+                                    isActive: Category == 'Meeting',
                                   ),
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    this._SetCategory('Study');
+                                    _SetCategory('Study');
                                   },
                                   child: Categorcard(
                                     CategoryText: 'Study',
-                                    isActive: this.Category == 'Study',
+                                    isActive: Category == 'Study',
                                   ),
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    this._SetCategory('Sports');
+                                    _SetCategory('Sports');
                                   },
                                   child: Categorcard(
                                     CategoryText: 'Sports',
-                                    isActive: this.Category == 'Sports',
+                                    isActive: Category == 'Sports',
                                   ),
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    this._SetCategory('Development');
+                                    _SetCategory('Development');
                                   },
                                   child: Categorcard(
                                     CategoryText: 'Development',
-                                    isActive: this.Category == 'Development',
+                                    isActive: Category == 'Development',
                                   ),
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    this._SetCategory('Family');
+                                    _SetCategory('Family');
                                   },
                                   child: Categorcard(
                                     CategoryText: 'Family',
-                                    isActive: this.Category == 'Family',
+                                    isActive: Category == 'Family',
                                   ),
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    this._SetCategory('Urgent');
+                                    _SetCategory('Urgent');
                                   },
                                   child: Categorcard(
                                     CategoryText: 'Urgent',
-                                    isActive: this.Category == 'Urgent',
+                                    isActive: Category == 'Urgent',
                                   ),
                                 )
                               ],
@@ -395,11 +356,11 @@ class _AddNewTaskState extends State<AddNewTask> {
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 40,
                       ),
                       Container(
-                        padding: EdgeInsets.all(15),
+                        padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.blueAccent,
