@@ -39,6 +39,7 @@ class _TaskManagerState extends State<TaskManager> {
         TasksPage(
           Goback: (int index) {},
           database: planDB,
+          homeScreenCubit: homeScreenCubit,
         ),
       ];
   @override

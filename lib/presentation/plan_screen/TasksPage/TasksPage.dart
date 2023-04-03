@@ -1,19 +1,27 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:weather/data/plan_database.dart';
 
+import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_cubit.dart';
+
 import '../AddNewTask/AddNewTask.dart';
 import '../ProjectsPage/ProgressCard.dart';
 
 class TasksPage extends StatefulWidget {
+  var homeScreenCubit;
+  
   PlanDatabase database;
 
   TasksPage({
     Key? key,
-    required this.Goback, required this.database,
+    required this.homeScreenCubit,
+    required this.database,
+    required this.Goback,
   }) : super(key: key);
+
   final void Function(int) Goback;
   @override
   State<TasksPage> createState() => _TasksPageState();
@@ -55,7 +63,7 @@ class _TasksPageState extends State<TasksPage> {
                     children: [
                       //show weather data of day
 
-                      _buildTaskWeatherData(context),
+                      _buildTaskWeatherData(context, widget.homeScreenCubit),
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -145,7 +153,11 @@ class _TasksPageState extends State<TasksPage> {
     );
   }
 
-  _buildTaskWeatherData(BuildContext context) {
+  _buildTaskWeatherData(BuildContext context, homeScreenCubit) {
+    var currentTemp =
+        homeScreenCubit.currentWeather.weatherOfDaysList[0].currentTemp.ceil();
+    var weatherStatus =
+        homeScreenCubit.currentWeather.weatherOfDaysList[0].weatherStatus;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -161,7 +173,7 @@ class _TasksPageState extends State<TasksPage> {
         Row(
           children: [
             Text(
-              "Sunny",
+              "$weatherStatus",
               style: GoogleFonts.montserrat(
                 color: Colors.black,
                 fontSize: 13,
@@ -176,7 +188,7 @@ class _TasksPageState extends State<TasksPage> {
             ),
             const SizedBox(width: 5),
             Text(
-              "30°",
+              " $currentTemp°",
               style: GoogleFonts.montserrat(
                 color: Colors.black,
                 fontSize: 13,
