@@ -78,7 +78,7 @@ class HereAPI {
   _sendRequest(Uri uri) async {
     final response = await http.get(uri);
     if ([200, 201].contains(response.statusCode)) {
-      return jsonDecode(response.body);
+      return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       throw Exception('Failed to load data');
     }

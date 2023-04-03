@@ -164,14 +164,9 @@ class MyDrawer extends StatelessWidget {
               showLoaderDialog(context);
 
               var locationName = listOfLocations[index];
-
-              hereAPI.geocode(query: locationName).then((value) {
-                var lat = value.first.position!.lat;
-                var lon = value.first.position!.lng;
-                homeScreenCubit.getWeatherByCityName(lat, lon).then((value) {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                });
+              homeScreenCubit.getWeatherByCityName(locationName).then((_) {
+                Navigator.pop(context);
+                Navigator.pop(context);
               });
             },
             child: LocationListItem(

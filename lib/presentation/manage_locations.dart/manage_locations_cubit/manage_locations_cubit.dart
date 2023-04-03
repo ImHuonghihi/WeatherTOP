@@ -42,6 +42,21 @@ class ManageLocationsCubit extends Cubit<ManageLocationsStates> {
     emit(AddLocationToFavoritesState());
   }
 
+  addWeatherLocationToFavorite(CurrentLocationWeather currentLocationWeather) {
+    isFavorite = true;
+    if (!favoriteLocationsList
+        .contains(currentLocationWeather.name)) {
+      favoriteLocationsList.add(currentLocationWeather.name);
+    }
+    if (!favoriteLocationsTempsList.contains(
+        currentLocationWeather.main.temp.ceil().toString())) {
+      favoriteLocationsTempsList.add(
+          currentLocationWeather.main.temp.ceil().toString());
+    }
+    emit(AddLocationToFavoritesState());
+  }
+
+
   _addLocationNameIfNotExisted(CurrentWeather currentWeather) {
     if (!favoriteLocationsList
         .contains(currentWeather.currentCountryDetails!.currentCity)) {

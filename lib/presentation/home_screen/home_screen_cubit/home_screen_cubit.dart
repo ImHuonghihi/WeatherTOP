@@ -182,7 +182,7 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
       uvIndexes = await UVAPI.getUVData();
       emit(SuccessfullyLoadedDataFromWeatherAPIState());
     } catch (e) {
-      debugPrint("GetWeatherAPI:" + e.toString());
+      debugPrint("GetWeatherAPI:$e");
       emit(FailedToLoadDataFromWeatherAPIState());
       rethrow;
     }
@@ -199,7 +199,7 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
         SharedHandler.favoriteLocationsTempListKey);
   }
 
-  Future<void> getWeatherByCityName(double lat, double lon) async {
+  Future<void> getWeather(double lat, double lon) async {
     emit(LoadingDataFromWeatherAPIState());
     try {
       currentWeather = await WeatherAPI.getWeatherData(lat: lat, lon: lon);
@@ -214,7 +214,28 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
       uvIndexes = await UVAPI.getUVData();
       emit(SuccessfullyLoadedDataFromWeatherAPIState());
     } catch (e) {
-      debugPrint("GetWeatherAPI:" + e.toString());
+      debugPrint("GetWeatherAPI:$e");
+      emit(FailedToLoadDataFromWeatherAPIState());
+      rethrow;
+    }
+  }
+
+  Future<void> getWeatherByCityName(String cityName) async {
+    emit(LoadingDataFromWeatherAPIState());
+    try {
+      currentWeather = await WeatherAPI.getWeatherDataByCityName(cityName: cityName);
+      windIndexes = currentWeather.weatherOfDaysList
+          .map((e) => convertNumber<double>(e.windSpeed))
+          .toList();
+      humidityIndexes = currentWeather.weatherOfDaysList
+          .map((e) => convertNumber<double>(e.humidity))
+          .toList();
+      sliverTitle = currentWeather.currentCountryDetails!.currentCity;
+      // uvIndexes = await UVAPI.getUVData(lat: lat, lon: lon);
+      uvIndexes = await UVAPI.getUVData();
+      emit(SuccessfullyLoadedDataFromWeatherAPIState());
+    } catch (e) {
+      debugPrint("GetWeatherAPI:$e");
       emit(FailedToLoadDataFromWeatherAPIState());
       rethrow;
     }
