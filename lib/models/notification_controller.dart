@@ -19,8 +19,19 @@ class NotificationController {
               importance: NotificationImportance.High,
               defaultPrivacy: NotificationPrivacy.Private,
               defaultColor: Colors.deepPurple,
-              ledColor: Colors.deepPurple)
+              ledColor: Colors.deepPurple),
+          // chanel for exsrteme weather
+          NotificationChannel(
+              channelKey: 'extreme',
+              channelName: 'Extreme',
+              channelDescription: 'This is the channel for extreme weather',
+              playSound: true,
+              importance: NotificationImportance.High,
+              defaultPrivacy: NotificationPrivacy.Private,
+              defaultColor: Colors.red,
+              ledColor: Colors.red),
         ],
+
         debug: debug);
   }
 
