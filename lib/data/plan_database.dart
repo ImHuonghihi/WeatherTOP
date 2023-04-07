@@ -34,6 +34,7 @@ class PlanDatabase {
         id $idType,
         title $textType,
         description $textType,
+        category $textType,
         date $textType,
         progress $intType,
         isDone $intType
@@ -84,6 +85,20 @@ class PlanDatabase {
       await db.rawQuery('SELECT COUNT(*) FROM plans'),
     )!;
   }
+
+  // get plans by date (day, week, month, year)
+  Future<List<Plan>> getPlansByDate(String date) async {
+    final db = await _database;
+    final res = await db.query(
+      'plans',
+      where: 'date = ?',
+      whereArgs: [date],
+    );
+    return res.isNotEmpty
+        ? res.map((e) => Plan.fromMap(e)).toList()
+        : <Plan>[];
+  }
+
 
   Future close() async {
     final db = await _database;

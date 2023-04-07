@@ -5,6 +5,7 @@ class Plan {
   final String title;
   final String description;
   final String date;
+  final String category;
   int progress = 0;
   bool isDone = false;
 
@@ -13,6 +14,7 @@ class Plan {
     required this.title,
     required this.description,
     required this.date,
+    required this.category,
     this.progress = 0,
     this.isDone = false,
   });
@@ -21,6 +23,7 @@ class Plan {
         id: dataMap['id'],
         title: dataMap['title'],
         description: dataMap['description'],
+        category: dataMap['category'],
         date: dataMap['date'],
         progress: dataMap['progress'],
         isDone: dataMap['isDone'] == 1,

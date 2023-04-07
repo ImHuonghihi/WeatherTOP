@@ -53,12 +53,12 @@ class FutureLoader {
   }
 
   // function that use FutureBuilder and show loading indicator
-  static Widget showLoadingIndicator<T>(
+  static showLoadingIndicator<T>(
       {required BuildContext context,
       required Future<T> future,
       required Widget Function(T) onSuccess,
-      Widget Function()? onLoading,
-      Widget Function()? onError,
+      dynamic Function()? onLoading,
+      dynamic Function()? onError,
       }) {
     return FutureBuilder<T>(
       future: future,

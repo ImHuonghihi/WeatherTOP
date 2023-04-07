@@ -200,8 +200,8 @@ class _NotificationSettingState extends State<NotificationSetting> {
                             DateTime.now().year,
                             DateTime.now().month,
                             DateTime.now().day,
-                            timeSet!.hour,
-                            timeSet!.minute,
+                            timeSet.hour,
+                            timeSet.minute,
                           );
                           SharedHandler.setSharedPref(
                               SharedHandler.timeNotificationKey,
@@ -210,17 +210,17 @@ class _NotificationSettingState extends State<NotificationSetting> {
                           widget.homeScreenCubit.initWeatherNotification();
                         });
                       },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: blueColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(radius),
+                        ),
+                      ),
                       child: MyText(
                         text: 'Set scheduled time',
                         size: fontSizeM,
                         fontWeight: FontWeight.normal,
                         color: whiteColor,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        primary: blueColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(radius),
-                        ),
                       ),
                     ),
                     //button to test notification
