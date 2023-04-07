@@ -10,6 +10,7 @@ import 'package:weather/models/weather_of_day.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_states.dart';
 import 'package:weather/services/remote/location_api.dart';
 import 'package:weather/services/local/shared_preferences.dart';
+import 'package:weather/utils/exstreme_weather_noti.dart';
 import 'package:weather/utils/functions/number_converter.dart';
 import 'package:weather/utils/template_noti.dart';
 
@@ -87,6 +88,7 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
       await _getWeatherApiData();
     }
     _initNotification();
+    _initWarningNotification();
   }
 
   _setPosition() async {
@@ -133,13 +135,17 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
                 repeats: true,
               ));
   }
-  
 
   _initNotification() async {
-    
     debugPrint('initNotification');
-    initWeatherNotification();  
-    }
+    initWeatherNotification();
+  }
+
+  _initWarningNotification() async {
+    debugPrint("initWarningNotification");
+    createExstremeWeatherNoti(currentWeather);
+  }
+
 
   _locationListener() async {
     late StreamSubscription streamSubscription;
@@ -223,7 +229,8 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
   Future<void> getWeatherByCityName(String cityName) async {
     emit(LoadingDataFromWeatherAPIState());
     try {
-      currentWeather = await WeatherAPI.getWeatherDataByCityName(cityName: cityName);
+      currentWeather =
+          await WeatherAPI.getWeatherDataByCityName(cityName: cityName);
       windIndexes = currentWeather.weatherOfDaysList
           .map((e) => convertNumber<double>(e.windSpeed))
           .toList();
