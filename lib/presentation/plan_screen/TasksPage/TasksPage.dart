@@ -70,7 +70,7 @@ class _TasksPageState extends State<TasksPage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const AddNewTask()));
+                                  builder: (context) => AddNewTask(database: widget.database,)));
                         },
                         child: Container(
                           padding: const EdgeInsets.all(15),

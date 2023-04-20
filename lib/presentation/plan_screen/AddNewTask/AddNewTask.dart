@@ -11,7 +11,8 @@ import 'package:weather/utils/styles/cosntants.dart';
 import 'CategoryCard.dart';
 
 class AddNewTask extends StatefulWidget {
-  const AddNewTask({Key? key}) : super(key: key);
+  final PlanDatabase database;
+  const AddNewTask({Key? key, this.database}) : super(key: key);
 
   @override
   State<AddNewTask> createState() => _AddNewTaskState();
@@ -99,8 +100,8 @@ class _AddNewTaskState extends State<AddNewTask> {
             child: Column(
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 20),
+                  padding: const EdgeInsets.only(
+                      left: 10, right: 10, top: 20, bottom: 20),
                   // child: Row(
                   //   mainAxisAlignment: MainAxisAlignment.start,
                   //   children: [
@@ -190,8 +191,8 @@ class _AddNewTaskState extends State<AddNewTask> {
                 ),
                 Container(
                   margin: const EdgeInsets.only(top: 40),
-                  padding:
-                      const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
+                  padding: const EdgeInsets.only(
+                      left: 20, right: 20, top: 20, bottom: 20),
                   decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
@@ -359,22 +360,27 @@ class _AddNewTaskState extends State<AddNewTask> {
                       const SizedBox(
                         height: 40,
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.blueAccent,
+                      GestureDetector(
+                          onTap: () {
+                            _AddTask();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.blueAccent,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Create Task",
+                              style: GoogleFonts.montserrat(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          )
                         ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          "Create Task",
-                          style: GoogleFonts.montserrat(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      )
                     ],
                   ),
                 ),
@@ -384,5 +390,24 @@ class _AddNewTaskState extends State<AddNewTask> {
         ),
       ),
     );
+  }
+
+  // function to add task to plan database
+  void _AddTask() async {
+    if (_Datecontroller.text.isNotEmpty &&
+        _date.text.isNotEmpty &&
+        _Taskcontroller.text.isNotEmpty &&
+        Category.isNotEmpty) {
+      var plan = Plan(
+        title: title.text,
+        date: date.text,
+        category: Category,
+        description: "",
+      );
+      var result = await _dbHelper.insertPlan(plan);
+      if (result != 0) {
+        Navigator.pop(context);
+      }
+    }
   }
 }
