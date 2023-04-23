@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:weather/data/plan_database.dart';
+import 'package:weather/models/plan.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/utils/functions/navigation_functions.dart';
+import 'package:weather/utils/functions/toaster.dart';
 import 'package:weather/utils/styles/colors.dart';
 import 'package:weather/utils/styles/cosntants.dart';
 
@@ -12,7 +15,7 @@ import 'CategoryCard.dart';
 
 class AddNewTask extends StatefulWidget {
   final PlanDatabase database;
-  const AddNewTask({Key? key, this.database}) : super(key: key);
+  const AddNewTask({Key? key, required this.database}) : super(key: key);
 
   @override
   State<AddNewTask> createState() => _AddNewTaskState();
@@ -21,14 +24,17 @@ class AddNewTask extends StatefulWidget {
 class _AddNewTaskState extends State<AddNewTask> {
   late TextEditingController _Titlecontroller;
   late TextEditingController _Datecontroller;
+  late TextEditingController _descriptionController;
   late TextEditingController _date;
   DateTime SelectedDate = DateTime.now();
+  DateTime selectedTime = DateTime.now();
   String Category = "Meeting";
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _Titlecontroller = TextEditingController();
+    _descriptionController = TextEditingController();
     _Datecontroller = TextEditingController(
         text: DateFormat('EEE, MMM d, ' 'yy').format(SelectedDate));
     _date = TextEditingController(text: DateFormat.jm().format(DateTime.now()));
@@ -56,6 +62,10 @@ class _AddNewTaskState extends State<AddNewTask> {
         await showTimePicker(context: context, initialTime: TimeOfDay.now());
     if (result != null) {
       setState(() {
+        var now = DateTime.now();
+        selectedTime = DateTime(DateTime.now().year, DateTime.now().month,
+            DateTime.now().day, result.hour, result.minute);
+
         _date.text = result.format(context);
       });
     }
@@ -247,6 +257,7 @@ class _AddNewTaskState extends State<AddNewTask> {
                       Padding(
                         padding: const EdgeInsets.only(top: 10, bottom: 20),
                         child: TextFormField(
+                          controller: _descriptionController,
                           keyboardType: TextInputType.multiline,
                           minLines: 1,
                           maxLines: 8,
@@ -361,9 +372,7 @@ class _AddNewTaskState extends State<AddNewTask> {
                         height: 40,
                       ),
                       GestureDetector(
-                          onTap: () {
-                            _AddTask();
-                          },
+                          onTap: _AddTask,
                           child: Container(
                             padding: const EdgeInsets.all(15),
                             decoration: BoxDecoration(
@@ -379,8 +388,7 @@ class _AddNewTaskState extends State<AddNewTask> {
                                 fontWeight: FontWeight.normal,
                               ),
                             ),
-                          )
-                        ),
+                          )),
                     ],
                   ),
                 ),
@@ -394,20 +402,28 @@ class _AddNewTaskState extends State<AddNewTask> {
 
   // function to add task to plan database
   void _AddTask() async {
-    if (_Datecontroller.text.isNotEmpty &&
-        _date.text.isNotEmpty &&
-        _Taskcontroller.text.isNotEmpty &&
-        Category.isNotEmpty) {
-      var plan = Plan(
-        title: title.text,
-        date: date.text,
-        category: Category,
-        description: "",
-      );
-      var result = await _dbHelper.insertPlan(plan);
-      if (result != 0) {
-        Navigator.pop(context);
+    try {
+      if (_Datecontroller.text.isNotEmpty &&
+          _date.text.isNotEmpty &&
+          Category.isNotEmpty) {
+        
+        var plan = Plan(
+          title: _Titlecontroller.text,
+          date: SelectedDate.toIso8601String(),
+          time: selectedTime.toIso8601String(),
+          category: Category,
+          description: _descriptionController.text,
+        );
+        var result = await widget.database.insertPlan(plan);
+        if (result != 0) {
+          showToastMessage("Added Successfully",
+              color: Colors.black, textColor: Colors.green);
+          Navigator.pop(context);
+        }
       }
+    } catch (e) {
+      showToastMessage(e.toString(),
+          color: Colors.black, textColor: Colors.red);
     }
   }
 }

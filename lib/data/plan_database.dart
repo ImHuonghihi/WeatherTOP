@@ -28,7 +28,7 @@ class PlanDatabase {
     const textType = 'TEXT NOT NULL';
     const intType = 'INTEGER NOT NULL';
     const tablePlans = 'plans';
-    
+
     return db.execute('''
       CREATE TABLE $tablePlans (
         id $idType,
@@ -36,6 +36,7 @@ class PlanDatabase {
         description $textType,
         category $textType,
         date $textType,
+        time $textType,
         progress $intType,
         isDone $intType
       )
@@ -43,11 +44,9 @@ class PlanDatabase {
   }
 
   Future<List<Plan>> getPlans() async {
-    final db = await _database;
+    final Database db = await _database;
     final res = await db.query('plans');
-    return res.isNotEmpty
-        ? res.map((e) => Plan.fromMap(e)).toList()
-        : <Plan>[];
+    return res.isNotEmpty ? res.map((e) => Plan.fromMap(e)).toList() : <Plan>[];
   }
 
   Future<int> insertPlan(Plan plan) async {
@@ -87,23 +86,34 @@ class PlanDatabase {
   }
 
   // get plans by date (day, week, month, year)
-  Future<List<Plan>> getPlansByDate(String date) async {
-    final db = await _database;
+  Future<List<Plan>> getPlansByDate(String dateStr) async {
+    final Database db = await _database;
     final res = await db.query(
       'plans',
       where: 'date = ?',
-      whereArgs: [date],
+      whereArgs: [dateStr]
     );
+    // filter by date
+
     return res.isNotEmpty
-        ? res.map((e) => Plan.fromMap(e)).toList()
+        ? res
+            .map((e) {
+              return Plan.fromMap(e);
+            }).toList()
         : <Plan>[];
   }
-
 
   Future close() async {
     final db = await _database;
     db.close();
   }
+}
 
-  
+// check date if they are in the same day, week, month, year
+bool isSameDay(String dateStr1, String dateStr2) {
+  final date1 = DateTime.parse(dateStr1);
+  final date2 = DateTime.parse(dateStr2);
+  return date1.year == date2.year &&
+      date1.month == date2.month &&
+      date1.day == date2.day;
 }

@@ -11,7 +11,8 @@ class ProjectsPage extends StatelessWidget {
   PlanDatabase database;
 
   ProjectsPage({
-    Key? key, required this.database,
+    Key? key,
+    required this.database,
   }) : super(key: key);
 
   @override
@@ -23,14 +24,11 @@ class ProjectsPage extends StatelessWidget {
           padding: const EdgeInsets.all(0),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                
             const SizedBox(
               height: 10,
             ),
-            
             const Padding(
-              padding:
-                  EdgeInsets.only(top: 0, bottom: 0, left: 20, right: 0),
+              padding: EdgeInsets.only(top: 0, bottom: 0, left: 20, right: 0),
               child: OverView(),
             ),
             Padding(
@@ -47,7 +45,7 @@ class ProjectsPage extends StatelessWidget {
                     ),
                   ),
                   _buildScrollableList(context)
-                  
+
                   // ProgressCard(ProjectName: "Project", CompletedPercent: 30),
                   // ProgressCard(ProjectName: "Project", CompletedPercent: 30),
                   // ProgressCard(ProjectName: "Project", CompletedPercent: 30),
@@ -62,55 +60,17 @@ class ProjectsPage extends StatelessWidget {
   }
 
   _buildScrollableList(BuildContext context) => Container(
-        height: 200,
-        child: FutureLoader.showLoadingIndicator(
-          context: context,
-          future: database.getPlans(),
-          onSuccess: (List<Plan> plans) {
-            return ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: plans.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: const EdgeInsets.only(left: 20),
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 100,
-                        width: 100,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Center(
-                          child: Text(
-                            plans[index].title,
-                            style: GoogleFonts.montserrat(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        plans[index].isDone ? "Completed" : "In Progress",
-                        style: GoogleFonts.montserrat(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            );
-          },
-          
-        )
-      );
+      height: 200,
+      child: FutureLoader.showLoadingIndicator(
+        context: context,
+        future: database.getPlans(),
+        onSuccess: (List<Plan> plans) {
+          return ListView.builder(
+            scrollDirection: Axis.vertical,
+            itemCount: plans.length,
+            itemBuilder: (BuildContext context, int index) =>
+                plans[index].toScrollProgressCard(),
+          );
+        },
+      ));
 }

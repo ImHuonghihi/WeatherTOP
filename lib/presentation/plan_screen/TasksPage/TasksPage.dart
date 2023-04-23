@@ -45,7 +45,7 @@ class _TasksPageState extends State<TasksPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+            IntrinsicHeight(child: Container(
               padding: const EdgeInsets.all(25),
               decoration: const BoxDecoration(
                   color: Color.fromARGB(255, 159, 192, 248),
@@ -70,7 +70,9 @@ class _TasksPageState extends State<TasksPage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => AddNewTask(database: widget.database,)));
+                                  builder: (context) => AddNewTask(
+                                        database: widget.database,
+                                      )));
                         },
                         child: Container(
                           padding: const EdgeInsets.all(15),
@@ -106,10 +108,13 @@ class _TasksPageState extends State<TasksPage> {
                     initialSelectedDate: _selectedDate,
                     selectionColor: Colors.blueAccent,
                     onDateChange: _onDateChange,
-                  )
+                    height: 90,
+                  ),
+                  const SizedBox(height: 25,),
+                  Expanded(child: Container()),
                 ],
               ),
-            ),
+            )),
             Container(
               padding: const EdgeInsets.all(25),
               child: Column(
@@ -145,10 +150,12 @@ class _TasksPageState extends State<TasksPage> {
                       },
                       onError: () => const Text("Error"),
                     ),
-                  )
+                  ),
                 ],
               ),
-            )
+            ),
+            // fill the rest of the screen with empty space
+            SizedBox(height: MediaQuery.of(context).size.height * 0.5),
           ],
         ),
       ),
@@ -160,7 +167,7 @@ class _TasksPageState extends State<TasksPage> {
         homeScreenCubit.currentWeather.weatherOfDaysList[0].currentTemp.ceil();
     var weatherStatus =
         homeScreenCubit.currentWeather.weatherOfDaysList[0].weatherStatus;
-    return Column(
+    return IntrinsicHeight(child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -200,7 +207,7 @@ class _TasksPageState extends State<TasksPage> {
           ],
         )
       ],
-    );
+    ));
   }
 
   _buildTaskByDate(DateTime selectedDate) async {
@@ -208,43 +215,7 @@ class _TasksPageState extends State<TasksPage> {
         await widget.database.getPlansByDate(selectedDate.toIso8601String());
     var taskListWidget = <Widget>[];
     for (var task in taskList) {
-      taskListWidget.add(
-        Container(
-          margin: const EdgeInsets.only(bottom: 15),
-          padding: const EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    task.title,
-                    style: GoogleFonts.montserrat(
-                      color: Colors.black,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    task.description,
-                    style: GoogleFonts.montserrat(
-                      color: Colors.black,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
+      taskListWidget.add(task.toScrollProgressCard());
     }
     return taskListWidget;
   }

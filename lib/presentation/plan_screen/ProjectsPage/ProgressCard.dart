@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:weather/utils/widgets/gesture_container.dart';
 
 class ProgressCard extends StatelessWidget {
   ProgressCard(
@@ -9,14 +10,19 @@ class ProgressCard extends StatelessWidget {
   late int CompletedPercent;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 10),
+    return GestureContainer.constrainedBox(
+      onTap: () {},
+      constraints: BoxConstraints(
+        maxHeight: 70,
+        minWidth: MediaQuery.of(context).size.width * 0.9,
+      ),
+      margin: const EdgeInsets.only(top: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 3.0,
-            margin: EdgeInsets.only(top: 10),
+            margin: const EdgeInsets.only(top: 10),
             height: 49 * 0.01 * this.CompletedPercent,
             decoration: BoxDecoration(
               color: Colors.blueAccent,
@@ -26,7 +32,7 @@ class ProgressCard extends StatelessWidget {
           Expanded(
             child: Container(
               height: 70,
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
@@ -41,7 +47,7 @@ class ProgressCard extends StatelessWidget {
                   ),
                   child: const Icon(Icons.assignment, color: Colors.white),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Column(
@@ -49,7 +55,7 @@ class ProgressCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                      this.ProjectName,
+                      ProjectName,
                       style: GoogleFonts.montserrat(
                         color: Colors.black,
                         fontSize: 15,
@@ -57,7 +63,7 @@ class ProgressCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "2 days ago",
+                      "$CompletedPercent% Completed",
                       style: GoogleFonts.montserrat(
                         color: Colors.grey,
                         fontSize: 10,
@@ -67,7 +73,7 @@ class ProgressCard extends StatelessWidget {
                   ],
                 ),
                 Expanded(child: Container()),
-                Icon(
+                const Icon(
                   Icons.more_vert_outlined,
                   color: Colors.grey,
                 ),
@@ -78,4 +84,97 @@ class ProgressCard extends StatelessWidget {
       ),
     );
   }
+}
+
+// progress card without expand widget for list scrolling
+class ScrollProgressCard extends StatelessWidget {
+  void Function()? onCardTap;
+  ScrollProgressCard(
+      {Key? key,
+      required this.ProjectName,
+      required this.CompletedPercent,
+      this.onCardTap})
+      : super(key: key);
+  late String ProjectName;
+  late int CompletedPercent;
+  @override
+  Widget build(BuildContext context) {
+    return _buildCard(context, onCardTap);
+  }
+
+  Widget _buildCard(BuildContext context, void Function()? onCardTap) =>
+      GestureContainer.constrainedBox(
+        onTap: () {},
+        constraints: BoxConstraints(
+          maxHeight: 70,
+          minWidth: MediaQuery.of(context).size.width * 0.9,
+        ),
+        margin: const EdgeInsets.only(top: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 3.0,
+              margin: const EdgeInsets.only(top: 10),
+              height: 49 * 0.01 * this.CompletedPercent,
+              decoration: BoxDecoration(
+                color: Colors.blueAccent,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                height: 70,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: IntrinsicWidth(
+                    child: Row(children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: const BoxDecoration(
+                      color: Colors.blueAccent,
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                    child: const Icon(Icons.assignment, color: Colors.white),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        ProjectName,
+                        style: GoogleFonts.montserrat(
+                          color: Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Text(
+                        "$CompletedPercent% Completed",
+                        style: GoogleFonts.montserrat(
+                          color: Colors.grey,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )
+                    ],
+                  ),
+                  Expanded(child: Container()),
+                  const Icon(
+                    Icons.more_vert_outlined,
+                    color: Colors.grey,
+                  ),
+                ])),
+              ),
+            ),
+          ],
+        ),
+      );
 }
