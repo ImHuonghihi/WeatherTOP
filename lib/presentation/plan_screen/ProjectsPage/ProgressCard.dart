@@ -152,8 +152,11 @@ class ScrollProgressCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
+                      // name of the project. If the name is too long, it will be truncated
                       Text(
-                        ProjectName,
+                        ProjectName.length > 15
+                            ? "${ProjectName.substring(0, 15)}..."
+                            : ProjectName,
                         style: GoogleFonts.montserrat(
                           color: Colors.black,
                           fontSize: 15,

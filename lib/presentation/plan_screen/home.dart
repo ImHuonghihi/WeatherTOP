@@ -44,6 +44,7 @@ class _TaskManagerState extends State<TaskManager> {
       ];
   @override
   Widget build(BuildContext context) {
+    var database;
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: const SystemUiOverlayStyle(
@@ -70,13 +71,16 @@ class _TaskManagerState extends State<TaskManager> {
       body: FutureLoader.showLoadingScreen(
           context: context,
           future: PlanDatabase.createFutureInstance(),
-          onSuccess: (PlanDatabase db) => _buildPage(context, db)),
+          onSuccess: (PlanDatabase db) {
+            database = db;
+            return _buildPage(context, db);
+          }),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           showSearch(
               context: context,
-              delegate:
-                  TripSearchDelegate(homeScreenCubit: widget.homeScreenCubit));
+              delegate: TripSearchDelegate(
+                  homeScreenCubit: widget.homeScreenCubit, database: database));
         },
         label: const Text('Suggest a trip?'),
         icon: const Icon(Icons.add_location_alt_rounded, color: whiteColor),

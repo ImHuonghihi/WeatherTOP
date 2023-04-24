@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:weather/utils/functions/number_converter.dart';
+
 class GeonameData {
   late String country, name, timezone;
   late double lat, lon;
@@ -15,13 +18,13 @@ class GeonameData {
 
 class Feature {
   late String type;
-  late int id;
+  late String id;
   late Geometry geometry;
   late TravelLocation properties;
 
   Feature.fromJson(Map<String, dynamic> json) {
-    type = json['type'];
-    id = json['id'];
+    type = json['type'].toString();
+    id = json['id'].toString();
     geometry = Geometry.fromJson(json['geometry']);
     properties = TravelLocation.fromJson(json['properties']);
   }
@@ -44,10 +47,16 @@ class TravelLocation {
     name = json['name'];
     osm = json['osm'];
     xid = json['xid'];
-    wikidata = json['wikidata'];
-    kind = json['kind'];
-    lat = json['point']['lat'];
-    lon = json['point']['lon'];
+    wikidata = json['wikidata'] ?? '';
+    kind = json['kinds'] ?? '';
+    if (json.containsKey('point')) {
+      lat = json['point']['lat'] ?? 0.0;
+      lon = json['point']['lon'] ?? 0.0;
+    } else {
+       lat = 0.0;
+      lon = 0.0;
+    }
+   
   }
 }
 
@@ -57,7 +66,7 @@ class Geometry {
   Geometry({required this.type, required this.coordinates});
   Geometry.fromJson(Map<String, dynamic> json) {
     type = json['type'];
-    coordinates = json['coordinates'];
+    coordinates = List<double>.from(json['coordinates']).map<double>((e) => e).toList();
   }
 }
 

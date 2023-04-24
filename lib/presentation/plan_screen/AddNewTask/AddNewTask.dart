@@ -16,7 +16,8 @@ import 'CategoryCard.dart';
 class AddNewTask extends StatefulWidget {
   final PlanDatabase database;
   final int? planId;
-  const AddNewTask({Key? key, required this.database, this.planId})
+  final Plan? plan;
+  const AddNewTask({Key? key, required this.database, this.planId, this.plan})
       : super(key: key);
 
   @override
@@ -30,7 +31,7 @@ class _AddNewTaskState extends State<AddNewTask> {
   late TextEditingController _date;
   DateTime SelectedDate = DateTime.now();
   DateTime selectedTime = DateTime.now();
-  String Category = "Meeting";
+  String Category = "Work";
   @override
   void initState() {
     // TODO: implement initState
@@ -57,6 +58,12 @@ class _AddNewTaskState extends State<AddNewTask> {
           text: DateFormat('EEE, MMM d, ' 'yy').format(SelectedDate));
       _date =
           TextEditingController(text: DateFormat.jm().format(DateTime.now()));
+
+      if (widget.plan != null) {
+        _Titlecontroller.text = widget.plan!.title;
+        _descriptionController.text = widget.plan!.description;
+        Category = widget.plan!.category;
+      }
     }
   }
 
@@ -97,8 +104,12 @@ class _AddNewTaskState extends State<AddNewTask> {
     });
   }
 
+  var categoryWidget;
+
   @override
   Widget build(BuildContext context) {
+    categoryWidget = categoryPicker(
+        categories: ["Work", "Personal", "Travel", "Health", "Other"], defaultCategory: Category);
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: const SystemUiOverlayStyle(
@@ -316,75 +327,10 @@ class _AddNewTaskState extends State<AddNewTask> {
                                 decoration: TextDecoration.none,
                               ),
                             ),
-                            Wrap(
-                              alignment: WrapAlignment.spaceEvenly,
-                              crossAxisAlignment: WrapCrossAlignment.start,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    _SetCategory('Marketting');
-                                  },
-                                  child: Categorcard(
-                                    CategoryText: 'Marketting',
-                                    isActive: Category == 'Marketting',
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    _SetCategory('Meeting');
-                                  },
-                                  child: Categorcard(
-                                    CategoryText: 'Meeting',
-                                    isActive: Category == 'Meeting',
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    _SetCategory('Study');
-                                  },
-                                  child: Categorcard(
-                                    CategoryText: 'Study',
-                                    isActive: Category == 'Study',
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    _SetCategory('Sports');
-                                  },
-                                  child: Categorcard(
-                                    CategoryText: 'Sports',
-                                    isActive: Category == 'Sports',
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    _SetCategory('Development');
-                                  },
-                                  child: Categorcard(
-                                    CategoryText: 'Development',
-                                    isActive: Category == 'Development',
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    _SetCategory('Family');
-                                  },
-                                  child: Categorcard(
-                                    CategoryText: 'Family',
-                                    isActive: Category == 'Family',
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    _SetCategory('Urgent');
-                                  },
-                                  child: Categorcard(
-                                    CategoryText: 'Urgent',
-                                    isActive: Category == 'Urgent',
-                                  ),
-                                )
-                              ],
-                            )
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            categoryWidget,
                           ],
                         ),
                       ),
@@ -468,5 +414,27 @@ class _AddNewTaskState extends State<AddNewTask> {
       showToastMessage(e.toString(),
           color: Colors.black, textColor: Colors.red);
     }
+  }
+
+  categoryPicker({required List<String> categories, String? defaultCategory}) {
+    if (defaultCategory != null) {
+      Category = defaultCategory;
+    }
+    var _cPicker = categories
+        .map((c) => GestureDetector(
+              onTap: () {
+                _SetCategory(c);
+              },
+              child: Categorcard(
+                CategoryText: c,
+                isActive: Category == c || defaultCategory == c,
+              ),
+            ))
+        .toList();
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween,
+      crossAxisAlignment: WrapCrossAlignment.start,
+      children: _cPicker,
+    );
   }
 }

@@ -33,20 +33,27 @@ class TripAPI {
         "http://api.opentripmap.com/0.1/$lang/places/${this.feature}?apikey=$tripAPIKey&${this.options}";
   }
 
-  Future<List<TravelLocation>> getPlacesByRadius(
+  Future<List<Feature>> getPlacesByRadius(
       {required double lat,
       required double lon,
+      String? kinds,
       required double radius}) async {
     createOptions(Features.radius, {
       'lat': lat,
       'lon': lon,
       'radius': radius,
       'lang': lang,
+      'kinds': kinds ?? 'interesting_places',
     });
     Response response = await get(Uri.parse(url));
-    return jsonDecode(response.body)
-        .map((e) => TravelLocation.fromJson(e))
-        .toList();
+    var json = jsonDecode(response.body);
+    if (json['error'] != null) {
+      throw Exception(json['error']);
+    }
+    var features = json['features'];
+    // print type of features
+    debugPrint(features.runtimeType.toString());
+    return features.map<Feature>((e) => Feature.fromJson(e)).toList();
   }
 
   Future<List<TravelLocation>> getPlacesByBBox({
@@ -92,13 +99,15 @@ class TripAPI {
         .toList();
   }
 
-  Future<List<TravelLocation>> getPlacesAutoSuggest({
+  Future<List<Feature>?> getPlacesAutoSuggest({
     required String name,
     required double radius,
     required double lat,
     required double lon,
     required int limit,
+    String? kinds
   }) async {
+    if (name.length < 3) return List.empty();
     createOptions(Features.autosuggest, {
       'lang': lang,
       'name': name,
@@ -106,13 +115,16 @@ class TripAPI {
       'lat': lat,
       'lon': lon,
       'limit': limit,
+      'kinds': kinds ?? 'interesting_places',
     });
     Response response = await get(Uri.parse(url));
     var json = jsonDecode(response.body);
     if (json['error'] != null) {
-      throw Exception(json['error']);
+      return null;
     }
-    var features = json['features'].map((e) => Feature.fromJson(e));
-    return features.map((e) => TravelLocation.fromJson(e)).toList();
+    var features = json['features'];
+    // print type of features
+    debugPrint(features.runtimeType.toString());
+    return features.map<Feature>((e) => Feature.fromJson(e)).toList();
   }
 }
