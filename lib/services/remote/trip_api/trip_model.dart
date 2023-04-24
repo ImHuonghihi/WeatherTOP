@@ -13,10 +13,24 @@ class GeonameData {
   }
 }
 
+class Feature {
+  late String type;
+  late int id;
+  late Geometry geometry;
+  late TravelLocation properties;
+
+  Feature.fromJson(Map<String, dynamic> json) {
+    type = json['type'];
+    id = json['id'];
+    geometry = Geometry.fromJson(json['geometry']);
+    properties = TravelLocation.fromJson(json['properties']);
+  }
+}
+
 class TravelLocation {
   late String name, osm, xid, wikidata, kind;
   late double lat, lon;
-
+  late double? dist;
   TravelLocation(
       {required this.name,
       required this.osm,
@@ -37,11 +51,20 @@ class TravelLocation {
   }
 }
 
+class Geometry {
+  late String type;
+  late List<double> coordinates;
+  Geometry({required this.type, required this.coordinates});
+  Geometry.fromJson(Map<String, dynamic> json) {
+    type = json['type'];
+    coordinates = json['coordinates'];
+  }
+}
+
 class XIDData {
   late String kinds, geometry;
   late List<String> attributes;
   late double latMin, latMax, lonMin, lonMax, lon, lat;
-
 
   XIDData.fromJson(Map<String, dynamic> json) {
     kinds = json['kinds'];
