@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:weather/data/plan_database.dart';
+import 'package:weather/models/plan.dart';
+import 'package:weather/utils/functions/loader_future.dart';
 
 import 'OverViewCard.dart';
 
 
 
 class OverView extends StatefulWidget {
-  const OverView({Key? key}) : super(key: key);
+  final PlanDatabase database;
+  const OverView({Key? key, required this.database}) : super(key: key);
 
   @override
   State<OverView> createState() => _OverViewState();
@@ -28,7 +32,7 @@ class _OverViewState extends State<OverView> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 10),
+      margin: const EdgeInsets.only(top: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -40,17 +44,17 @@ class _OverViewState extends State<OverView> with TickerProviderStateMixin {
               borderRadius: BorderRadius.circular(20),
               color: Colors.white,
             ),
-            padding: EdgeInsets.all(0),
+            padding: const EdgeInsets.all(0),
             unselectedLabelColor: Colors.grey.shade400,
             tabs: [
-              Tab(
-                text: "My tasks",
+              const Tab(
+                text: "Today",
               ),
-              Tab(
-                text: "Project",
-              ),
-              Tab(
+              const Tab(
                 text: "Pendings",
+              ),
+              const Tab(
+                text: "Done",
               ),
             ],
           ),
@@ -60,14 +64,26 @@ class _OverViewState extends State<OverView> with TickerProviderStateMixin {
             child: TabBarView(
               controller: tabController,
               children: [
-                ListView.builder(
-                    itemCount: 3,
+                FutureLoader.showLoadingIndicator<List<Plan>>(
+                  context: context,
+                  future: widget.database.getPlansOfToday(),
+                  onSuccess: (plans) => ListView.builder(
+                    itemCount: plans.length,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (BuildContext context, int index) {
-                      return OverviewCard();
+                      return OverviewCard(
+                        title: plans[index].title,
+                        content: plans[index].description,
+                      );
                     }),
-                Text("Projects"),
-                Text("Projects"),
+                ),
+                // center texts for now
+                const Center(
+                  child: Text("Pendings"),
+                ),
+                const Center(
+                  child: Text("Done"),
+                ),
               ],
             ),
           )

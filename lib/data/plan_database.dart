@@ -49,6 +49,17 @@ class PlanDatabase {
     return res.isNotEmpty ? res.map((e) => Plan.fromMap(e)).toList() : <Plan>[];
   }
 
+  // get plan by id
+  Future<Plan?> getPlan(int id) async {
+    final Database db = await _database;
+    final res = await db.query(
+      'plans',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    return res.isNotEmpty ? Plan.fromMap(res.first) : null;
+  }
+
   Future<int> insertPlan(Plan plan) async {
     final db = await _database;
     return await db.insert('plans', plan.toMap());
@@ -83,6 +94,23 @@ class PlanDatabase {
     return Sqflite.firstIntValue(
       await db.rawQuery('SELECT COUNT(*) FROM plans'),
     )!;
+  }
+
+  // get plans of today
+  Future<List<Plan>> getPlansOfToday() async {
+    final Database db = await _database;
+    var now = DateTime.now();
+    var today = DateTime(now.year, now.month, now.day);
+    final res = await db.query('plans', 
+      where: 'date = ?',
+      whereArgs: [today.toIso8601String()]);
+    return res.isNotEmpty
+        ? res
+            .map((e) {
+              return Plan.fromMap(e);
+            })
+            .toList()
+        : <Plan>[];
   }
 
   // get plans by date (day, week, month, year)

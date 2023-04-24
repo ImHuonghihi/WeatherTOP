@@ -7,6 +7,8 @@ import 'package:weather/data/plan_database.dart';
 
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_cubit.dart';
 import 'package:weather/utils/functions/loader_future.dart';
+import 'package:weather/utils/functions/navigation_functions.dart';
+import 'package:weather/utils/functions/number_converter.dart';
 
 import '../AddNewTask/AddNewTask.dart';
 import '../ProjectsPage/ProgressCard.dart';
@@ -29,7 +31,7 @@ class TasksPage extends StatefulWidget {
 }
 
 class _TasksPageState extends State<TasksPage> {
-  DateTime _selectedDate = DateTime.now();
+  DateTime _selectedDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
   void _onDateChange(DateTime date) {
     setState(() {
       _selectedDate = date;
@@ -45,7 +47,8 @@ class _TasksPageState extends State<TasksPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            IntrinsicHeight(child: Container(
+            IntrinsicHeight(
+                child: Container(
               padding: const EdgeInsets.all(25),
               decoration: const BoxDecoration(
                   color: Color.fromARGB(255, 159, 192, 248),
@@ -110,7 +113,9 @@ class _TasksPageState extends State<TasksPage> {
                     onDateChange: _onDateChange,
                     height: 90,
                   ),
-                  const SizedBox(height: 25,),
+                  const SizedBox(
+                    height: 25,
+                  ),
                   Expanded(child: Container()),
                 ],
               ),
@@ -163,51 +168,76 @@ class _TasksPageState extends State<TasksPage> {
   }
 
   _buildTaskWeatherData(BuildContext context, homeScreenCubit) {
-    var currentTemp =
-        homeScreenCubit.currentWeather.weatherOfDaysList[0].currentTemp.ceil();
-    var weatherStatus =
-        homeScreenCubit.currentWeather.weatherOfDaysList[0].weatherStatus;
-    return IntrinsicHeight(child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          DateFormat('MMM, d').format(_selectedDate),
-          style: GoogleFonts.montserrat(
-            color: Colors.black,
-            fontSize: 25,
-            fontWeight: FontWeight.w500,
+    try {
+      var today = DateTime.now();
+      int dayFromToday = _selectedDate.difference(today).inDays;
+      var currentWeather =
+          homeScreenCubit.currentWeather.weatherOfDaysList[dayFromToday * 8];
+      var currentTemp = currentWeather.currentTemp.ceil();
+      var weatherStatus =
+          homeScreenCubit.currentWeather.weatherOfDaysList[0].weatherStatus;
+      return IntrinsicHeight(
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            DateFormat('MMM, d').format(_selectedDate),
+            style: GoogleFonts.montserrat(
+              color: Colors.black,
+              fontSize: 25,
+              fontWeight: FontWeight.w500,
+            ),
           ),
-        ),
-        const SizedBox(height: 5),
-        Row(
-          children: [
-            Text(
-              "$weatherStatus",
-              style: GoogleFonts.montserrat(
-                color: Colors.black,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
+          const SizedBox(height: 5),
+          Row(
+            children: [
+              Text(
+                "$weatherStatus",
+                style: GoogleFonts.montserrat(
+                  color: Colors.black,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            const SizedBox(width: 10),
-            const Icon(
-              Icons.wb_sunny,
-              color: Colors.yellow,
-              size: 20,
-            ),
-            const SizedBox(width: 5),
-            Text(
-              " $currentTemp°",
-              style: GoogleFonts.montserrat(
-                color: Colors.black,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
+              const SizedBox(width: 10),
+              const Icon(
+                Icons.wb_sunny,
+                color: Colors.yellow,
+                size: 20,
               ),
+              const SizedBox(width: 5),
+              Text(
+                " $currentTemp°",
+                style: GoogleFonts.montserrat(
+                  color: Colors.black,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          )
+        ],
+      ));
+      // outofbound
+    } catch (e) {
+      //debugPrint(e.toString());
+      return IntrinsicHeight(
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            DateFormat('MMM, d').format(_selectedDate),
+            style: GoogleFonts.montserrat(
+              color: Colors.black,
+              fontSize: 25,
+              fontWeight: FontWeight.w500,
             ),
-          ],
-        )
-      ],
-    ));
+          ),
+          const SizedBox(height: 5),
+        ],
+      ));
+      ;
+    }
   }
 
   _buildTaskByDate(DateTime selectedDate) async {
@@ -215,7 +245,25 @@ class _TasksPageState extends State<TasksPage> {
         await widget.database.getPlansByDate(selectedDate.toIso8601String());
     var taskListWidget = <Widget>[];
     for (var task in taskList) {
-      taskListWidget.add(task.toScrollProgressCard());
+      taskListWidget.add(task.toScrollProgressCard(onOptionTap: (option) {
+        switch (option) {
+          case 'delete':
+            widget.database.deletePlan(task.id!).then((value) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Deleted ${task.title}"),
+                ),
+              );
+              setState(() {});
+            });
+            break;
+          case 'edit':
+            // navigate to add plan screen
+            navigateTo(context,
+                AddNewTask(database: widget.database, planId: task.id!));
+            break;
+        }
+      }));
     }
     return taskListWidget;
   }

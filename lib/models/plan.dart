@@ -51,8 +51,10 @@ class Plan {
         CompletedPercent: progress,
       );
   
-  ScrollProgressCard toScrollProgressCard() => ScrollProgressCard(
+  ScrollProgressCard toScrollProgressCard({void Function()? onTap, void Function(String?)? onOptionTap}) => ScrollProgressCard(
         ProjectName: title,
         CompletedPercent: progress,
+        onCardTap: onTap,
+        onOptionTap: onOptionTap,
       );
 }

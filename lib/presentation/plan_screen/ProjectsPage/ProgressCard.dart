@@ -89,10 +89,14 @@ class ProgressCard extends StatelessWidget {
 // progress card without expand widget for list scrolling
 class ScrollProgressCard extends StatelessWidget {
   void Function()? onCardTap;
+
+  void Function(String?)? onOptionTap;
+
   ScrollProgressCard(
       {Key? key,
       required this.ProjectName,
       required this.CompletedPercent,
+      this.onOptionTap,
       this.onCardTap})
       : super(key: key);
   late String ProjectName;
@@ -103,13 +107,11 @@ class ScrollProgressCard extends StatelessWidget {
   }
 
   Widget _buildCard(BuildContext context, void Function()? onCardTap) =>
-      GestureContainer.constrainedBox(
-        onTap: () {},
+      ConstrainedBox(
         constraints: BoxConstraints(
           maxHeight: 70,
           minWidth: MediaQuery.of(context).size.width * 0.9,
         ),
-        margin: const EdgeInsets.only(top: 10),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -144,7 +146,9 @@ class ScrollProgressCard extends StatelessWidget {
                   const SizedBox(
                     width: 10,
                   ),
-                  Column(
+                  GestureDetector(
+                      onTap: onCardTap,
+                      child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -165,11 +169,24 @@ class ScrollProgressCard extends StatelessWidget {
                         ),
                       )
                     ],
-                  ),
+                  )),
                   Expanded(child: Container()),
-                  const Icon(
-                    Icons.more_vert_outlined,
-                    color: Colors.grey,
+                  DropdownButton(
+                    icon: const Icon(
+                      Icons.more_vert_outlined,
+                      color: Colors.grey,
+                    ),
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'edit',
+                        child: Text('Edit'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'delete',
+                        child: Text('Delete'),
+                      ),
+                    ],
+                    onChanged: onOptionTap,
                   ),
                 ])),
               ),

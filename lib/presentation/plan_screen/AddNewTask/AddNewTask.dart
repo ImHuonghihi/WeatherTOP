@@ -15,7 +15,9 @@ import 'CategoryCard.dart';
 
 class AddNewTask extends StatefulWidget {
   final PlanDatabase database;
-  const AddNewTask({Key? key, required this.database}) : super(key: key);
+  final int? planId;
+  const AddNewTask({Key? key, required this.database, this.planId})
+      : super(key: key);
 
   @override
   State<AddNewTask> createState() => _AddNewTaskState();
@@ -33,11 +35,29 @@ class _AddNewTaskState extends State<AddNewTask> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _Titlecontroller = TextEditingController();
-    _descriptionController = TextEditingController();
-    _Datecontroller = TextEditingController(
-        text: DateFormat('EEE, MMM d, ' 'yy').format(SelectedDate));
-    _date = TextEditingController(text: DateFormat.jm().format(DateTime.now()));
+    if (widget.planId != null) {
+      widget.database.getPlan(widget.planId!).then((plan) {
+        setState(() {
+          _Titlecontroller = TextEditingController(text: plan!.title);
+          _descriptionController =
+              TextEditingController(text: plan.description);
+          SelectedDate = DateTime.parse(plan.date);
+          selectedTime = DateTime.parse(plan.time);
+          _Datecontroller = TextEditingController(
+              text: DateFormat('EEE, MMM d, ' 'yy').format(SelectedDate));
+          _date =
+              TextEditingController(text: DateFormat.jm().format(selectedTime));
+          Category = plan.category;
+        });
+      });
+    } else {
+      _Titlecontroller = TextEditingController();
+      _descriptionController = TextEditingController();
+      _Datecontroller = TextEditingController(
+          text: DateFormat('EEE, MMM d, ' 'yy').format(SelectedDate));
+      _date =
+          TextEditingController(text: DateFormat.jm().format(DateTime.now()));
+    }
   }
 
   _selectDate(BuildContext context) async {
@@ -93,7 +113,7 @@ class _AddNewTaskState extends State<AddNewTask> {
           icon: const Icon(CupertinoIcons.back, color: blueColor),
         ),
         title: MyText(
-          text: 'Create new task',
+          text: widget.planId != null ? 'Update task' : 'Create new task',
           size: fontSizeL - 2,
           fontWeight: FontWeight.normal,
           color: blueColor,
@@ -372,7 +392,7 @@ class _AddNewTaskState extends State<AddNewTask> {
                         height: 40,
                       ),
                       GestureDetector(
-                          onTap: _AddTask,
+                          onTap: widget.planId != null ? _editTask : _AddTask,
                           child: Container(
                             padding: const EdgeInsets.all(15),
                             decoration: BoxDecoration(
@@ -381,7 +401,7 @@ class _AddNewTaskState extends State<AddNewTask> {
                             ),
                             alignment: Alignment.center,
                             child: Text(
-                              "Create Task",
+                              widget.planId == null ? "Add" : "Update",
                               style: GoogleFonts.montserrat(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -406,7 +426,6 @@ class _AddNewTaskState extends State<AddNewTask> {
       if (_Datecontroller.text.isNotEmpty &&
           _date.text.isNotEmpty &&
           Category.isNotEmpty) {
-        
         var plan = Plan(
           title: _Titlecontroller.text,
           date: SelectedDate.toIso8601String(),
@@ -420,6 +439,30 @@ class _AddNewTaskState extends State<AddNewTask> {
               color: Colors.black, textColor: Colors.green);
           Navigator.pop(context);
         }
+      }
+    } catch (e) {
+      showToastMessage(e.toString(),
+          color: Colors.black, textColor: Colors.red);
+    }
+  }
+
+  _editTask() {
+    try {
+      if (_Datecontroller.text.isNotEmpty &&
+          _date.text.isNotEmpty &&
+          Category.isNotEmpty) {
+        var plan = Plan(
+          id: widget.planId,
+          title: _Titlecontroller.text,
+          date: SelectedDate.toIso8601String(),
+          time: selectedTime.toIso8601String(),
+          category: Category,
+          description: _descriptionController.text,
+        );
+        widget.database.updatePlan(plan);
+        showToastMessage("Updated Successfully",
+            color: Colors.black, textColor: Colors.green);
+        Navigator.pop(context);
       }
     } catch (e) {
       showToastMessage(e.toString(),

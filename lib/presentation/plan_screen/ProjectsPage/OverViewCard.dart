@@ -3,7 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class OverviewCard extends StatelessWidget {
-  const OverviewCard({Key? key}) : super(key: key);
+  final String title, content;
+  const OverviewCard({Key? key, required this.title, required this.content}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,16 +30,16 @@ class OverviewCard extends StatelessWidget {
                   color: Colors.blueAccent,
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
-                child: const Icon(Icons.person, color: Colors.white),
+                child: const Icon(Icons.assignment, color: Colors.white),
               ),
               Text(
-                "project",
+                title,
                 style: GoogleFonts.montserrat(color: Colors.white),
               ),
             ],
           ),
           Text(
-            "Back End Development",
+            content,
             style: GoogleFonts.montserrat(color: Colors.white, fontSize: 15),
           ),
           Text(
