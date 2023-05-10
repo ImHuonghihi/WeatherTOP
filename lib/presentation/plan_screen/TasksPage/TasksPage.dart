@@ -31,7 +31,8 @@ class TasksPage extends StatefulWidget {
 }
 
 class _TasksPageState extends State<TasksPage> {
-  DateTime _selectedDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  DateTime _selectedDate =
+      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
   void _onDateChange(DateTime date) {
     setState(() {
       _selectedDate = date;
@@ -245,6 +246,7 @@ class _TasksPageState extends State<TasksPage> {
         await widget.database.getPlansByDate(selectedDate.toIso8601String());
     var taskListWidget = <Widget>[];
     for (var task in taskList) {
+      debugPrint(task.toMap().toString());
       taskListWidget.add(task.toScrollProgressCard(onOptionTap: (option) {
         switch (option) {
           case 'delete':

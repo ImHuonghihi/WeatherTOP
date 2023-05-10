@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:weather/utils/functions/string_ext.dart';
 
 class OverviewCard extends StatelessWidget {
   final String title, content;
@@ -33,13 +34,13 @@ class OverviewCard extends StatelessWidget {
                 child: const Icon(Icons.assignment, color: Colors.white),
               ),
               Text(
-                title,
+                title.limitLength(5),
                 style: GoogleFonts.montserrat(color: Colors.white),
               ),
             ],
           ),
           Text(
-            content,
+            content.limitLength(30),
             style: GoogleFonts.montserrat(color: Colors.white, fontSize: 15),
           ),
           Text(

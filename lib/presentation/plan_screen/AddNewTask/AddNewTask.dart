@@ -29,8 +29,8 @@ class _AddNewTaskState extends State<AddNewTask> {
   late TextEditingController _Datecontroller;
   late TextEditingController _descriptionController;
   late TextEditingController _date;
-  DateTime SelectedDate = DateTime.now();
-  DateTime selectedTime = DateTime.now();
+  late DateTime SelectedDate, selectedTime;
+  
   String Category = "Work";
   @override
   void initState() {
@@ -52,6 +52,9 @@ class _AddNewTaskState extends State<AddNewTask> {
         });
       });
     } else {
+      selectedTime = DateTime.now();
+      SelectedDate = DateTime(
+          selectedTime.year, selectedTime.month, selectedTime.day);
       _Titlecontroller = TextEditingController();
       _descriptionController = TextEditingController();
       _Datecontroller = TextEditingController(
@@ -76,7 +79,7 @@ class _AddNewTaskState extends State<AddNewTask> {
     );
     if (selected != null && selected != SelectedDate) {
       setState(() {
-        SelectedDate = selected;
+        SelectedDate = DateTime(selected.year, selected.month, selected.day);
         _Datecontroller.text = DateFormat('EEE, MMM d, ' 'yy').format(selected);
       });
     }
@@ -90,8 +93,8 @@ class _AddNewTaskState extends State<AddNewTask> {
     if (result != null) {
       setState(() {
         var now = DateTime.now();
-        selectedTime = DateTime(DateTime.now().year, DateTime.now().month,
-            DateTime.now().day, result.hour, result.minute);
+        selectedTime = DateTime(now.year, now.month,
+            now.day, result.hour, result.minute);
 
         _date.text = result.format(context);
       });
@@ -379,12 +382,10 @@ class _AddNewTaskState extends State<AddNewTask> {
           category: Category,
           description: _descriptionController.text,
         );
-        var result = await widget.database.insertPlan(plan);
-        if (result != 0) {
-          showToastMessage("Added Successfully",
-              color: Colors.black, textColor: Colors.green);
-          Navigator.pop(context);
-        }
+        await widget.database.insertPlan(plan);
+        showToastMessage("Added Successfully",
+            color: Colors.black, textColor: Colors.green);
+        Navigator.pop(context);
       }
     } catch (e) {
       showToastMessage(e.toString(),
