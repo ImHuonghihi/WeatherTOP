@@ -119,7 +119,7 @@ class Headline extends StatelessWidget {
               left: 16.0,
               bottom: 16.0,
               child: Text(
-                title!.limitLength(15),
+                title!.limitLength(30),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18.0,
