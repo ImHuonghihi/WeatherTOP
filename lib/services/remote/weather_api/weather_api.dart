@@ -45,6 +45,7 @@ class WeatherAPI {
 
   static Future<dynamic> getWeatherDataByCityName(
       {required String cityName}) async {
+    // remove Quan word if they have it
     dynamic result;
     await dio!.get(
       _baseURL + EndPoints.current,
@@ -61,7 +62,8 @@ class WeatherAPI {
     }).then((value) {
       result = value;
     }).catchError((err) {
-      result = false;
+      debugPrint(err.toString());
+      result = null;
     });
     return result;
   }

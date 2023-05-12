@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:weather/models/current_weather.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_cubit.dart';
 import 'package:weather/services/remote/weather_api/weather_api.dart';
+import 'package:weather/utils/functions/toaster.dart';
 import 'package:weather/utils/functions/vietnamese_fix.dart';
 import 'package:weather/utils/loading.dart';
 
@@ -53,11 +54,16 @@ class LocationSearchDelegate extends SearchDelegate {
                   onTap: () {
                     showLoaderDialog(context);
                     WeatherAPI.getWeatherDataByCityName(
-                            cityName: locationString)
+                            cityName: locationString.split(', ').first)
                         .then((value) {
-                      manageLocationsCubit.addLocationToFavorites(value);
-                      Navigator.pop(context);
-                      close(context, null);
+                          if (value is CurrentWeather) {
+                            manageLocationsCubit.addLocationToFavorites(value);
+                            Navigator.pop(context);
+                            close(context, null);
+                          } else {
+                            Navigator.pop(context);
+                            showToastMessage('Unable to get weather data.');
+                          }
                     });
                   });
             }));

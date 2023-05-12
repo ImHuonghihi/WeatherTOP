@@ -1,3 +1,5 @@
+import 'package:weather/utils/functions/number_converter.dart';
+
 class HereLocationData {
   String id, title, resultType;
   String? language, houseNumberType;
@@ -23,22 +25,22 @@ class HereLocationData {
       resultType: json['resultType'],
       houseNumberType: json['houseNumberType'],
       position: HerePosition(
-        lat: json['position']['lat'],
-        lng: json['position']['lng'],
+        lat: json['position'] != null ? json['position']['lat'] : 0.0,
+        lng: json['position'] != null ? json['position']['lng'] : 0.0,
       ),
       address: HereAddress(
-        label: json['address']['label'],
-        countryCode: json['address']['countryCode'],
-        country: json['address']['country'],
-        state: json['address']['state'],
-        stateCode: json['address']['stateCode'],
-        county: json['address']['county'],
-        countyCode: json['address']['countyCode'],
-        city: json['address']['city'],
-        district: json['address']['district'],
-        street: json['address']['street'],
-        postalCode: json['address']['postalCode'],
-        houseNumber: json['address']['houseNumber'],
+        label: json['address'] != null ? json['address']['label']: '',
+        countryCode: json['address'] != null ? json['address']['countryCode'] : '0',
+        country: json['address'] != null ? json['address']['country'] : '',
+        state: json['address'] != null ? json['address']['state'] : '',
+        stateCode: json['address'] != null ? json['address']['stateCode'] : '',
+        county: json['address'] != null ? json['address']['county'] : '',
+        countyCode: json['address'] != null ? json['address']['countyCode'] : '',
+        city: json['address'] != null ? json['address']['city'] : '',
+        district: json['address'] != null ? json['address']['district']: '',
+        street: json['address'] != null ? json['address']['street'] : '',
+        postalCode: json['address'] != null ? json['address']['postalCode'] : '',
+        houseNumber: json['address'] != null ? json['address']['houseNumber'] : '',
       ),
     );
   }

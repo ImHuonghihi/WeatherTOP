@@ -159,7 +159,6 @@ class MyDrawer extends StatelessWidget {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              debugPrint('Tapped on $index');
 
               showLoaderDialog(context);
 

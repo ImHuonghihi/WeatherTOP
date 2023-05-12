@@ -154,7 +154,7 @@ class Main {
 
   Main.fromJson(Map<String, dynamic> json) {
     temp = convertNumber<double>(json['temp']);
-    feelsLike = json['feels_like'];
+    feelsLike = convertNumber<double>(json['feels_like']);
     tempMin = convertNumber<double>(json['temp_min']);
     tempMax = convertNumber<double>(json['temp_max']);
     pressure = json['pressure'];

@@ -3,13 +3,16 @@ import 'package:conditional_builder_null_safety/conditional_builder_null_safety.
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather/models/current_weather.dart';
 import 'package:weather/presentation/drawer/widgets/Location_list_item.dart';
 import 'package:weather/presentation/manage_locations.dart/manage_locations_cubit/manage_locations_cubit.dart';
 import 'package:weather/presentation/manage_locations.dart/manage_locations_cubit/manage_locations_states.dart';
 import 'package:weather/presentation/manage_locations.dart/search_delegate.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
+import 'package:weather/services/remote/weather_api/weather_api.dart';
 import 'package:weather/utils/functions/navigation_functions.dart';
 import 'package:weather/utils/functions/toaster.dart';
+import 'package:weather/utils/loading.dart';
 import 'package:weather/utils/styles/colors.dart';
 import 'package:weather/utils/styles/spaces.dart';
 import '../../utils/styles/cosntants.dart';
@@ -19,8 +22,9 @@ import '../home_screen/home_screen_cubit/home_screen_cubit.dart';
 
 class ManageLocations extends StatelessWidget {
   final HomeScreenCubit homeScreenCubit;
-  const ManageLocations({Key? key, required this.homeScreenCubit})
-      : super(key: key);
+  var manageLocationsCubit;
+  final textEditingController = TextEditingController();
+  ManageLocations({Key? key, required this.homeScreenCubit}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +43,7 @@ class ManageLocations extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          ManageLocationsCubit manageLocationsCubit =
+           manageLocationsCubit =
               ManageLocationsCubit.get(context);
           return Scaffold(
             backgroundColor: whiteColor,
@@ -87,6 +91,62 @@ class ManageLocations extends StatelessWidget {
               ),
               centerTitle: true,
             ),
+            floatingActionButton: FloatingActionButton(
+              child: const Icon(
+                CupertinoIcons.add,
+                color: whiteColor,
+              ),
+              onPressed: () {
+                // create input dialog
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: MyText(
+                      text: "Add location",
+                      size: fontSizeM + 2,
+                      fontWeight: FontWeight.bold,
+                      color: blackColor,
+                    ),
+                    content: TextField(
+                      controller: textEditingController,
+                      decoration: InputDecoration(
+                        hintText: "Enter location name",
+                        hintStyle: TextStyle(
+                          color: blackColor.withOpacity(0.4),
+                          fontSize: fontSizeM,
+                        ),
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: MyText(
+                          text: "Cancel",
+                          size: fontSizeM,
+                          fontWeight: FontWeight.normal,
+                          color: blackColor,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          if (addLocation(context, textEditingController.text)) {
+                            Navigator.of(context).pop();
+                          }
+                        },     
+                        child: MyText(
+                          text: "Add",
+                          size: fontSizeM,
+                          fontWeight: FontWeight.normal,
+                          color: blueColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
             body: ConditionalBuilder(
                 condition: state is NoLocationsAvailableState ||
                     manageLocationsCubit.favoriteLocationsList.isEmpty,
@@ -129,7 +189,7 @@ class ManageLocations extends StatelessWidget {
                                 ),
                                 K_hSpace10,
                                 MyText(
-                                    text: 'Swipe left to delete a location',
+                                    text: 'Swipe left to perform action',
                                     size: fontSizeM - 2,
                                     fontWeight: FontWeight.normal,
                                     color: blackColor.withOpacity(0.4)),
@@ -155,13 +215,75 @@ class ManageLocations extends StatelessWidget {
                                     child: Dismissible(
                                       key: UniqueKey(),
                                       direction: DismissDirection.endToStart,
+                                      confirmDismiss: (direction) async {
+                                        var isDeleted = false;
+                                        await showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: MyText(
+                                              text: "Are you sure?",
+                                              size: fontSizeM + 2,
+                                              fontWeight: FontWeight.bold,
+                                              color: blackColor,
+                                            ),
+                                            content: MyText(
+                                              text:
+                                                  "Do you want to load weather from this location?",
+                                              size: fontSizeM,
+                                              fontWeight: FontWeight.normal,
+                                              color: blackColor,
+                                            ),
+                                            actions: [
+                                              // delete button
+                                              TextButton(
+                                                  onPressed: () {
+                                                   isDeleted = true;
+                                                  Navigator.of(context).pop();
+                                                  },
+                                                  child: MyText(
+                                                    text: "Delete",
+                                                    size: fontSizeM,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: Colors.red,
+                                                  )),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: MyText(
+                                                  text: "Cancel",
+                                                  size: fontSizeM,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: blackColor,
+                                                ),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  loadWeather(
+                                                      context,
+                                                      manageLocationsCubit
+                                                              .favoriteLocationsList[
+                                                          index]);
+                                                },
+                                                child: MyText(
+                                                  text: "Load",
+                                                  size: fontSizeM,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: blueColor,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                        return isDeleted;
+                                      },
                                       onDismissed: (direction) =>
                                           manageLocationsCubit
                                               .removeAtIndexFromFavorites(
                                                   index),
                                       background: Container(
                                         color: offWhiteColor,
-                                    
                                       ),
                                       child: LocationListItem(
                                         isFavoriteItem: true,
@@ -184,5 +306,30 @@ class ManageLocations extends StatelessWidget {
         },
       ),
     );
+  }
+
+  addLocation(BuildContext context, String locationName) {
+    showLoaderDialog(context);
+    WeatherAPI.getWeatherDataByCityName(
+            cityName: locationName.split(', ').first)
+        .then((value) {
+      if (value is CurrentWeather) {
+        manageLocationsCubit.addLocationToFavorites(value);
+        Navigator.pop(context);
+        return true;
+      } else {
+        Navigator.pop(context);
+        showToastMessage('Unable to get weather data.');
+        return false;
+      }
+    });
+  }
+
+  loadWeather(BuildContext context, String locationName) {
+     showLoaderDialog(context);
+    homeScreenCubit.getWeatherByCityName(locationName).then((_) {
+      Navigator.pop(context);
+      Navigator.pop(context);
+    });
   }
 }

@@ -19,7 +19,7 @@ class _OverViewState extends State<OverView> with TickerProviderStateMixin {
   late TabController tabController;
   @override
   void initState() {
-    tabController = new TabController(length: 3, vsync: this, initialIndex: 0);
+    tabController = new TabController(length: 2, vsync: this, initialIndex: 0);
     super.initState();
   }
 
@@ -46,15 +46,12 @@ class _OverViewState extends State<OverView> with TickerProviderStateMixin {
             ),
             padding: const EdgeInsets.all(0),
             unselectedLabelColor: Colors.grey.shade400,
-            tabs: [
-              const Tab(
+            tabs: const [
+              Tab(
                 text: "Today",
               ),
-              const Tab(
-                text: "Pendings",
-              ),
-              const Tab(
-                text: "Done",
+              Tab(
+                text: "All",
               ),
             ],
           ),
@@ -78,11 +75,18 @@ class _OverViewState extends State<OverView> with TickerProviderStateMixin {
                     }),
                 ),
                 // center texts for now
-                const Center(
-                  child: Text("Pendings"),
-                ),
-                const Center(
-                  child: Text("Done"),
+                FutureLoader.showLoadingIndicator<List<Plan>>(
+                  context: context,
+                  future: widget.database.getPlans(),
+                  onSuccess: (plans) => ListView.builder(
+                      itemCount: plans.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (BuildContext context, int index) {
+                        return OverviewCard(
+                          title: plans[index].title,
+                          content: plans[index].description,
+                        );
+                      }),
                 ),
               ],
             ),

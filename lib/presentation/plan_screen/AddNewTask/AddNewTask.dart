@@ -34,6 +34,20 @@ class _AddNewTaskState extends State<AddNewTask> {
   String Category = "Work";
   @override
   void initState() {
+    _Titlecontroller = TextEditingController();
+    selectedTime = DateTime.now();
+    SelectedDate =
+        DateTime(selectedTime.year, selectedTime.month, selectedTime.day);
+    _descriptionController = TextEditingController();
+    _Datecontroller = TextEditingController(
+        text: DateFormat('EEE, MMM d, ' 'yy').format(SelectedDate));
+    _date = TextEditingController(text: DateFormat.jm().format(DateTime.now()));
+
+    if (widget.plan != null) {
+      _Titlecontroller.text = widget.plan!.title;
+      _descriptionController.text = widget.plan!.description;
+      Category = widget.plan!.category;
+    }
     // TODO: implement initState
     super.initState();
     if (widget.planId != null) {
@@ -51,22 +65,6 @@ class _AddNewTaskState extends State<AddNewTask> {
           Category = plan.category;
         });
       });
-    } else {
-      selectedTime = DateTime.now();
-      SelectedDate = DateTime(
-          selectedTime.year, selectedTime.month, selectedTime.day);
-      _Titlecontroller = TextEditingController();
-      _descriptionController = TextEditingController();
-      _Datecontroller = TextEditingController(
-          text: DateFormat('EEE, MMM d, ' 'yy').format(SelectedDate));
-      _date =
-          TextEditingController(text: DateFormat.jm().format(DateTime.now()));
-
-      if (widget.plan != null) {
-        _Titlecontroller.text = widget.plan!.title;
-        _descriptionController.text = widget.plan!.description;
-        Category = widget.plan!.category;
-      }
     }
   }
 
