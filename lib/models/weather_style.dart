@@ -6,8 +6,8 @@ import 'package:weather/utils/styles/colors.dart';
 class WeatherStyle {
   final weatherIcon;
   final weatherIconColor;
-  final weatherLottie;
-  final weatherLottieFitStyle;
+  final weatherLottie; //đường dẫn đến file lottie của thời tiết
+  final weatherLottieFitStyle; //kiểu điều chỉnh kích thước của tệp lottie
   final colorOpacity;
   var colorOne;
   var colorTwo;
