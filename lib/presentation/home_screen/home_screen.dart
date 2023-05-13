@@ -157,26 +157,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(//sử dụng BlocProvider để cung cấp một đối tượng HomeScreenCubit cho widget
-    //và sử dụng BlocConsumer để lắng nghe sự thay đổi của state
-      create: (context) => HomeScreenCubit()..initServices(),//khởi tạo đối tượng HomeScreenCubit
-      //và gọi hàm initServices để khởi tạo các dịch vụ cần thiết
-      child: BlocConsumer<HomeScreenCubit, HomeScreenStates>(//lắng nghe sự thay đổi của state
+    return BlocProvider(
+      create: (context) => HomeScreenCubit()..initServices(),
+      child: BlocConsumer<HomeScreenCubit, HomeScreenStates>(
         listener: (listenerContext, state) {
           if (state is LocationServicesDisabledState && !dialogIsShown ||
-              state is DeniedPermissionState && !dialogIsShown) {//nếu state là LocationServicesDisabledState hoặc 
-              //DeniedPermissionState và dislog chưa được hiển thị
-              //biến dialogIsShown được sử dụng để tránh việc hiển thị dialog nhiều lần
-            showDialog(//hiển thị dialog thông báo 
+              state is DeniedPermissionState && !dialogIsShown) {
+            showDialog(
               context: context,
               barrierDismissible: false,
-              builder: (context) {//builder nhận vào một context và trả về một widget
+              builder: (context) {
                 dialogIsShown = true;
-                return WillPopScope(//WillPopScope sẽ chặn việc thoát khỏi dialog khi nhấn nút back
+                return WillPopScope(
                   onWillPop: () async => false,
-                  child: ShowLocationServicesDisabledDialog(//hiển thị dialog thông báo
-                    cubit: HomeScreenCubit.get(listenerContext),//truyền vào đối tượng HomeScreenCubit
-                    //để sử dụng các hàm của nó
+                  child: ShowLocationServicesDisabledDialog(
+                    cubit: HomeScreenCubit.get(listenerContext),
                   ),
                 );
               },

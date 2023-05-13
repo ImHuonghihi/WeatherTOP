@@ -146,6 +146,7 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
     createExstremeWeatherNoti(currentWeather);
   }
 
+
   _locationListener() async {
     late StreamSubscription streamSubscription;
     Stream stream = Geolocator.getServiceStatusStream();
@@ -169,32 +170,6 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
       await LocationAPI.openLocationSettings();
     }
   }
-
-//Hàm này được sử dụng để lấy dữ liệu thời tiết từ API thông qua các phương thức được gọi 
-//từ các lớp WeatherAPI và UVAPI.
-
-// Cụ thể, hàm này bao gồm các bước sau:
-
-// Khi hàm được gọi, nó sẽ phát ra một sự kiện (event) LoadingDataFromWeatherAPIState() 
-//thông qua phương thức emit(). Sự kiện này sẽ được Bloc lắng nghe để cập nhật trạng thái (state) của ứng dụng.
-
-// Hàm tiếp tục bằng việc lấy vị trí hiện tại của người dùng thông qua biến positionOfUser.
-
-// Sau đó, hàm gọi phương thức getWeatherData() từ lớp WeatherAPI để lấy dữ liệu thời tiết hiện tại.
-
-// Tiếp theo, hàm lấy danh sách các chỉ số gió và độ ẩm từ dữ liệu thời tiết và lưu chúng vào 
-//các biến windIndexes và humidityIndexes.
-
-// Hàm cũng lưu tên của thành phố hiện tại vào biến sliverTitle.
-
-// Sau đó, hàm gọi phương thức getUVData() từ lớp UVAPI để lấy chỉ số UV.
-
-// Cuối cùng, hàm phát ra một sự kiện SuccessfullyLoadedDataFromWeatherAPIState() 
-//thông qua phương thức emit(). Nếu có lỗi xảy ra trong quá trình lấy dữ liệu, hàm sẽ phát 
-//ra sự kiện FailedToLoadDataFromWeatherAPIState() và ném ra ngoại lệ để xử lý lỗi.
-
-// Với việc sử dụng Future và async/await, hàm này sẽ chạy bất đồng bộ và không làm 
-//đóng băng giao diện người dùng trong quá trình lấy dữ liệu từ API
 
   Future<void> _getWeatherApiData() async {
     emit(LoadingDataFromWeatherAPIState());
@@ -229,29 +204,6 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
     return SharedHandler.getListFromSharedPref(
         SharedHandler.favoriteLocationsTempListKey);
   }
-
-//sử dụng để lấy dữ liệu thời tiết từ API và cập nhật trạng thái của ứng dụng. Cụ thể, 
-//phương thức này có các bước như sau:
-
-// Phương thức bắt đầu bằng việc phát ra một trạng thái "LoadingDataFromWeatherAPIState" 
-//để hiển thị cho người dùng biết rằng ứng dụng đang tải dữ liệu.
-
-// Sau đó, phương thức sử dụng hàm "await" để đợi dữ liệu thời tiết được trả về từ API 
-//thông qua hàm "getWeatherData" trong lớp "WeatherAPI". Dữ liệu này được gán vào biến "currentWeather".
-
-// Tiếp theo, phương thức sử dụng phương thức "map" để lấy danh sách chỉ số gió và 
-//độ ẩm từ danh sách dữ liệu thời tiết. Chúng được chuyển đổi thành danh sách số thực bằng 
-//cách sử dụng hàm "convertNumber".
-
-// Sau đó, phương thức gán giá trị cho biến "sliverTitle" bằng tên thành phố hiện tại.
-
-// Tiếp theo, phương thức sử dụng hàm "await" để đợi dữ liệu chỉ số tia UV được trả về 
-//từ API thông qua hàm "getUVData" trong lớp "UVAPI". Dữ liệu này được gán vào biến "uvIndexes".
-
-// Cuối cùng, phương thức phát ra một trạng thái "SuccessfullyLoadedDataFromWeatherAPIState" 
-//để hiển thị cho người dùng biết rằng dữ liệu đã được tải thành công. Nếu có lỗi xảy ra trong 
-//quá trình tải dữ liệu, phương thức sẽ phát ra trạng thái "FailedToLoadDataFromWeatherAPIState" 
-//và ném ra ngoại lệ để thông báo cho người dùng biết rằng đã xảy ra lỗi và không thể tải dữ liệu.
 
   Future<void> getWeather(double lat, double lon) async {
     emit(LoadingDataFromWeatherAPIState());

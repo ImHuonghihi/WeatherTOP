@@ -9,6 +9,10 @@ class SharedHandler {
 
   static String extremeWeatherNotificationKey = 'extremeWeatherNotification';
 
+  
+
+  
+  
   static String weatherNotificationKey = 'weatherNotification';
   
   static String newsNotificationKey = 'newsNotification';

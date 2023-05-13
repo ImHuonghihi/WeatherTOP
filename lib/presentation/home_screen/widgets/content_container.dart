@@ -3,8 +3,8 @@ import 'package:weather/utils/functions/number_converter.dart';
 import 'package:weather/utils/styles/cosntants.dart';
 
 class AnimatedContentContainer extends StatelessWidget {
-  final contentWidget;//widget chứa nội dung
-  final animatedContainerColor;//màu của container
+  final contentWidget;
+  final animatedContainerColor;
   double? height;
   AnimatedContentContainer({
     Key? key,
@@ -16,14 +16,14 @@ class AnimatedContentContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      constraints: BoxConstraints(//giới hạn kích thước của container
+      constraints: BoxConstraints(
         minHeight: convertNumber<double>(height ?? 100),
         maxHeight: 500.0,
       ),
-      duration: const Duration(milliseconds: 500),//thời gian để hoàn thành hiệu ứng chuyển đổi kích thước
+      duration: const Duration(milliseconds: 500),
       height: height != null ? convertNumber<double>(height) : null,
-      width: double.infinity, //chiều rộng của container bằng với chiều rộng của màn hình
-      decoration: BoxDecoration(//trang trí container
+      width: double.infinity,
+      decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(radius),
         border: Border.all(color: animatedContainerColor, width: 0.5),
         color: animatedContainerColor.withOpacity(0.3),
