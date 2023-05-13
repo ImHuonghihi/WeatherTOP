@@ -5,6 +5,7 @@ import 'package:weather/models/weather_of_day.dart';
 import 'package:weather/models/weather_style.dart';
 import 'package:weather/presentation/home_screen/widgets/content_container.dart';
 import 'package:weather/presentation/home_screen/widgets/flexible_space_bar.dart';
+import 'package:weather/presentation/home_screen/widgets/news/headline.dart';
 import 'package:weather/presentation/home_screen/widgets/sunrise_sunset.dart';
 import 'package:weather/presentation/home_screen/widgets/temp_forcasting_container.dart';
 import 'package:weather/presentation/home_screen/widgets/weeklyContainer.dart';
@@ -44,6 +45,26 @@ class CurrentWeatherDataViewer extends StatefulWidget {
 }
 
 class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
+  final List<RSSData> rss = [
+    RSSData(
+      title: "News 1",
+      url: 'https://www.aljazeera.com/',
+      imageUrl:
+          'https://gdb.voanews.com/01000000-0aff-0242-2e96-08db51804d9f_w1597_n_st.jpg',
+    ),
+    RSSData(
+      title: "News 2",
+      url: 'https://www.aljazeera.com/',
+      imageUrl:
+          'https://gdb.voanews.com/01000000-0aff-0242-2e96-08db51804d9f_w1597_n_st.jpg',
+    ),
+    RSSData(
+      title: "News 3",
+      url: 'https://www.aljazeera.com/',
+      imageUrl:
+          'https://gdb.voanews.com/01000000-0aff-0242-2e96-08db51804d9f_w1597_n_st.jpg',
+    ),
+  ];
   @override
   Widget build(BuildContext context) {
     WeatherOfDay weatherOfDay = widget.currentWeatherData.weatherOfDaysList[0];
@@ -122,7 +143,6 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
           ),
           child: Column(
             children: [
-              
               AnimatedContentContainer(
                 height: 180.0,
                 contentWidget: TemperatureForecastingContainer(
@@ -141,7 +161,7 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
               K_vSpace10,
               //sunrise
               AnimatedContentContainer(
-                height: 150.0,
+                height: 170.0,
                 contentWidget: SunriseSunsetContainer(
                   sunriseTime: TimeConverting.getTime(widget.currentWeatherData
                           .currentCountryDetails!.currentSunRise)
@@ -163,6 +183,17 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
                 ),
                 animatedContainerColor: widget.animatedContainerColor,
               ),
+              K_vSpace10,
+              FutureBuilder(
+                future: null,
+                builder: (context, snapshot) {
+                  return AnimatedContentContainer(
+                    height: 150.0,
+                    contentWidget: NewsHeadlineSlider(rssDataList: rss),
+                    animatedContainerColor: widget.animatedContainerColor,
+                  );
+                },
+              ),
               K_vSpace20,
               FutureBuilder(
                   future: getQuotes(),
@@ -182,7 +213,9 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
                             Padding(
                                 padding: const EdgeInsets.only(
                                     top: 10.0,
-                                    left: 20.0, right: 20.0, bottom: 10.0),
+                                    left: 20.0,
+                                    right: 20.0,
+                                    bottom: 10.0),
                                 child: Column(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     crossAxisAlignment:
