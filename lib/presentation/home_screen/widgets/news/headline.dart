@@ -19,7 +19,7 @@ class NewsHeadlineSlider extends StatefulWidget {
   
   int? timer = 10;
 
-  NewsHeadlineSlider({super.key, required this.rssDataList, this.timer});
+  NewsHeadlineSlider({super.key, required this.rssDataList, this.timer=10});
 
   @override
   _NewsHeadlineSliderState createState() => _NewsHeadlineSliderState();
