@@ -1,4 +1,6 @@
 
+//sử dụng thư vineje sliding_up_panel, lottie, conditional_builder_null_safety
+
 import 'dart:ui';
 
 import 'package:animate_do/animate_do.dart';
@@ -59,7 +61,8 @@ class _HomeScreenState extends State<HomeScreen> {
   double scrollOffset = 0.0;
   double headerAnimatedContainerHeight = 0.0;
   double headerAnimatedContainerIconSize = 0.0;
-  //This boolean will make us avoid creating the same dialog again as we will use stream to listen on the location service
+  //This boolean will make us avoid creating the same dialog again as we will use stream 
+  //to listen on the location service
   bool dialogIsShown = false;
   Widget sliverTitle = MyText(
     text: HomeScreenCubit.sliverTitle,
@@ -157,98 +160,105 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => HomeScreenCubit()..initServices(),
-      child: BlocConsumer<HomeScreenCubit, HomeScreenStates>(
-        listener: (listenerContext, state) {
+    return BlocProvider(//sử dụng BlocProvider để cung cấp cho các widget con
+      create: (context) => HomeScreenCubit()..initServices(), //khởi tạo cubit và gọi init để khởi tạo các dịch vụ
+      child: BlocConsumer<HomeScreenCubit, HomeScreenStates>(//sử dụng BlocConsumer để lắng nghe các thay đổi của state
+        listener: (listenerContext, state) {//listener sẽ được gọi mỗi khi state thay đổi
           if (state is LocationServicesDisabledState && !dialogIsShown ||
-              state is DeniedPermissionState && !dialogIsShown) {
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) {
-                dialogIsShown = true;
-                return WillPopScope(
-                  onWillPop: () async => false,
-                  child: ShowLocationServicesDisabledDialog(
-                    cubit: HomeScreenCubit.get(listenerContext),
+              state is DeniedPermissionState && !dialogIsShown) {//nếu state là LocationServicesDisabledState hoặc 
+              //DeniedPermissionState và dialog chưa được hiển thị
+            showDialog(//hiển thị dialog
+              context: context,//context của widget hiện tại
+              barrierDismissible: false,//không cho phép bấm ra ngoài để đóng dialog
+              builder: (context) {//builder của dialog
+                dialogIsShown = true;//đánh dấu dialog đã được hiển thị
+                return WillPopScope(//sử dụng WillPopScope để ngăn chặn việc đóng dialog khi bấm nút back
+                  onWillPop: () async => false,//không cho phép đóng dialog khi bấm nút back
+                  child: ShowLocationServicesDisabledDialog(//hiển thị dialog
+                    cubit: HomeScreenCubit.get(listenerContext),//truyền cubit vào dialog
                   ),
                 );
               },
             );
           }
         },
-        builder: (context, state) {
-          HomeScreenCubit homeScreenCubit = HomeScreenCubit.get(context);
-          return Scaffold(
-            drawer: MyDrawer(
-              homeScreenCubit: homeScreenCubit,
+        
+        builder: (context, state) {//builder sẽ được gọi mỗi khi state thay đổi
+          HomeScreenCubit homeScreenCubit = HomeScreenCubit.get(context);//lấy cubit
+          return Scaffold(//trả về widget Scaffold
+            drawer: MyDrawer(//truyền MyDrawer vào drawer
+              homeScreenCubit: homeScreenCubit,//truyền cubit vào MyDrawer
               currentLocationName: homeScreenCubit
-                  .currentWeather.currentCountryDetails!.currentCity,
+                  .currentWeather.currentCountryDetails!.currentCity,//truyền tên thành phố hiện tại vào MyDrawer
               currentLocationCurrentTemp: homeScreenCubit
                   .currentWeather.weatherOfDaysList[0].currentTemp
-                  .ceil(),
+                  .ceil(),//truyền nhiệt độ hiện tại vào MyDrawer
             ),
-            body: Stack(
+
+
+            //widget cha là một Stack, 
+            //được sử dụng để xếp các widget con lên nhau. 
+            //Hai widget con của Stack là FadeIn và BackdropFilter. (hiệu ứng hiển thị dần và mờ dần)
+            body: Stack(//
               children: [
-                FadeIn(
-                  duration: const Duration(seconds: 3),
-                  child: LottieBuilder.asset(
-                    widget.weatherStyle.weatherLottie,
-                    fit: widget.weatherStyle.weatherLottieFitStyle,
-                    width: DeviceDimensions.getWidthOfDevice(context),
-                    height: DeviceDimensions.getHeightOfDevice(context),
+                FadeIn(//hiệu ứng FadeIn
+                  duration: const Duration(seconds: 3),//thời gian hiệu ứng
+                  child: LottieBuilder.asset(//sử dụng LottieBuilder để hiển thị animation
+                    widget.weatherStyle.weatherLottie,//truyền animation vào
+                    fit: widget.weatherStyle.weatherLottieFitStyle,//truyền fit style vào
+                    width: DeviceDimensions.getWidthOfDevice(context),//truyền chiều rộng của thiết bị vào
+                    height: DeviceDimensions.getHeightOfDevice(context),//truyền chiều cao của thiết bị vào
                   ),
                 ),
-                BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: 0.0,
-                    sigmaY: 0.0,
+                BackdropFilter(//sử dụng BackdropFilter để tạo hiệu ứng blur
+                  filter: ImageFilter.blur(//sử dụng ImageFilter để tạo hiệu ứng blur
+                    sigmaX: 0.0,//độ mờ theo chiều ngang
+                    sigmaY: 0.0,//độ mờ theo chiều dọc
                   ),
-                  child: AnimatedContainer(
-                    height: double.infinity,
-                    duration: const Duration(milliseconds: 500),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
+                  child: AnimatedContainer(//sử dụng AnimatedContainer để tạo hiệu ứng chuyển màu
+                    height: double.infinity,//chiều cao bằng với chiều cao của thiết bị
+                    duration: const Duration(milliseconds: 500),//thời gian chuyển màu
+                    decoration: BoxDecoration(//decoration của AnimatedContainer
+                      gradient: LinearGradient(//sử dụng LinearGradient để tạo hiệu ứng chuyển màu
                         colors: [color1, color2],
-                        stops: const [0.25, 0.9],
+                        stops: const [0.25, 0.9],//điểm dừng của gradient
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                       ),
                     ),
                   ),
                 ),
-                ConditionalBuilder(
+                ConditionalBuilder(//sử dụng ConditionalBuilder để xây dựng các widget theo điều kiện
                   condition: state is LoadingSettingLocationState,
-                  builder: (context) => const MainProgressIndicator(
+                  builder: (context) => const MainProgressIndicator(//hiển thị MainProgressIndicator
                       loadingMessage:
                           "We're trying to get your current location..."),
-                  fallback: (context) => ConditionalBuilder(
-                    condition: state is LoadingDataFromWeatherAPIState,
+                  fallback: (context) => ConditionalBuilder(//nếu state không phải là LoadingSettingLocationState
+                    condition: state is LoadingDataFromWeatherAPIState,//kiểm tra state có phải là LoadingDataFromWeatherAPIState
                     builder: (context) => const MainProgressIndicator(
                       loadingMessage: "Getting weather data...",
                     ),
                     fallback: (context) => ConditionalBuilder(
                       condition:
                           state is SuccessfullyLoadedDataFromWeatherAPIState,
-                      builder: (context) => FadeIn(
+                      builder: (context) => FadeIn(//hiệu ứng FadeIn
                         duration: const Duration(seconds: 2),
-                        child: CurrentWeatherDataViewer(
-                          currentWeatherData: homeScreenCubit.currentWeather,
-                          sc: sc,
-                          sliverTitle: sliverTitle,
+                        child: CurrentWeatherDataViewer(//hiển thị CurrentWeatherDataViewer
+                          currentWeatherData: homeScreenCubit.currentWeather,//truyền currentWeather vào CurrentWeatherDataViewer
+                          sc: sc,//truyền ScrollController vào CurrentWeatherDataViewer
+                          sliverTitle: sliverTitle,//truyền sliverTitle vào CurrentWeatherDataViewer
                           sliverAppBarColor: sliverAppBarColor,
                           weatherStyle: widget.weatherStyle,
-                          animatedContainerColor: animatedContainerColor,
-                          controllers: [uvpc, windpc, humiditypc],
-                          quotes: data,
+                          animatedContainerColor: animatedContainerColor,//truyền animatedContainerColor vào CurrentWeatherDataViewer
+                          controllers: [uvpc, windpc, humiditypc],//truyền controllers vào CurrentWeatherDataViewer
+                          quotes: data,//truyền quotes vào CurrentWeatherDataViewer
                         ),
                       ),
-                      fallback: (context) => ConditionalBuilder(
+                      fallback: (context) => ConditionalBuilder(//nếu state không phải là SuccessfullyLoadedDataFromWeatherAPIState
                         condition: state is FailedToLoadDataFromWeatherAPIState,
-                        builder: (context) => BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
-                          child: Container(
+                        builder: (context) => BackdropFilter(//
+                          filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),//hiệu ứng blur
+                          child: Container(//Container chứa các widget con
                             color: blackColor.withOpacity(0.5),
                             height: double.infinity,
                             width: double.infinity,
@@ -288,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 //The header container of the temp
-                HeaderContainerOfTheTemp(
+                HeaderContainerOfTheTemp(//hiển thị HeaderContainerOfTheTemp
                   headerAnimatedContainerHeight: headerAnimatedContainerHeight,
                   headerAnimatedContainerIconSize:
                       headerAnimatedContainerIconSize,
@@ -450,7 +460,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             K_vSpace10,
             MyText(
-              text: "Today is good day to go out hihi!!",
+              text: "You can go out safely",
               size: fontSizeM,
               fontWeight: FontWeight.normal,
             ),
@@ -500,7 +510,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             K_vSpace10,
             MyText(
-              text: "Today is good day to go out hihi!!",
+              text: "You can go out safely",
               size: fontSizeM,
               fontWeight: FontWeight.normal,
             ),

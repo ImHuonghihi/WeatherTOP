@@ -6,7 +6,7 @@ import 'package:weather/utils/styles/colors.dart';
 class WeatherStyle {
   final weatherIcon;
   final weatherIconColor;
-  final weatherLottie;
+  final weatherLottie;//đường dẫn đến file json
   final weatherLottieFitStyle;
   final colorOpacity;
   var colorOne;
