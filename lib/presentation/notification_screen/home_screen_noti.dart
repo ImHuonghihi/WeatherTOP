@@ -8,6 +8,7 @@ import 'package:weather/utils/functions/navigation_functions.dart';
 import 'package:weather/utils/styles/colors.dart';
 import 'package:weather/utils/styles/cosntants.dart';
 
+import 'rss.dart';
 
 class NotificationSetting extends StatefulWidget {
   var homeScreenCubit;
@@ -28,9 +29,10 @@ class _NotificationSettingState extends State<NotificationSetting> {
   var isNotificationEnabled = true;
   var isExtremeWeatherWarningEnabled =
       SharedHandler.getSharedPref(SharedHandler.extremeWeatherNotificationKey);
-  // var isNewsFeedEnabled =
-  //     SharedHandler.getSharedPref(SharedHandler.newsNotificationKey);
-  // var newsFeedRSS = 'https://vnexpress.net/rss/tin-moi-nhat.rss';
+  var isNewsFeedEnabled =
+      SharedHandler.getSharedPref(SharedHandler.newsNotificationKey);
+  var rssInterval = 1; //hours
+  
 
   // var rssInterval = 1; //hours
 
@@ -59,7 +61,6 @@ class _NotificationSettingState extends State<NotificationSetting> {
         centerTitle: true,
         backgroundColor: whiteColor,
       ),
-      
       backgroundColor: whiteColor,
       body: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -90,86 +91,126 @@ class _NotificationSettingState extends State<NotificationSetting> {
                         activeColor: whiteColor,
                       ),
                     ),
-                    //switch to enable/disable news feed
-                    // ListTile(
-                    //   title: MyText(
-                    //     text: 'News feed',
-                    //     size: fontSizeM,
-                    //     fontWeight: FontWeight.normal,
-                    //     color: blackColor,
-                    //   ),
-                    //   trailing: Switch(
-                    //     value: isNewsFeedEnabled,
-                    //     onChanged: (value) {
-                    //       setState(() {
-                    //         isNewsFeedEnabled = value;
-                    //         SharedHandler.setSharedPref(
-                    //             SharedHandler.newsNotificationKey, value);
-                    //       });
-                    //     },
-                    //     activeTrackColor: blueColor,
-                    //     activeColor: whiteColor,
-                    //   ),
-                    // ),
-                    //RSS link
-                    // ListTile(
-                    //   title: MyText(
-                    //     text: 'RSS link',
-                    //     size: fontSizeM,
-                    //     fontWeight: FontWeight.normal,
-                    //     color: blackColor,
-                    //   ),
-                    //   trailing: MyText(
-                    //     text: "Click to edit",
-                    //     size: fontSizeM,
-                    //     fontWeight: FontWeight.normal,
-                    //     color: blackColor,
-                    //   ),
-                    // ),
-                    // // RSS refreh time
-                    // ListTile(
-                    //   title: MyText(
-                    //     text: 'RSS refresh time',
-                    //     size: fontSizeM,
-                    //     fontWeight: FontWeight.normal,
-                    //     color: blackColor,
-                    //   ),
-                      // trailing: GestureDetector(
-                      //   onTap: () {
-                      //     showModalBottomSheet(
-                      //       context: context,
-                      //       builder: (context) {
-                      //         return Container(
-                      //           height: 200,
-                      //           child: CupertinoPicker(
-                      //             itemExtent: 50,
-                      //             onSelectedItemChanged: (value) {
-                      //               setState(() {
-                      //                 rssInterval = value + 1;
-                      //               });
-                      //             },
-                      //             children: [
-                      //               for (var i = 1; i <= 24; i++)
-                      //                 MyText(
-                      //                   text: '$i hours',
-                      //                   size: fontSizeM,
-                      //                   fontWeight: FontWeight.normal,
-                      //                   color: blackColor,
-                      //                 ),
-                      //             ],
-                      //           ),
-                      //         );
-                      //       },
-                      //     );
-                      //   },
-                    //     child: MyText(
-                    //       text: '$rssInterval hours',
-                    //       size: fontSizeM,
-                    //       fontWeight: FontWeight.normal,
-                    //       color: blackColor,
-                    //     ),
-                    //   ),
-                    // ),
+                    ListTile(
+                      title: MyText(
+                        text: 'News feed',
+                        size: fontSizeM,
+                        fontWeight: FontWeight.normal,
+                        color: blackColor,
+                      ),
+                      trailing: Switch(
+                        value: isNewsFeedEnabled,
+                        onChanged: (value) {
+                          setState(() {
+                            isNewsFeedEnabled = value;
+                            SharedHandler.setSharedPref(
+                                SharedHandler.newsNotificationKey, value);
+                          });
+                        },
+                        activeTrackColor: blueColor,
+                        activeColor: whiteColor,
+                      ),
+                    ),
+                    //list of RSS
+                   GestureDetector(
+                    onTap: () {
+                      // show bottom modal for choosing rss link
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) {
+                          return Container(
+                            height: 200,
+                            child: CupertinoPicker(
+                              itemExtent: 50,
+                              onSelectedItemChanged: (value) {
+                                setState(() {
+                                  var i = 0;
+                                  for (var key in newsFeedRSS.keys) {
+                                    if (i == value) {
+                                      SharedHandler.setSharedPref(
+                                          SharedHandler
+                                              .rssValueKey,
+                                          key);
+                                      break;
+                                    }
+                                    i++;
+                                  }
+                                });
+                              },
+                              children: [
+                                // loop key and value of newsFeedRSS
+                                for (var key in newsFeedRSS.keys)
+                                  MyText(
+                                    text: key,
+                                    size: fontSizeM,
+                                    fontWeight: FontWeight.normal,
+                                    color: blackColor,
+                                  ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child:  ListTile(
+                      title: MyText(
+                        text: 'RSS link',
+                        size: fontSizeM,
+                        fontWeight: FontWeight.normal,
+                        color: blackColor,
+                      ),
+                      trailing: MyText(
+                        text: "Click to edit",
+                        size: fontSizeM,
+                        fontWeight: FontWeight.normal,
+                        color: blackColor,
+                      ),
+                    ),
+                   ),
+                    // RSS refreh time
+                    ListTile(
+                      title: MyText(
+                        text: 'RSS refresh time',
+                        size: fontSizeM,
+                        fontWeight: FontWeight.normal,
+                        color: blackColor,
+                      ),
+                    trailing: GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return Container(
+                              height: 200,
+                              child: CupertinoPicker(
+                                itemExtent: 50,
+                                onSelectedItemChanged: (value) {
+                                  setState(() {
+                                    rssInterval = value + 1;
+                                  });
+                                },
+                                children: [
+                                  for (var i = 1; i <= 24; i++)
+                                    MyText(
+                                      text: '$i hours',
+                                      size: fontSizeM,
+                                      fontWeight: FontWeight.normal,
+                                      color: blackColor,
+                                    ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                        child: MyText(
+                          text: '$rssInterval hours',
+                          size: fontSizeM,
+                          fontWeight: FontWeight.normal,
+                          color: blackColor,
+                        ),
+                      ),
+                    ),
                     //scheduled time
                     ListTile(
                       title: MyText(

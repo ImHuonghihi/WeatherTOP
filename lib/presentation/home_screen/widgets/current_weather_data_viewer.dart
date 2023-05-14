@@ -13,6 +13,7 @@ import 'package:weather/presentation/home_screen/widgets/wind_humidity.dart';
 import 'package:weather/presentation/shared_widgets_constant/progress_indicatior.dart';
 import 'package:weather/models/quotes.dart';
 import 'package:weather/services/remote/quotes_api.dart';
+import 'package:weather/services/remote/rss_api.dart';
 import 'package:weather/utils/functions/time_converting.dart';
 import 'package:weather/utils/styles/colors.dart';
 
@@ -45,26 +46,7 @@ class CurrentWeatherDataViewer extends StatefulWidget {
 }
 
 class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
-  final List<RSSData> rss = [
-    RSSData(
-      title: "News 1",
-      url: 'https://www.aljazeera.com/',
-      imageUrl:
-          'https://gdb.voanews.com/01000000-0aff-0242-2e96-08db51804d9f_w1597_n_st.jpg',
-    ),
-    RSSData(
-      title: "News 2",
-      url: 'https://www.aljazeera.com/',
-      imageUrl:
-          'https://gdb.voanews.com/01000000-0aff-0242-2e96-08db51804d9f_w1597_n_st.jpg',
-    ),
-    RSSData(
-      title: "News 3",
-      url: 'https://www.aljazeera.com/',
-      imageUrl:
-          'https://gdb.voanews.com/01000000-0aff-0242-2e96-08db51804d9f_w1597_n_st.jpg',
-    ),
-  ];
+  
   @override
   Widget build(BuildContext context) {
     WeatherOfDay weatherOfDay = widget.currentWeatherData.weatherOfDaysList[0];
@@ -185,13 +167,26 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
               ),
               K_vSpace10,
               FutureBuilder(
-                future: null,
+                future: RSSApi.getRSS(),
                 builder: (context, snapshot) {
-                  return AnimatedContentContainer(
-                    height: 150.0,
-                    contentWidget: NewsHeadlineSlider(rssDataList: rss),
-                    animatedContainerColor: widget.animatedContainerColor,
-                  );
+                  if (snapshot.hasData) {
+                    var rss = snapshot.data as List<RssData>;
+                    return AnimatedContentContainer(
+                      height: 150.0,
+                      contentWidget: NewsHeadlineSlider(rssDataList: rss),
+                      animatedContainerColor: widget.animatedContainerColor,
+                    );
+                  } else if (snapshot.hasError) {
+                    debugPrint("RSS widget: ${snapshot.error}");
+                    return Container();
+                  } else {
+                    return AnimatedContentContainer(
+                      height: 100,
+                      contentWidget: const MainProgressIndicator(
+                          loadingMessage: "Getting news..."),
+                      animatedContainerColor: widget.animatedContainerColor,
+                    );
+                  }
                 },
               ),
               K_vSpace20,

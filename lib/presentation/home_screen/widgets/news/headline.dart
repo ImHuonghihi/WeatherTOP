@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:weather/presentation/shared_widgets/my_text.dart';
-import 'package:weather/utils/functions/navigation_functions.dart';
+import 'package:weather/services/remote/rss_api.dart';
+import 'package:weather/utils/functions/number_converter.dart';
 import 'package:weather/utils/functions/string_ext.dart';
-import 'package:weather/utils/styles/cosntants.dart';
-import 'package:weather/utils/styles/spaces.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
-class RSSData {
-  final String title;
-  final String imageUrl;
-  final String url;
 
-  RSSData({required this.title, required this.imageUrl, required this.url});
-}
 
 class NewsHeadlineSlider extends StatefulWidget {
-  final List<RSSData> rssDataList;
+  final List<RssData> rssDataList;
   
   int? timer = 10;
 
@@ -76,7 +68,7 @@ class _NewsHeadlineSliderState extends State<NewsHeadlineSlider> {
         return Headline(
           title: widget.rssDataList[index].title,
           imageUrl: widget.rssDataList[index].imageUrl,
-          url: widget.rssDataList[index].url,
+          url: widget.rssDataList[index].link,
         );
       },
     );
@@ -119,7 +111,10 @@ class Headline extends StatelessWidget {
               left: 16.0,
               bottom: 16.0,
               child: Text(
-                title!.limitLength(15),
+                // limit title length based on screen size
+                title!.limitLength(convertNumber<int>(
+                    (MediaQuery.of(context).size.width -
+                        MediaQuery.of(context).padding.horizontal) / 10)),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18.0,

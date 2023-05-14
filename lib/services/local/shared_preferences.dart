@@ -13,6 +13,8 @@ class SharedHandler {
   
   static String newsNotificationKey = 'newsNotification';
 
+  static String rssValueKey = 'rssValue';
+
   static String timeNotificationKey = 'timeNotification';
 
 

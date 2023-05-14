@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:ffi';
+import 'dart:math';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,6 +12,7 @@ import 'package:weather/models/weather_of_day.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_states.dart';
 import 'package:weather/services/remote/location_api.dart';
 import 'package:weather/services/local/shared_preferences.dart';
+import 'package:weather/services/remote/rss_api.dart';
 import 'package:weather/utils/exstreme_weather_noti.dart';
 import 'package:weather/utils/functions/number_converter.dart';
 import 'package:weather/utils/template_noti.dart';
@@ -30,6 +33,7 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
   late List<UVIndex> uvIndexes;
   late List<double> windIndexes;
   late List<double> humidityIndexes;
+  late List<RssData> rssDataList;
 
   //We use this list to avoid the problem of late currentWeather the problem is an error occurred because the
   //currentWeather is still null when starting the app and we can  not await on initializing
@@ -80,7 +84,7 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
     //fill the currentWeather with dummy data until the true data come
     _setCurrentWeatherDefault();
     _setChartDefault();
-
+    await _setRss();
     await _initLocationService();
 
     await UVAPI.initializeUVAPI();
@@ -89,6 +93,24 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
     }
     _initNotification();
     _initWarningNotification();
+  }
+
+  _setRss() async {
+    if (SharedHandler.getSharedPref(SharedHandler.rssValueKey) is Bool) return;
+    SharedHandler.setSharedPref(
+      SharedHandler.rssValueKey,
+      'vnexpress',
+    );
+    rssDataList = await RSSApi.getRSS();
+    // check if news notification is enabled
+    if (SharedHandler.getSharedPref(SharedHandler.newsNotificationKey) == true) {
+      var randomNumber = Random().nextInt(rssDataList.length);
+      createNotification(
+        title: rssDataList[randomNumber].title,
+        body: rssDataList[randomNumber].description,
+        bigPicture: rssDataList[randomNumber].imageUrl,
+      );
+    }
   }
 
   _setPosition() async {
@@ -170,30 +192,30 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
     }
   }
 
-//Hàm này được sử dụng để lấy dữ liệu thời tiết từ API thông qua các phương thức được gọi 
+//Hàm này được sử dụng để lấy dữ liệu thời tiết từ API thông qua các phương thức được gọi
 //từ các lớp WeatherAPI và UVAPI.
 
 // Cụ thể, hàm này bao gồm các bước sau:
 
-// Khi hàm được gọi, nó sẽ phát ra một sự kiện (event) LoadingDataFromWeatherAPIState() 
+// Khi hàm được gọi, nó sẽ phát ra một sự kiện (event) LoadingDataFromWeatherAPIState()
 //thông qua phương thức emit(). Sự kiện này sẽ được Bloc lắng nghe để cập nhật trạng thái (state) của ứng dụng.
 
 // Hàm tiếp tục bằng việc lấy vị trí hiện tại của người dùng thông qua biến positionOfUser.
 
 // Sau đó, hàm gọi phương thức getWeatherData() từ lớp WeatherAPI để lấy dữ liệu thời tiết hiện tại.
 
-// Tiếp theo, hàm lấy danh sách các chỉ số gió và độ ẩm từ dữ liệu thời tiết và lưu chúng vào 
+// Tiếp theo, hàm lấy danh sách các chỉ số gió và độ ẩm từ dữ liệu thời tiết và lưu chúng vào
 //các biến windIndexes và humidityIndexes.
 
 // Hàm cũng lưu tên của thành phố hiện tại vào biến sliverTitle.
 
 // Sau đó, hàm gọi phương thức getUVData() từ lớp UVAPI để lấy chỉ số UV.
 
-// Cuối cùng, hàm phát ra một sự kiện SuccessfullyLoadedDataFromWeatherAPIState() 
-//thông qua phương thức emit(). Nếu có lỗi xảy ra trong quá trình lấy dữ liệu, hàm sẽ phát 
+// Cuối cùng, hàm phát ra một sự kiện SuccessfullyLoadedDataFromWeatherAPIState()
+//thông qua phương thức emit(). Nếu có lỗi xảy ra trong quá trình lấy dữ liệu, hàm sẽ phát
 //ra sự kiện FailedToLoadDataFromWeatherAPIState() và ném ra ngoại lệ để xử lý lỗi.
 
-// Với việc sử dụng Future và async/await, hàm này sẽ chạy bất đồng bộ và không làm 
+// Với việc sử dụng Future và async/await, hàm này sẽ chạy bất đồng bộ và không làm
 //đóng băng giao diện người dùng trong quá trình lấy dữ liệu từ API
 
   Future<void> _getWeatherApiData() async {
@@ -230,27 +252,27 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
         SharedHandler.favoriteLocationsTempListKey);
   }
 
-//sử dụng để lấy dữ liệu thời tiết từ API và cập nhật trạng thái của ứng dụng. Cụ thể, 
+//sử dụng để lấy dữ liệu thời tiết từ API và cập nhật trạng thái của ứng dụng. Cụ thể,
 //phương thức này có các bước như sau:
 
-// Phương thức bắt đầu bằng việc phát ra một trạng thái "LoadingDataFromWeatherAPIState" 
+// Phương thức bắt đầu bằng việc phát ra một trạng thái "LoadingDataFromWeatherAPIState"
 //để hiển thị cho người dùng biết rằng ứng dụng đang tải dữ liệu.
 
-// Sau đó, phương thức sử dụng hàm "await" để đợi dữ liệu thời tiết được trả về từ API 
+// Sau đó, phương thức sử dụng hàm "await" để đợi dữ liệu thời tiết được trả về từ API
 //thông qua hàm "getWeatherData" trong lớp "WeatherAPI". Dữ liệu này được gán vào biến "currentWeather".
 
-// Tiếp theo, phương thức sử dụng phương thức "map" để lấy danh sách chỉ số gió và 
-//độ ẩm từ danh sách dữ liệu thời tiết. Chúng được chuyển đổi thành danh sách số thực bằng 
+// Tiếp theo, phương thức sử dụng phương thức "map" để lấy danh sách chỉ số gió và
+//độ ẩm từ danh sách dữ liệu thời tiết. Chúng được chuyển đổi thành danh sách số thực bằng
 //cách sử dụng hàm "convertNumber".
 
 // Sau đó, phương thức gán giá trị cho biến "sliverTitle" bằng tên thành phố hiện tại.
 
-// Tiếp theo, phương thức sử dụng hàm "await" để đợi dữ liệu chỉ số tia UV được trả về 
+// Tiếp theo, phương thức sử dụng hàm "await" để đợi dữ liệu chỉ số tia UV được trả về
 //từ API thông qua hàm "getUVData" trong lớp "UVAPI". Dữ liệu này được gán vào biến "uvIndexes".
 
-// Cuối cùng, phương thức phát ra một trạng thái "SuccessfullyLoadedDataFromWeatherAPIState" 
-//để hiển thị cho người dùng biết rằng dữ liệu đã được tải thành công. Nếu có lỗi xảy ra trong 
-//quá trình tải dữ liệu, phương thức sẽ phát ra trạng thái "FailedToLoadDataFromWeatherAPIState" 
+// Cuối cùng, phương thức phát ra một trạng thái "SuccessfullyLoadedDataFromWeatherAPIState"
+//để hiển thị cho người dùng biết rằng dữ liệu đã được tải thành công. Nếu có lỗi xảy ra trong
+//quá trình tải dữ liệu, phương thức sẽ phát ra trạng thái "FailedToLoadDataFromWeatherAPIState"
 //và ném ra ngoại lệ để thông báo cho người dùng biết rằng đã xảy ra lỗi và không thể tải dữ liệu.
 
   Future<void> getWeather(double lat, double lon) async {
