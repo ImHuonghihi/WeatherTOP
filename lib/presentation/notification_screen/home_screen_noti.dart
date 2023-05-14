@@ -1,3 +1,6 @@
+import 'dart:ffi';
+
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,12 +8,15 @@ import 'package:flutter/services.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/services/local/shared_preferences.dart';
 import 'package:weather/utils/functions/navigation_functions.dart';
+import 'package:weather/utils/functions/setRSS.dart';
 import 'package:weather/utils/styles/colors.dart';
 import 'package:weather/utils/styles/cosntants.dart';
 
+import '../home_screen/home_screen_cubit/home_screen_cubit.dart';
+import 'rss.dart';
 
 class NotificationSetting extends StatefulWidget {
-  var homeScreenCubit;
+  HomeScreenCubit homeScreenCubit;
 
   NotificationSetting({Key? key, required this.homeScreenCubit})
       : super(key: key);
@@ -28,11 +34,11 @@ class _NotificationSettingState extends State<NotificationSetting> {
   var isNotificationEnabled = true;
   var isExtremeWeatherWarningEnabled =
       SharedHandler.getSharedPref(SharedHandler.extremeWeatherNotificationKey);
-  var isNewsFeedEnabled =
-      SharedHandler.getSharedPref(SharedHandler.newsNotificationKey);
-  var newsFeedRSS = 'https://vnexpress.net/rss/tin-moi-nhat.rss';
+  // var isNewsFeedEnabled =
+  //     SharedHandler.getSharedPref(SharedHandler.newsNotificationKey);
+  // var newsFeedRSS = 'https://vnexpress.net/rss/tin-moi-nhat.rss';
 
-  var rssInterval = 1; //hours
+  // var rssInterval = 1; //hours
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +65,6 @@ class _NotificationSettingState extends State<NotificationSetting> {
         centerTitle: true,
         backgroundColor: whiteColor,
       ),
-      
       backgroundColor: whiteColor,
       body: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -81,16 +86,12 @@ class _NotificationSettingState extends State<NotificationSetting> {
                         onChanged: (value) {
                           setState(() {
                             isExtremeWeatherWarningEnabled = value;
-                            SharedHandler.setSharedPref(
-                                SharedHandler.extremeWeatherNotificationKey,
-                                value);
                           });
                         },
                         activeTrackColor: blueColor,
                         activeColor: whiteColor,
                       ),
                     ),
-                    //switch to enable/disable news feed
                     ListTile(
                       title: MyText(
                         text: 'News feed',
@@ -111,65 +112,86 @@ class _NotificationSettingState extends State<NotificationSetting> {
                         activeColor: whiteColor,
                       ),
                     ),
+                    //switch to enable/disable news feed
+                    // ListTile(
+                    //   title: MyText(
+                    //     text: 'News feed',
+                    //     size: fontSizeM,
+                    //     fontWeight: FontWeight.normal,
+                    //     color: blackColor,
+                    //   ),
+                    //   trailing: Switch(
+                    //     value: isNewsFeedEnabled,
+                    //     onChanged: (value) {
+                    //       setState(() {
+                    //         isNewsFeedEnabled = value;
+                    //         SharedHandler.setSharedPref(
+                    //             SharedHandler.newsNotificationKey, value);
+                    //       });
+                    //     },
+                    //     activeTrackColor: blueColor,
+                    //     activeColor: whiteColor,
+                    //   ),
+                    // ),
                     //RSS link
-                    ListTile(
-                      title: MyText(
-                        text: 'RSS link',
-                        size: fontSizeM,
-                        fontWeight: FontWeight.normal,
-                        color: blackColor,
-                      ),
-                      trailing: MyText(
-                        text: "Click to edit",
-                        size: fontSizeM,
-                        fontWeight: FontWeight.normal,
-                        color: blackColor,
-                      ),
-                    ),
-                    // RSS refreh time
-                    ListTile(
-                      title: MyText(
-                        text: 'RSS refresh time',
-                        size: fontSizeM,
-                        fontWeight: FontWeight.normal,
-                        color: blackColor,
-                      ),
-                      trailing: GestureDetector(
-                        onTap: () {
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (context) {
-                              return Container(
-                                height: 200,
-                                child: CupertinoPicker(
-                                  itemExtent: 50,
-                                  onSelectedItemChanged: (value) {
-                                    setState(() {
-                                      rssInterval = value + 1;
-                                    });
-                                  },
-                                  children: [
-                                    for (var i = 1; i <= 24; i++)
-                                      MyText(
-                                        text: '$i hours',
-                                        size: fontSizeM,
-                                        fontWeight: FontWeight.normal,
-                                        color: blackColor,
-                                      ),
-                                  ],
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        child: MyText(
-                          text: '$rssInterval hours',
-                          size: fontSizeM,
-                          fontWeight: FontWeight.normal,
-                          color: blackColor,
-                        ),
-                      ),
-                    ),
+                    // ListTile(
+                    //   title: MyText(
+                    //     text: 'RSS link',
+                    //     size: fontSizeM,
+                    //     fontWeight: FontWeight.normal,
+                    //     color: blackColor,
+                    //   ),
+                    //   trailing: MyText(
+                    //     text: "Click to edit",
+                    //     size: fontSizeM,
+                    //     fontWeight: FontWeight.normal,
+                    //     color: blackColor,
+                    //   ),
+                    // ),
+                    // // RSS refreh time
+                    // ListTile(
+                    //   title: MyText(
+                    //     text: 'RSS refresh time',
+                    //     size: fontSizeM,
+                    //     fontWeight: FontWeight.normal,
+                    //     color: blackColor,
+                    //   ),
+                      // trailing: GestureDetector(
+                      //   onTap: () {
+                      //     showModalBottomSheet(
+                      //       context: context,
+                      //       builder: (context) {
+                      //         return Container(
+                      //           height: 200,
+                      //           child: CupertinoPicker(
+                      //             itemExtent: 50,
+                      //             onSelectedItemChanged: (value) {
+                      //               setState(() {
+                      //                 rssInterval = value + 1;
+                      //               });
+                      //             },
+                      //             children: [
+                      //               for (var i = 1; i <= 24; i++)
+                      //                 MyText(
+                      //                   text: '$i hours',
+                      //                   size: fontSizeM,
+                      //                   fontWeight: FontWeight.normal,
+                      //                   color: blackColor,
+                      //                 ),
+                      //             ],
+                      //           ),
+                      //         );
+                      //       },
+                      //     );
+                      //   },
+                    //     child: MyText(
+                    //       text: '$rssInterval hours',
+                    //       size: fontSizeM,
+                    //       fontWeight: FontWeight.normal,
+                    //       color: blackColor,
+                    //     ),
+                    //   ),
+                    // ),
                     //scheduled time
                     ListTile(
                       title: MyText(
@@ -178,38 +200,35 @@ class _NotificationSettingState extends State<NotificationSetting> {
                         fontWeight: FontWeight.normal,
                         color: blackColor,
                       ),
-                      trailing: MyText(
-                        text: scheduledDate == null
-                            ? 'Not set'
-                            : '${scheduledDate!.hour}:${scheduledDate!.minute}',
-                        size: fontSizeM,
-                        fontWeight: FontWeight.normal,
-                        color: blackColor,
-                      ),
+                      trailing: GestureDetector(
+                          onTap: () async {
+                            var timeSet = (await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                            ));
+                            if (timeSet == null) return;
+                            setState(() {
+                              scheduledDate = DateTime(
+                                DateTime.now().year,
+                                DateTime.now().month,
+                                DateTime.now().day,
+                                timeSet.hour,
+                                timeSet.minute,
+                              );
+                            });
+                          },
+                          child: MyText(
+                            text: scheduledDate == null
+                                ? 'Not set'
+                                : scheduledDate.toString().substring(11, 16),
+                            size: fontSizeM,
+                            fontWeight: FontWeight.normal,
+                            color: blackColor,
+                          )),
                     ),
                     //button to set scheduled time
                     ElevatedButton(
-                      onPressed: () async {
-                        var timeSet = (await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.now(),
-                        ));
-                        if (timeSet == null) return;
-                        setState(() {
-                          scheduledDate = DateTime(
-                            DateTime.now().year,
-                            DateTime.now().month,
-                            DateTime.now().day,
-                            timeSet.hour,
-                            timeSet.minute,
-                          );
-                          SharedHandler.setSharedPref(
-                              SharedHandler.timeNotificationKey,
-                              scheduledDate.toString());
-                          AwesomeNotifications().cancel(10);
-                          widget.homeScreenCubit.initWeatherNotification();
-                        });
-                      },
+                      onPressed: onSave,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: blueColor,
                         shape: RoundedRectangleBorder(
@@ -217,7 +236,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
                         ),
                       ),
                       child: MyText(
-                        text: 'Set scheduled time',
+                        text: 'Save',
                         size: fontSizeM,
                         fontWeight: FontWeight.normal,
                         color: whiteColor,
@@ -230,5 +249,33 @@ class _NotificationSettingState extends State<NotificationSetting> {
             ],
           )),
     );
+  }
+
+  onSave() async {
+    await AndroidAlarmManager.periodic(
+      const Duration(hours: 1),
+      0,
+      setRss,
+      exact: true,
+      wakeup: true,
+    );
+
+    // reset notification
+    SharedHandler.setSharedPref(
+        SharedHandler.timeNotificationKey, scheduledDate.toString());
+    AwesomeNotifications().cancel(10);
+    widget.homeScreenCubit.initWeatherNotification();
+
+    // reset rss
+    SharedHandler.setSharedPref(SharedHandler.rssValueKey, rssKey);
+    SharedHandler.setSharedPref(
+        SharedHandler.rssIntervalKey, rssInterval.toString());
+    await setRss();
+    await initRss();
+
+    // reset extreme weather warning
+    SharedHandler.setSharedPref(SharedHandler.extremeWeatherNotificationKey,
+        isExtremeWeatherWarningEnabled);
+    widget.homeScreenCubit.initWarningNotification();
   }
 }

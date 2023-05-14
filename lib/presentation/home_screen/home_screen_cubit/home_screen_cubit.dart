@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:ffi';
+import 'dart:math';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,10 +12,13 @@ import 'package:weather/models/weather_of_day.dart';
 import 'package:weather/presentation/home_screen/home_screen_cubit/home_screen_states.dart';
 import 'package:weather/services/remote/location_api.dart';
 import 'package:weather/services/local/shared_preferences.dart';
+import 'package:weather/services/remote/rss_api.dart';
 import 'package:weather/utils/exstreme_weather_noti.dart';
 import 'package:weather/utils/functions/number_converter.dart';
+import 'package:weather/utils/functions/setRSS.dart';
+import 'package:weather/utils/functions/time_converting.dart';
 import 'package:weather/utils/template_noti.dart';
-
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import '../../../models/uv_index.dart';
 import '../../../services/remote/uv_api.dart';
 import '../../../services/remote/weather_api/weather_api.dart';
@@ -76,11 +81,33 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
     }
   }
 
+  _defaultPref() {
+    if (SharedHandler.getSharedPref(SharedHandler.rssValueKey) is Bool) {
+      SharedHandler.setSharedPref(
+        SharedHandler.rssValueKey,
+        'vnexpress',
+      );
+    }
+    if (SharedHandler.getSharedPref(SharedHandler.rssIntervalKey) is Bool) {
+      SharedHandler.setSharedPref(
+        SharedHandler.rssIntervalKey,
+        1,
+      );
+    }
+    if (SharedHandler.getSharedPref(SharedHandler.timeNotificationKey)
+        is Bool || !(SharedHandler.getSharedPref(SharedHandler.timeNotificationKey) as String).isValidDate()) {
+      SharedHandler.setSharedPref(
+        SharedHandler.timeNotificationKey,
+        DateTime.now().toString(),
+      );
+    }
+  }
+
   initServices() async {
     //fill the currentWeather with dummy data until the true data come
     _setCurrentWeatherDefault();
     _setChartDefault();
-
+    _defaultPref();
     await _initLocationService();
 
     await UVAPI.initializeUVAPI();
@@ -88,7 +115,8 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
       await _getWeatherApiData();
     }
     _initNotification();
-    _initWarningNotification();
+    initWarningNotification();
+    
   }
 
   _setPosition() async {
@@ -126,6 +154,7 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
     DateTime? scheduledDate = timeSet == "" ? null : DateTime.parse(timeSet);
 
     createNotification(
+        id: 10,
         title: currentWeather.currentCountryDetails!.currentCity +
             Emojis.wheater_thermometer +
             Emojis.sky_cloud_with_snow,
@@ -148,9 +177,14 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
     initWeatherNotification();
   }
 
-  _initWarningNotification() async {
-    debugPrint("initWarningNotification");
-    createExstremeWeatherNoti(currentWeather);
+  initWarningNotification() async {
+    if (SharedHandler.getSharedPref(
+            SharedHandler.extremeWeatherNotificationKey) ==
+        true) {
+      createExstremeWeatherNoti(currentWeather);
+    } else {
+      AwesomeNotifications().cancel(11);
+    }
   }
 
 
@@ -177,30 +211,31 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
       await LocationAPI.openLocationSettings();
     }
   }
+
 //Hàm này được sử dụng để lấy dữ liệu thời tiết từ API thông qua các phương thức được gọi 
 //từ các lớp WeatherAPI và UVAPI.
 
 // Cụ thể, hàm này bao gồm các bước sau:
 
-// Khi hàm được gọi, nó sẽ phát ra một sự kiện (event) LoadingDataFromWeatherAPIState() 
+// Khi hàm được gọi, nó sẽ phát ra một sự kiện (event) LoadingDataFromWeatherAPIState()
 //thông qua phương thức emit(). Sự kiện này sẽ được Bloc lắng nghe để cập nhật trạng thái (state) của ứng dụng.
 
 // Hàm tiếp tục bằng việc lấy vị trí hiện tại của người dùng thông qua biến positionOfUser.
 
 // Sau đó, hàm gọi phương thức getWeatherData() từ lớp WeatherAPI để lấy dữ liệu thời tiết hiện tại.
 
-// Tiếp theo, hàm lấy danh sách các chỉ số gió và độ ẩm từ dữ liệu thời tiết và lưu chúng vào 
+// Tiếp theo, hàm lấy danh sách các chỉ số gió và độ ẩm từ dữ liệu thời tiết và lưu chúng vào
 //các biến windIndexes và humidityIndexes.
 
 // Hàm cũng lưu tên của thành phố hiện tại vào biến sliverTitle.
 
 // Sau đó, hàm gọi phương thức getUVData() từ lớp UVAPI để lấy chỉ số UV.
 
-// Cuối cùng, hàm phát ra một sự kiện SuccessfullyLoadedDataFromWeatherAPIState() 
-//thông qua phương thức emit(). Nếu có lỗi xảy ra trong quá trình lấy dữ liệu, hàm sẽ phát 
+// Cuối cùng, hàm phát ra một sự kiện SuccessfullyLoadedDataFromWeatherAPIState()
+//thông qua phương thức emit(). Nếu có lỗi xảy ra trong quá trình lấy dữ liệu, hàm sẽ phát
 //ra sự kiện FailedToLoadDataFromWeatherAPIState() và ném ra ngoại lệ để xử lý lỗi.
 
-// Với việc sử dụng Future và async/await, hàm này sẽ chạy bất đồng bộ và không làm 
+// Với việc sử dụng Future và async/await, hàm này sẽ chạy bất đồng bộ và không làm
 //đóng băng giao diện người dùng trong quá trình lấy dữ liệu từ API
 
   Future<void> _getWeatherApiData() async {
@@ -237,28 +272,27 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
         SharedHandler.favoriteLocationsTempListKey);
   }
 
-
 //sử dụng để lấy dữ liệu thời tiết từ API và cập nhật trạng thái của ứng dụng. Cụ thể, 
 //phương thức này có các bước như sau:
 
-// Phương thức bắt đầu bằng việc phát ra một trạng thái "LoadingDataFromWeatherAPIState" 
+// Phương thức bắt đầu bằng việc phát ra một trạng thái "LoadingDataFromWeatherAPIState"
 //để hiển thị cho người dùng biết rằng ứng dụng đang tải dữ liệu.
 
-// Sau đó, phương thức sử dụng hàm "await" để đợi dữ liệu thời tiết được trả về từ API 
+// Sau đó, phương thức sử dụng hàm "await" để đợi dữ liệu thời tiết được trả về từ API
 //thông qua hàm "getWeatherData" trong lớp "WeatherAPI". Dữ liệu này được gán vào biến "currentWeather".
 
-// Tiếp theo, phương thức sử dụng phương thức "map" để lấy danh sách chỉ số gió và 
-//độ ẩm từ danh sách dữ liệu thời tiết. Chúng được chuyển đổi thành danh sách số thực bằng 
+// Tiếp theo, phương thức sử dụng phương thức "map" để lấy danh sách chỉ số gió và
+//độ ẩm từ danh sách dữ liệu thời tiết. Chúng được chuyển đổi thành danh sách số thực bằng
 //cách sử dụng hàm "convertNumber".
 
 // Sau đó, phương thức gán giá trị cho biến "sliverTitle" bằng tên thành phố hiện tại.
 
-// Tiếp theo, phương thức sử dụng hàm "await" để đợi dữ liệu chỉ số tia UV được trả về 
+// Tiếp theo, phương thức sử dụng hàm "await" để đợi dữ liệu chỉ số tia UV được trả về
 //từ API thông qua hàm "getUVData" trong lớp "UVAPI". Dữ liệu này được gán vào biến "uvIndexes".
 
-// Cuối cùng, phương thức phát ra một trạng thái "SuccessfullyLoadedDataFromWeatherAPIState" 
-//để hiển thị cho người dùng biết rằng dữ liệu đã được tải thành công. Nếu có lỗi xảy ra trong 
-//quá trình tải dữ liệu, phương thức sẽ phát ra trạng thái "FailedToLoadDataFromWeatherAPIState" 
+// Cuối cùng, phương thức phát ra một trạng thái "SuccessfullyLoadedDataFromWeatherAPIState"
+//để hiển thị cho người dùng biết rằng dữ liệu đã được tải thành công. Nếu có lỗi xảy ra trong
+//quá trình tải dữ liệu, phương thức sẽ phát ra trạng thái "FailedToLoadDataFromWeatherAPIState"
 //và ném ra ngoại lệ để thông báo cho người dùng biết rằng đã xảy ra lỗi và không thể tải dữ liệu.
   Future<void> getWeather(double lat, double lon) async {
     emit(LoadingDataFromWeatherAPIState());

@@ -14,4 +14,15 @@ class TimeConverting {
           {bool setFullDayName = false}) =>
       DateFormat(setFullDayName ? 'EEEE' : 'EEE')
           .format(convertToDateTime(timeStamp));
+  
+}
+extension DateExt on String {
+  bool isValidDate() {
+    try {
+      DateTime.parse(this);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }

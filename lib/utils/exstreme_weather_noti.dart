@@ -45,15 +45,12 @@ Future<void> createExstremeWeatherNoti(CurrentWeather weather) async {
     //create the notification
     AwesomeNotifications().createNotification(
       content: NotificationContent(
-        id: 10,
+        id: 11,
         channelKey: 'extreme',
         title: Emojis.symbols_warning + 'WARNING!',
         body:
             "The weather currently is ${weather.weatherOfDaysList[0].weatherStatus}, ${weather.weatherOfDaysList[0].currentTemp}. Be careful when going outside!",
         notificationLayout: NotificationLayout.BigPicture,
-        
-        bigPicture:
-            "https://www.shutterstock.com/image-illustration/severe-weather-alert-warning-caution-260nw-1512157175.jpg",
         payload: {'data': 'my payload'},
       ),
     );

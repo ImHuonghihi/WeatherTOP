@@ -1,4 +1,6 @@
 // function that converts Vietnamese characters to non-accented characters
+import 'dart:convert';
+
 String toNonAccentedVietnamese(String str) {
   str = str.replaceAll(RegExp(r"/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g"), "a");
   str = str.replaceAll(RegExp(r"/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g"), "e");
@@ -17,6 +19,20 @@ String toNonAccentedVietnamese(String str) {
   str = str.replaceAll(RegExp(r"/\u0300|\u0301|\u0303|\u0309|\u0323/g"), "");
   str = str.replaceAll(RegExp(r"/\u02C6|\u0306|\u031B/g"), "");
   return str;
+}
+
+extension StringExtension on String {
+  String nonAccentedVietnamese() {
+    return toNonAccentedVietnamese(this);
+  }
+
+  // to utf8
+  String toUTF8() {
+    // string to bytes
+    List<int> bytes = this.codeUnits;
+    // bytes to string
+    return utf8.decode(bytes);
+  }
 }
 
 // detect if a string is a Vietnamese string
