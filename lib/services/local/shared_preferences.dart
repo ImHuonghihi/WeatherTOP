@@ -15,6 +15,8 @@ class SharedHandler {
 
   static String rssValueKey = 'rssValue';
 
+  static String rssIntervalKey = 'rssInterval';
+
   static String timeNotificationKey = 'timeNotification';
 
 

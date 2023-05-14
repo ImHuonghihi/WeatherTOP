@@ -15,8 +15,10 @@ import 'package:weather/services/local/shared_preferences.dart';
 import 'package:weather/services/remote/rss_api.dart';
 import 'package:weather/utils/exstreme_weather_noti.dart';
 import 'package:weather/utils/functions/number_converter.dart';
+import 'package:weather/utils/functions/setRSS.dart';
+import 'package:weather/utils/functions/time_converting.dart';
 import 'package:weather/utils/template_noti.dart';
-
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import '../../../models/uv_index.dart';
 import '../../../services/remote/uv_api.dart';
 import '../../../services/remote/weather_api/weather_api.dart';
@@ -33,7 +35,6 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
   late List<UVIndex> uvIndexes;
   late List<double> windIndexes;
   late List<double> humidityIndexes;
-  late List<RssData> rssDataList;
 
   //We use this list to avoid the problem of late currentWeather the problem is an error occurred because the
   //currentWeather is still null when starting the app and we can  not await on initializing
@@ -80,11 +81,33 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
     }
   }
 
+  _defaultPref() {
+    if (SharedHandler.getSharedPref(SharedHandler.rssValueKey) is Bool) {
+      SharedHandler.setSharedPref(
+        SharedHandler.rssValueKey,
+        'vnexpress',
+      );
+    }
+    if (SharedHandler.getSharedPref(SharedHandler.rssIntervalKey) is Bool) {
+      SharedHandler.setSharedPref(
+        SharedHandler.rssIntervalKey,
+        1,
+      );
+    }
+    if (SharedHandler.getSharedPref(SharedHandler.timeNotificationKey)
+        is Bool || !(SharedHandler.getSharedPref(SharedHandler.timeNotificationKey) as String).isValidDate()) {
+      SharedHandler.setSharedPref(
+        SharedHandler.timeNotificationKey,
+        DateTime.now().toString(),
+      );
+    }
+  }
+
   initServices() async {
     //fill the currentWeather with dummy data until the true data come
     _setCurrentWeatherDefault();
     _setChartDefault();
-    await _setRss();
+    _defaultPref();
     await _initLocationService();
 
     await UVAPI.initializeUVAPI();
@@ -92,25 +115,8 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
       await _getWeatherApiData();
     }
     _initNotification();
-    _initWarningNotification();
-  }
-
-  _setRss() async {
-    if (SharedHandler.getSharedPref(SharedHandler.rssValueKey) is Bool) return;
-    SharedHandler.setSharedPref(
-      SharedHandler.rssValueKey,
-      'vnexpress',
-    );
-    rssDataList = await RSSApi.getRSS();
-    // check if news notification is enabled
-    if (SharedHandler.getSharedPref(SharedHandler.newsNotificationKey) == true) {
-      var randomNumber = Random().nextInt(rssDataList.length);
-      createNotification(
-        title: rssDataList[randomNumber].title,
-        body: rssDataList[randomNumber].description,
-        bigPicture: rssDataList[randomNumber].imageUrl,
-      );
-    }
+    initWarningNotification();
+    
   }
 
   _setPosition() async {
@@ -141,6 +147,7 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
 
     DateTime? scheduledDate = timeSet == "" ? null : DateTime.parse(timeSet);
     createNotification(
+        id: 10,
         title: currentWeather.currentCountryDetails!.currentCity +
             Emojis.wheater_thermometer +
             Emojis.sky_cloud_with_snow,
@@ -163,9 +170,14 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
     initWeatherNotification();
   }
 
-  _initWarningNotification() async {
-    debugPrint("initWarningNotification");
-    createExstremeWeatherNoti(currentWeather);
+  initWarningNotification() async {
+    if (SharedHandler.getSharedPref(
+            SharedHandler.extremeWeatherNotificationKey) ==
+        true) {
+      createExstremeWeatherNoti(currentWeather);
+    } else {
+      AwesomeNotifications().cancel(11);
+    }
   }
 
   _locationListener() async {

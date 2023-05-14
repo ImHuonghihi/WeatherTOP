@@ -58,6 +58,7 @@ dependencies:
   sqflite: ^2.2.6
   url_launcher: ^6.1.11
   xml: ^6.3.0
+  android_alarm_manager_plus: ^3.0.0
 
 dev_dependencies:
   flutter_test:

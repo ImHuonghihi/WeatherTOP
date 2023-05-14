@@ -1,3 +1,6 @@
+import 'dart:ffi';
+
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,13 +8,15 @@ import 'package:flutter/services.dart';
 import 'package:weather/presentation/shared_widgets/my_text.dart';
 import 'package:weather/services/local/shared_preferences.dart';
 import 'package:weather/utils/functions/navigation_functions.dart';
+import 'package:weather/utils/functions/setRSS.dart';
 import 'package:weather/utils/styles/colors.dart';
 import 'package:weather/utils/styles/cosntants.dart';
 
+import '../home_screen/home_screen_cubit/home_screen_cubit.dart';
 import 'rss.dart';
 
 class NotificationSetting extends StatefulWidget {
-  var homeScreenCubit;
+  HomeScreenCubit homeScreenCubit;
 
   NotificationSetting({Key? key, required this.homeScreenCubit})
       : super(key: key);
@@ -21,20 +26,31 @@ class NotificationSetting extends StatefulWidget {
 }
 
 class _NotificationSettingState extends State<NotificationSetting> {
-  var scheduledDate =
-      SharedHandler.getSharedPref(SharedHandler.timeNotificationKey) == false
-          ? null
-          : DateTime.parse(
-              SharedHandler.getSharedPref(SharedHandler.timeNotificationKey));
-  var isNotificationEnabled = true;
-  var isExtremeWeatherWarningEnabled =
-      SharedHandler.getSharedPref(SharedHandler.extremeWeatherNotificationKey);
-  var isNewsFeedEnabled =
-      SharedHandler.getSharedPref(SharedHandler.newsNotificationKey);
-  var rssInterval = 1; //hours
-  
+  var scheduledDate;
 
-  // var rssInterval = 1; //hours
+  var isNotificationEnabled;
+  var isExtremeWeatherWarningEnabled;
+  var isNewsFeedEnabled;
+  var rssInterval; //hours
+  var rssKey;
+
+  @override
+  void initState() {
+    super.initState();
+    scheduledDate =
+        SharedHandler.getSharedPref(SharedHandler.timeNotificationKey) == false
+            ? null
+            : DateTime.parse(
+                SharedHandler.getSharedPref(SharedHandler.timeNotificationKey));
+    isNotificationEnabled = true;
+    isExtremeWeatherWarningEnabled = SharedHandler.getSharedPref(
+        SharedHandler.extremeWeatherNotificationKey);
+    isNewsFeedEnabled =
+        SharedHandler.getSharedPref(SharedHandler.newsNotificationKey);
+    rssInterval = 1;
+    rssKey =
+        SharedHandler.getSharedPref(SharedHandler.rssValueKey) == false ? 'vnexpress' : SharedHandler.getSharedPref(SharedHandler.rssValueKey);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,9 +98,6 @@ class _NotificationSettingState extends State<NotificationSetting> {
                         onChanged: (value) {
                           setState(() {
                             isExtremeWeatherWarningEnabled = value;
-                            SharedHandler.setSharedPref(
-                                SharedHandler.extremeWeatherNotificationKey,
-                                value);
                           });
                         },
                         activeTrackColor: blueColor,
@@ -112,71 +125,9 @@ class _NotificationSettingState extends State<NotificationSetting> {
                       ),
                     ),
                     //list of RSS
-                   GestureDetector(
-                    onTap: () {
-                      // show bottom modal for choosing rss link
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) {
-                          return Container(
-                            height: 200,
-                            child: CupertinoPicker(
-                              itemExtent: 50,
-                              onSelectedItemChanged: (value) {
-                                setState(() {
-                                  var i = 0;
-                                  for (var key in newsFeedRSS.keys) {
-                                    if (i == value) {
-                                      SharedHandler.setSharedPref(
-                                          SharedHandler
-                                              .rssValueKey,
-                                          key);
-                                      break;
-                                    }
-                                    i++;
-                                  }
-                                });
-                              },
-                              children: [
-                                // loop key and value of newsFeedRSS
-                                for (var key in newsFeedRSS.keys)
-                                  MyText(
-                                    text: key,
-                                    size: fontSizeM,
-                                    fontWeight: FontWeight.normal,
-                                    color: blackColor,
-                                  ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    child:  ListTile(
-                      title: MyText(
-                        text: 'RSS link',
-                        size: fontSizeM,
-                        fontWeight: FontWeight.normal,
-                        color: blackColor,
-                      ),
-                      trailing: MyText(
-                        text: "Click to edit",
-                        size: fontSizeM,
-                        fontWeight: FontWeight.normal,
-                        color: blackColor,
-                      ),
-                    ),
-                   ),
-                    // RSS refreh time
-                    ListTile(
-                      title: MyText(
-                        text: 'RSS refresh time',
-                        size: fontSizeM,
-                        fontWeight: FontWeight.normal,
-                        color: blackColor,
-                      ),
-                    trailing: GestureDetector(
+                    GestureDetector(
                       onTap: () {
+                        // show bottom modal for choosing rss link
                         showModalBottomSheet(
                           context: context,
                           builder: (context) {
@@ -186,13 +137,21 @@ class _NotificationSettingState extends State<NotificationSetting> {
                                 itemExtent: 50,
                                 onSelectedItemChanged: (value) {
                                   setState(() {
-                                    rssInterval = value + 1;
+                                    var i = 0;
+                                    for (var key in newsFeedRSS.keys) {
+                                      if (i == value) {
+                                        rssKey = key;
+                                        break;
+                                      }
+                                      i++;
+                                    }
                                   });
                                 },
                                 children: [
-                                  for (var i = 1; i <= 24; i++)
+                                  // loop key and value of newsFeedRSS
+                                  for (var key in newsFeedRSS.keys)
                                     MyText(
-                                      text: '$i hours',
+                                      text: key,
                                       size: fontSizeM,
                                       fontWeight: FontWeight.normal,
                                       color: blackColor,
@@ -203,6 +162,60 @@ class _NotificationSettingState extends State<NotificationSetting> {
                           },
                         );
                       },
+                      child: ListTile(
+                        title: MyText(
+                          text: 'RSS link',
+                          size: fontSizeM,
+                          fontWeight: FontWeight.normal,
+                          color: blackColor,
+                        ),
+                        trailing: MyText(
+                          text: rssKey == false ? 'None' : rssKey,
+                          size: fontSizeM,
+                          fontWeight: FontWeight.normal,
+                          color: blackColor,
+                        ),
+                      ),
+                    ),
+                    // RSS refreh time
+                    ListTile(
+                      title: MyText(
+                        text: 'RSS refresh time',
+                        size: fontSizeM,
+                        fontWeight: FontWeight.normal,
+                        color: blackColor,
+                      ),
+                      trailing: GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return Container(
+                                height: 200,
+                                child: CupertinoPicker(
+                                  itemExtent: 50,
+                                  onSelectedItemChanged: (value) {
+                                    setState(() {
+                                      rssInterval = value + 1;
+                                      SharedHandler.setSharedPref(
+                                          SharedHandler.timeNotificationKey,
+                                          rssInterval.toString());
+                                    });
+                                  },
+                                  children: [
+                                    for (var i = 1; i <= 24; i++)
+                                      MyText(
+                                        text: '$i hours',
+                                        size: fontSizeM,
+                                        fontWeight: FontWeight.normal,
+                                        color: blackColor,
+                                      ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
                         child: MyText(
                           text: '$rssInterval hours',
                           size: fontSizeM,
@@ -219,38 +232,35 @@ class _NotificationSettingState extends State<NotificationSetting> {
                         fontWeight: FontWeight.normal,
                         color: blackColor,
                       ),
-                      trailing: MyText(
-                        text: scheduledDate == null
-                            ? 'Not set'
-                            : '${scheduledDate!.hour}:${scheduledDate!.minute}',
-                        size: fontSizeM,
-                        fontWeight: FontWeight.normal,
-                        color: blackColor,
-                      ),
+                      trailing: GestureDetector(
+                          onTap: () async {
+                            var timeSet = (await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                            ));
+                            if (timeSet == null) return;
+                            setState(() {
+                              scheduledDate = DateTime(
+                                DateTime.now().year,
+                                DateTime.now().month,
+                                DateTime.now().day,
+                                timeSet.hour,
+                                timeSet.minute,
+                              );
+                            });
+                          },
+                          child: MyText(
+                            text: scheduledDate == null
+                                ? 'Not set'
+                                : scheduledDate.toString().substring(11, 16),
+                            size: fontSizeM,
+                            fontWeight: FontWeight.normal,
+                            color: blackColor,
+                          )),
                     ),
                     //button to set scheduled time
                     ElevatedButton(
-                      onPressed: () async {
-                        var timeSet = (await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.now(),
-                        ));
-                        if (timeSet == null) return;
-                        setState(() {
-                          scheduledDate = DateTime(
-                            DateTime.now().year,
-                            DateTime.now().month,
-                            DateTime.now().day,
-                            timeSet.hour,
-                            timeSet.minute,
-                          );
-                          SharedHandler.setSharedPref(
-                              SharedHandler.timeNotificationKey,
-                              scheduledDate.toString());
-                          AwesomeNotifications().cancel(10);
-                          widget.homeScreenCubit.initWeatherNotification();
-                        });
-                      },
+                      onPressed: onSave,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: blueColor,
                         shape: RoundedRectangleBorder(
@@ -258,7 +268,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
                         ),
                       ),
                       child: MyText(
-                        text: 'Set scheduled time',
+                        text: 'Save',
                         size: fontSizeM,
                         fontWeight: FontWeight.normal,
                         color: whiteColor,
@@ -271,5 +281,33 @@ class _NotificationSettingState extends State<NotificationSetting> {
             ],
           )),
     );
+  }
+
+  onSave() async {
+    await AndroidAlarmManager.periodic(
+      const Duration(hours: 1),
+      0,
+      setRss,
+      exact: true,
+      wakeup: true,
+    );
+
+    // reset notification
+    SharedHandler.setSharedPref(
+        SharedHandler.timeNotificationKey, scheduledDate.toString());
+    AwesomeNotifications().cancel(10);
+    widget.homeScreenCubit.initWeatherNotification();
+
+    // reset rss
+    SharedHandler.setSharedPref(SharedHandler.rssValueKey, rssKey);
+    SharedHandler.setSharedPref(
+        SharedHandler.rssIntervalKey, rssInterval.toString());
+    await setRss();
+    await initRss();
+
+    // reset extreme weather warning
+    SharedHandler.setSharedPref(SharedHandler.extremeWeatherNotificationKey,
+        isExtremeWeatherWarningEnabled);
+    widget.homeScreenCubit.initWarningNotification();
   }
 }

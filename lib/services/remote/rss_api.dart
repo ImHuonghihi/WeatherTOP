@@ -24,8 +24,15 @@ class RssData {
   // xml to rssdata
   factory RssData.fromXml(XmlElement xml) {
     var title, description, link, imageUrl, pubDate;
-
     if (SharedHandler.getSharedPref(SharedHandler.rssValueKey) == 'vnexpress') {
+      var data = _vnexpressData(xml,
+          title: title, description: description, link: link, pubDate: pubDate);
+      title = data[0];
+      description = data[1];
+      link = data[2];
+      imageUrl = data[3];
+      pubDate = data[4];
+    } else {
       title = xml.findAllElements('title').first.innerText;
       description = xml
           .findAllElements('description')
@@ -43,12 +50,6 @@ class RssData {
           .split("\"")
           .first;
       pubDate = xml.findAllElements('pubDate').first.innerText;
-    } else {
-      title = xml.findAllElements('title').first.innerText!;
-      description = xml.findAllElements('description').first.innerText!;
-      link = xml.findAllElements('link').first.innerText!;
-      imageUrl = xml.findAllElements('enclosure').first.getAttribute('url')!;
-      pubDate = xml.findAllElements('pubDate').first.innerText!;
     }
 
     return RssData(
@@ -59,14 +60,42 @@ class RssData {
       pubDate: pubDate,
     );
   }
+
+  static _vnexpressData(
+    XmlElement xml, {
+    title,
+    description,
+    link,
+    imageUrl,
+    pubDate,
+  }) {
+    title = xml.findAllElements('title').first.innerText;
+    description = xml
+        .findAllElements('description')
+        .first
+        .innerText
+        .split("</a><br/>")
+        .last;
+    link = xml.findAllElements('link').first.innerText;
+    imageUrl = xml
+        .findAllElements('description')
+        .first
+        .innerText
+        .split("img src=\"")
+        .last
+        .split("\"")
+        .first;
+    pubDate = xml.findAllElements('pubDate').first.innerText;
+    return [title, description, link, imageUrl, pubDate];
+  }
 }
 
 // wrapper class for rss api
 class RSSApi {
-  static Future<List<RssData>> getRSS() async {
+  static Future<List<RssData>> getRSS({String? forceURL}) async {
     final keyRss = SharedHandler.getSharedPref(SharedHandler.rssValueKey);
     final url = newsFeedRSS[keyRss];
-    final response = await http.get(Uri.parse(url!));
+    final response = await http.get(Uri.parse(forceURL ?? url!));
     if (response.statusCode == 200) {
       final rss = XmlDocument.parse(utf8.decode(response.bodyBytes));
       final items = rss.findAllElements('item');

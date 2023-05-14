@@ -10,6 +10,7 @@ import 'package:weather/presentation/home_screen/widgets/sunrise_sunset.dart';
 import 'package:weather/presentation/home_screen/widgets/temp_forcasting_container.dart';
 import 'package:weather/presentation/home_screen/widgets/weeklyContainer.dart';
 import 'package:weather/presentation/home_screen/widgets/wind_humidity.dart';
+import 'package:weather/presentation/notification_screen/rss.dart';
 import 'package:weather/presentation/shared_widgets_constant/progress_indicatior.dart';
 import 'package:weather/models/quotes.dart';
 import 'package:weather/services/remote/quotes_api.dart';
@@ -167,7 +168,7 @@ class _CurrentWeatherDataViewerState extends State<CurrentWeatherDataViewer> {
               ),
               K_vSpace10,
               FutureBuilder(
-                future: RSSApi.getRSS(),
+                future: RSSApi.getRSS(forceURL: newsFeedRSS['vnexpress']),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     var rss = snapshot.data as List<RssData>;

@@ -6,11 +6,12 @@ import 'package:weather/models/weather_style_selector.dart';
 import 'package:weather/presentation/home_screen/home_screen.dart';
 import 'package:weather/services/local/shared_preferences.dart';
 import 'package:weather/services/remote/weather_api/weather_api.dart';
-
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'data/bloc_observer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
 
   WeatherStyleSelector.initCurrentTime();
 
