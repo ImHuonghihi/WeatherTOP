@@ -145,7 +145,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
                                   children: [
                                     for (var i = 0; i < newsFeedRSS.length; i++)
                                       MyText(
-                                        text: newsFeedRSS[i],
+                                        text: newsFeedRSS.values.elementAt(i),
                                         size: fontSizeM,
                                         fontWeight: FontWeight.normal,
                                         color: blackColor,
