@@ -95,8 +95,16 @@ class HomeScreenCubit extends Cubit<HomeScreenStates> {
       );
     }
     if (SharedHandler.getSharedPref(SharedHandler.timeNotificationKey)
-        is Bool || !(SharedHandler.getSharedPref(SharedHandler.timeNotificationKey) as String).isValidDate()) {
+        is Bool ) {
       SharedHandler.setSharedPref(
+        SharedHandler.timeNotificationKey,
+        DateTime.now().toString(),
+      );
+    }
+
+    if (SharedHandler.getSharedPref(SharedHandler.timeNotificationKey)
+        is String && (SharedHandler.getSharedPref(SharedHandler.timeNotificationKey) as String).isValidDate()) {
+       SharedHandler.setSharedPref(
         SharedHandler.timeNotificationKey,
         DateTime.now().toString(),
       );
