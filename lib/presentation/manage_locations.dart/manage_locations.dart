@@ -55,8 +55,7 @@ class ManageLocations extends StatelessWidget {
               actions: [
                 IconButton(
                   onPressed: () {
-                    manageLocationsCubit
-                        .addLocationToFavorites(homeScreenCubit.currentWeather);
+                    addLocation(context, HomeScreenCubit.sliverTitle);
                   },
                   icon: const Icon(CupertinoIcons.star, color: blueColor),
                 ),
