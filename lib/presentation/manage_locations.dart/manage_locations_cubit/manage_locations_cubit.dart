@@ -44,18 +44,16 @@ class ManageLocationsCubit extends Cubit<ManageLocationsStates> {
 
   addWeatherLocationToFavorite(CurrentLocationWeather currentLocationWeather) {
     isFavorite = true;
-    if (!favoriteLocationsList
-        .contains(currentLocationWeather.name)) {
+    if (!favoriteLocationsList.contains(currentLocationWeather.name)) {
       favoriteLocationsList.add(currentLocationWeather.name);
     }
-    if (!favoriteLocationsTempsList.contains(
-        currentLocationWeather.main.temp.ceil().toString())) {
-      favoriteLocationsTempsList.add(
-          currentLocationWeather.main.temp.ceil().toString());
+    if (!favoriteLocationsTempsList
+        .contains(currentLocationWeather.main.temp.ceil().toString())) {
+      favoriteLocationsTempsList
+          .add(currentLocationWeather.main.temp.ceil().toString());
     }
     emit(AddLocationToFavoritesState());
   }
-
 
   _addLocationNameIfNotExisted(CurrentWeather currentWeather) {
     if (!favoriteLocationsList
@@ -72,9 +70,12 @@ class ManageLocationsCubit extends Cubit<ManageLocationsStates> {
         currentWeather.weatherOfDaysList[0].currentTemp.ceil().toString())) {
       favoriteLocationsTempsList.add(
           currentWeather.weatherOfDaysList[0].currentTemp.ceil().toString());
+      SharedHandler.saveListInSharedPref(
+          SharedHandler.favoriteLocationsTempListKey,
+          favoriteLocationsTempsList);
+    } else {
+      throw Exception('Temperature info is not available. Try again later.');
     }
-    SharedHandler.saveListInSharedPref(
-        SharedHandler.favoriteLocationsTempListKey, favoriteLocationsTempsList);
   }
 
   removeAtIndexFromFavorites(index) {
@@ -96,6 +97,5 @@ class ManageLocationsCubit extends Cubit<ManageLocationsStates> {
     } catch (e) {
       debugPrint(e.toString());
     }
-
   }
 }

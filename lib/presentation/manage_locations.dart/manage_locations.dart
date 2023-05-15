@@ -43,8 +43,7 @@ class ManageLocations extends StatelessWidget {
           }
         },
         builder: (context, state) {
-           manageLocationsCubit =
-              ManageLocationsCubit.get(context);
+          manageLocationsCubit = ManageLocationsCubit.get(context);
           return Scaffold(
             backgroundColor: whiteColor,
             appBar: AppBar(
@@ -131,10 +130,11 @@ class ManageLocations extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          if (addLocation(context, textEditingController.text)) {
+                          if (addLocation(
+                              context, textEditingController.text)) {
                             Navigator.of(context).pop();
                           }
-                        },     
+                        },
                         child: MyText(
                           text: "Add",
                           size: fontSizeM,
@@ -237,8 +237,8 @@ class ManageLocations extends StatelessWidget {
                                               // delete button
                                               TextButton(
                                                   onPressed: () {
-                                                   isDeleted = true;
-                                                  Navigator.of(context).pop();
+                                                    isDeleted = true;
+                                                    Navigator.of(context).pop();
                                                   },
                                                   child: MyText(
                                                     text: "Delete",
@@ -313,20 +313,24 @@ class ManageLocations extends StatelessWidget {
     WeatherAPI.getWeatherDataByCityName(
             cityName: locationName.split(', ').first)
         .then((value) {
-      if (value is CurrentWeather) {
-        manageLocationsCubit.addLocationToFavorites(value);
-        Navigator.pop(context);
-        return true;
-      } else {
-        Navigator.pop(context);
-        showToastMessage('Unable to get weather data.');
-        return false;
+      try {
+        if (value is CurrentWeather) {
+          manageLocationsCubit.addLocationToFavorites(value);
+          Navigator.pop(context);
+          return true;
+        } else {
+          Navigator.pop(context);
+          showToastMessage('Unable to get weather data.');
+          return false;
+        }
+      } catch (err) {
+        showToastMessage(err.toString());
       }
     });
   }
 
   loadWeather(BuildContext context, String locationName) {
-     showLoaderDialog(context);
+    showLoaderDialog(context);
     homeScreenCubit.getWeatherByCityName(locationName).then((_) {
       Navigator.pop(context);
       Navigator.pop(context);
