@@ -36,7 +36,9 @@ class _NotificationSettingState extends State<NotificationSetting> {
       SharedHandler.getSharedPref(SharedHandler.extremeWeatherNotificationKey);
   var isNewsFeedEnabled =
       SharedHandler.getSharedPref(SharedHandler.newsNotificationKey);
-  var newsFeedRSS = 'https://vnexpress.net/rss/tin-moi-nhat.rss';
+  var rssKey = SharedHandler.getSharedPref(SharedHandler.rssValueKey) == false
+      ? 'vnexpress'
+      : SharedHandler.getSharedPref(SharedHandler.rssValueKey);
 
   var rssInterval = 1; //hours
 
