@@ -5,7 +5,9 @@ import 'package:weather/utils/functions/string_ext.dart';
 
 class OverviewCard extends StatelessWidget {
   final String title, content;
-  const OverviewCard({Key? key, required this.title, required this.content}) : super(key: key);
+  
+  DateTime date;
+  OverviewCard({Key? key, required this.title, required this.content, required this.date}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

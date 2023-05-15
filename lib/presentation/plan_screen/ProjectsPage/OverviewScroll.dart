@@ -71,6 +71,7 @@ class _OverViewState extends State<OverView> with TickerProviderStateMixin {
                       return OverviewCard(
                         title: plans[index].title,
                         content: plans[index].description,
+                        date: DateTime.parse(plans[index].date),
                       );
                     }),
                 ),
@@ -85,6 +86,7 @@ class _OverViewState extends State<OverView> with TickerProviderStateMixin {
                         return OverviewCard(
                           title: plans[index].title,
                           content: plans[index].description,
+                          date: DateTime.parse(plans[index].date),
                         );
                       }),
                 ),
