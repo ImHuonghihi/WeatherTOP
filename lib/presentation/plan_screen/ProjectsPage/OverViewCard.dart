@@ -46,7 +46,7 @@ class OverviewCard extends StatelessWidget {
             style: GoogleFonts.montserrat(color: Colors.white, fontSize: 15),
           ),
           Text(
-            DateFormat.MMMd().format((DateTime.now())),
+            DateFormat.MMMd().format(date),
             style: GoogleFonts.montserrat(color: Colors.white, fontSize: 15),
           )
         ],
