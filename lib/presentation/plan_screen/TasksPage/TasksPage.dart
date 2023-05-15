@@ -76,6 +76,7 @@ class _TasksPageState extends State<TasksPage> {
                               MaterialPageRoute(
                                   builder: (context) => AddNewTask(
                                         database: widget.database,
+                                        selectedDate: _selectedDate,
                                       )));
                         },
                         child: Container(

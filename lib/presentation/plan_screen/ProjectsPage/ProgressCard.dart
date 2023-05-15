@@ -163,14 +163,14 @@ class ScrollProgressCard extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Text(
-                        "$CompletedPercent% Completed",
-                        style: GoogleFonts.montserrat(
-                          color: Colors.grey,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      )
+                      // Text(
+                      //   "$CompletedPercent% Completed",
+                      //   style: GoogleFonts.montserrat(
+                      //     color: Colors.grey,
+                      //     fontSize: 10,
+                      //     fontWeight: FontWeight.w600,
+                      //   ),
+                      // )
                     ],
                   )),
                   Expanded(child: Container()),

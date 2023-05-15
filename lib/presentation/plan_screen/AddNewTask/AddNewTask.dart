@@ -17,7 +17,8 @@ class AddNewTask extends StatefulWidget {
   final PlanDatabase database;
   final int? planId;
   final Plan? plan;
-  const AddNewTask({Key? key, required this.database, this.planId, this.plan})
+  DateTime? selectedDate;
+  AddNewTask({Key? key, required this.database, this.planId, this.plan, this.selectedDate})
       : super(key: key);
 
   @override
@@ -35,7 +36,7 @@ class _AddNewTaskState extends State<AddNewTask> {
   @override
   void initState() {
     _Titlecontroller = TextEditingController();
-    selectedTime = DateTime.now();
+    selectedTime = widget.selectedDate ?? DateTime.now();
     SelectedDate =
         DateTime(selectedTime.year, selectedTime.month, selectedTime.day);
     _descriptionController = TextEditingController();
