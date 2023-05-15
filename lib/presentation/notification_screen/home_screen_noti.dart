@@ -123,13 +123,47 @@ class _NotificationSettingState extends State<NotificationSetting> {
                         fontWeight: FontWeight.normal,
                         color: blackColor,
                       ),
-                      trailing: MyText(
-                        text: rssKey,
-                        size: fontSizeM,
-                        fontWeight: FontWeight.normal,
-                        color: blackColor,
+                      trailing: GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return Container(
+                                height: 200,
+                                child: CupertinoPicker(
+                                  itemExtent: 50,
+                                  onSelectedItemChanged: (value) {
+                                    setState(() {
+                                      for (var key in newsFeedRSS.keys) {
+                                        if (key == newsFeedRSS.keys.elementAt(value)) {
+                                          rssKey = key;
+                                          break;
+                                        }
+                                      }
+                                    });
+                                  },
+                                  children: [
+                                    for (var i = 0; i < newsFeedRSS.length; i++)
+                                      MyText(
+                                        text: newsFeedRSS[i],
+                                        size: fontSizeM,
+                                        fontWeight: FontWeight.normal,
+                                        color: blackColor,
+                                      ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: MyText(
+                            text: rssKey == false ? 'Not set' : rssKey,
+                            size: fontSizeM,
+                            fontWeight: FontWeight.normal,
+                            color: blackColor,
+                          ),
+                        )
                       ),
-                    ),
                     // RSS refreh time
                     ListTile(
                       title: MyText(
