@@ -28,7 +28,7 @@ class NotificationSetting extends StatefulWidget {
 class _NotificationSettingState extends State<NotificationSetting> {
   var scheduledDate =
       SharedHandler.getSharedPref(SharedHandler.timeNotificationKey) == false
-          ? null
+          ? DateTime.now()
           : DateTime.parse(
               SharedHandler.getSharedPref(SharedHandler.timeNotificationKey));
   var isNotificationEnabled = true;
@@ -40,7 +40,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
       ? 'vnexpress'
       : SharedHandler.getSharedPref(SharedHandler.rssValueKey);
 
-  var rssInterval = 1; //hours
+  var rssInterval = SharedHandler.getSharedPref(SharedHandler.rssIntervalKey); //hours
 
   @override
   Widget build(BuildContext context) {
@@ -115,26 +115,6 @@ class _NotificationSettingState extends State<NotificationSetting> {
                       ),
                     ),
                     //switch to enable/disable news feed
-                    ListTile(
-                      title: MyText(
-                        text: 'News feed',
-                        size: fontSizeM,
-                        fontWeight: FontWeight.normal,
-                        color: blackColor,
-                      ),
-                      trailing: Switch(
-                        value: isNewsFeedEnabled,
-                        onChanged: (value) {
-                          setState(() {
-                            isNewsFeedEnabled = value;
-                            SharedHandler.setSharedPref(
-                                SharedHandler.newsNotificationKey, value);
-                          });
-                        },
-                        activeTrackColor: blueColor,
-                        activeColor: whiteColor,
-                      ),
-                    ),
                     //RSS link
                     ListTile(
                       title: MyText(
@@ -144,7 +124,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
                         color: blackColor,
                       ),
                       trailing: MyText(
-                        text: "Click to edit",
+                        text: rssKey,
                         size: fontSizeM,
                         fontWeight: FontWeight.normal,
                         color: blackColor,
